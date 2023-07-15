@@ -25,7 +25,11 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  */
+<<<<<<< HEAD
 //本文件头文件   123123127389127356575
+
+//本文件头文件   1231234
+>>>>>>> c1df11ad902503813b251bb800735c5dd1d5b3e2
 #include "fwknop.h"
 //设置初始化
 #include "config_init.h"
