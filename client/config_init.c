@@ -71,6 +71,7 @@ typedef struct fko_var_bitmask
 /**
  * Structure to handle a variable in an rcfile (name and value)
  */
+//这个结构体用来处理rc文件中的变量（名称和值）
 typedef struct rc_file_param
 {
     char name[MAX_LINE_LEN];    /*!< Variable name */
@@ -1966,6 +1967,7 @@ set_defaults(fko_cli_options_t *options)
 /* Initialize program configuration via config file and/or command-line
  * switches.
 */
+//这个函数是用来初始化配置文件的
 void
 config_init(fko_cli_options_t *options, int argc, char **argv)
 {
@@ -1975,16 +1977,20 @@ config_init(fko_cli_options_t *options, int argc, char **argv)
 
     /* Zero out options, opts_track and bitmask.
     */
+   //初始化
+
     memset(options, 0x00, sizeof(fko_cli_options_t));
     memset(&var_bitmask, 0x00, sizeof(fko_var_bitmask_t));
 
     /* Make sure a few reasonable defaults are set
     */
+   //设置一些默认值
     set_defaults(options);
 
     /* First pass over cmd_line args to see if a named-stanza in the
      * rc file is used.
     */
+   //第一次遍历命令行参数，看看是否使用了配置文件中的命名段
     while ((cmd_arg = getopt_long(argc, argv,
             GETOPTS_OPTION_STRING, cmd_opts, &index)) != -1) {
         switch(cmd_arg) {

@@ -7,6 +7,8 @@
         "spa_comm.h": "c",
         "config_init.h": "c",
         "utils.h": "c",
-        "getpasswd.h": "c"
+        "getpasswd.h": "c",
+        "fcntl.h": "c",
+        "fwknop_common.h": "c"
     }
 }

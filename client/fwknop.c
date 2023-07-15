@@ -48,9 +48,8 @@
 
 /* prototypes
 */
+
 // get_keys: 用于获取密钥，包括加密密钥和 HMAC 密钥。
-
-
 static int get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
     char *key, int *key_len, char *hmac_key, int *hmac_key_len);
 
@@ -121,10 +120,10 @@ main(int argc, char **argv)
     fko_cli_options_t   options;
 
     memset(&options, 0x0, sizeof(fko_cli_options_t));
-
+    //初始化消息模块
     /* Initialize the log module */
     log_new();
-
+    //处理命令行  
     /* Handle command line
     */
     config_init(&options, argc, argv);
