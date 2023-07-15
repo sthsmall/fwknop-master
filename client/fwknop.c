@@ -47,16 +47,6 @@
 // get_keys: 用于获取密钥，包括加密密钥和 HMAC 密钥。
 
 
-
-
-
-
-
-
-
-
-
-
 static int get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
     char *key, int *key_len, char *hmac_key, int *hmac_key_len);
 
