@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "fwknop.h": "c",
+        "common.h": "c",
+        "cunit_common.h": "c",
+        "fko.h": "c",
+        "spa_comm.h": "c",
+        "config_init.h": "c",
+        "utils.h": "c",
+        "getpasswd.h": "c"
+    }
+}

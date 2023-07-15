@@ -1,0 +1,32 @@
+﻿D:\Program Files (x86)\vs2021\MSBuild\Microsoft\VC\v170\Microsoft.Cpp.Analysis.props(24,5): warning MSB4211: 正在首次将属性“MsvcAnalysisPluginPath”设置为某个值，但已在“D:\Program Files (x86)\vs2021\MSBuild\Microsoft\VC\v170\Microsoft.CodeAnalysis.Extensions.props (33,5)”处使用了该属性。
+base64.obj : warning LNK4075: 忽略“/EDITANDCONTINUE”(由于“/SAFESEH”规范)
+    正在创建库 D:\Downloads\fwknop-master\win32\Debug\libfko.lib 和对象 D:\Downloads\fwknop-master\win32\Debug\libfko.exp
+cipher_funcs.obj : error LNK2019: 无法解析的外部符号 _is_base64，函数 _add_gpg_prefix 中引用了该符号
+cipher_funcs.obj : error LNK2019: 无法解析的外部符号 _constant_runtime_cmp，函数 _add_gpg_prefix 中引用了该符号
+fko_decode.obj : error LNK2001: 无法解析的外部符号 _constant_runtime_cmp
+fko_hmac.obj : error LNK2001: 无法解析的外部符号 _constant_runtime_cmp
+cipher_funcs.obj : error LNK2019: 无法解析的外部符号 _zero_buf，函数 _rij_decrypt 中引用了该符号
+digest.obj : error LNK2019: 无法解析的外部符号 _FIPS202_SHA3_256，函数 _sha3_256 中引用了该符号
+hmac.obj : error LNK2001: 无法解析的外部符号 _FIPS202_SHA3_256
+digest.obj : error LNK2019: 无法解析的外部符号 _FIPS202_SHA3_512，函数 _sha3_512 中引用了该符号
+hmac.obj : error LNK2001: 无法解析的外部符号 _FIPS202_SHA3_512
+fko_hmac.obj : error LNK2001: 无法解析的外部符号 _is_valid_encoded_msg_len
+fko_decode.obj : error LNK2001: 无法解析的外部符号 _is_valid_encoded_msg_len
+fko_encode.obj : error LNK2001: 无法解析的外部符号 _is_valid_encoded_msg_len
+fko_encryption.obj : error LNK2001: 无法解析的外部符号 _is_valid_encoded_msg_len
+fko_funcs.obj : error LNK2001: 无法解析的外部符号 _is_valid_encoded_msg_len
+fko_decode.obj : error LNK2019: 无法解析的外部符号 _strtol_wrapper，函数 _parse_client_timeout 中引用了该符号
+fko_message.obj : error LNK2001: 无法解析的外部符号 _strtol_wrapper
+fko_decode.obj : error LNK2019: 无法解析的外部符号 _strlcpy，函数 _parse_msg 中引用了该符号
+fko_encode.obj : error LNK2001: 无法解析的外部符号 _strlcpy
+fko_encode.obj : error LNK2019: 无法解析的外部符号 _strlcat，函数 _append_b64 中引用了该符号
+fko_funcs.obj : error LNK2001: 无法解析的外部符号 _strlcat
+fko_rand_value.obj : error LNK2001: 无法解析的外部符号 _strlcat
+fko_encryption.obj : error LNK2019: 无法解析的外部符号 _is_valid_pt_msg_len，函数 __rijndael_encrypt 中引用了该符号
+fko_encryption.obj : error LNK2019: 无法解析的外部符号 _zero_free，函数 __rijndael_decrypt 中引用了该符号
+fko_funcs.obj : error LNK2001: 无法解析的外部符号 _zero_free
+fko_hmac.obj : error LNK2001: 无法解析的外部符号 _zero_free
+fko_hmac.obj : error LNK2019: 无法解析的外部符号 _strndup，函数 _fko_verify_hmac 中引用了该符号
+fko_message.obj : error LNK2019: 无法解析的外部符号 _is_valid_ipv4_addr，函数 _have_allow_ip 中引用了该符号
+fko_message.obj : error LNK2019: 无法解析的外部符号 _count_characters，函数 _validate_nat_access_msg 中引用了该符号
+D:\Downloads\fwknop-master\win32\Debug\libfko.dll : fatal error LNK1120: 14 个无法解析的外部命令
