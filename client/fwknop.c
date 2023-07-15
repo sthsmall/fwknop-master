@@ -117,6 +117,7 @@ main(int argc, char **argv)
     int                 tmp_port = 0;
     char                dump_buf[CTX_DUMP_BUFSIZE];
 
+    //这个结构体用于保存命令行参数
     fko_cli_options_t   options;
 
     memset(&options, 0x0, sizeof(fko_cli_options_t));

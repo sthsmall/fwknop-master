@@ -433,6 +433,7 @@ fko_base64_decode(const char * const in, unsigned char *out)
 
 /* Return the fko version
 */
+// fko_get_version: 用于获取fko的版本号
 int
 fko_get_version(fko_ctx_t ctx, char **version)
 {

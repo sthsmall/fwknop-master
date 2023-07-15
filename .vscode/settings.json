@@ -9,6 +9,7 @@
         "utils.h": "c",
         "getpasswd.h": "c",
         "fcntl.h": "c",
-        "fwknop_common.h": "c"
+        "fwknop_common.h": "c",
+        "crtdefs.h": "c"
     }
 }

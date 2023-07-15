@@ -39,6 +39,8 @@
 
 /* Function Prototypes
 */
+
+//
 void config_init(fko_cli_options_t *options, int argc, char **argv);
 void usage(void);
 

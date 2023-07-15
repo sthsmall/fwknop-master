@@ -36,7 +36,7 @@
 
 typedef struct
 {
-    int verbosity;                                  /*!< Verbosity level (LOG_VERBOSITY_DEBUG...*/
+    int verbosity;//详细程度级别                                  /*!< Verbosity level (LOG_VERBOSITY_DEBUG...*/
 } log_ctx_t;
 
 static log_ctx_t log_ctx;                           /*!< Structure to store the context of the module */
