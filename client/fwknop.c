@@ -25,40 +25,75 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  */
-
+//本文件头文件
 #include "fwknop.h"
+//设置初始化
 #include "config_init.h"
+//导入spa包读写操作
 #include "spa_comm.h"
+//导入工具头文件
 #include "utils.h"
+//提供了从文件读取密钥的函数
 #include "getpasswd.h"
 
+
+//文件状态和文件控制
 #include <sys/stat.h>
 #include <fcntl.h>
 
 
 /* prototypes
 */
+// get_keys: 用于获取密钥，包括加密密钥和 HMAC 密钥。
+
+
+
+
+
+
+
+
+
+
+
+
 static int get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
     char *key, int *key_len, char *hmac_key, int *hmac_key_len);
+
+// errmsg: 用于输出错误消息。
 static void errmsg(const char *msg, const int err);
+// prev_exec: 用于执行之前的命令。
 static int prev_exec(fko_cli_options_t *options, int argc, char **argv);
+// get_save_file: 用于获取保存文件的路径。
 static int get_save_file(char *args_save_file);
+// show_last_command: 用于显示最后一条命令。
 static int show_last_command(const char * const args_save_file);
+// save_args: 用于保存命令行参数。
 static int save_args(int argc, char **argv, const char * const args_save_file);
+// run_last_args: 用于运行最后保存的命令行参数。
 static int run_last_args(fko_cli_options_t *options,
         const char * const args_save_file);
+// set_message_type: 用于设置消息类型。
 static int set_message_type(fko_ctx_t ctx, fko_cli_options_t *options);
+// set_nat_access: 用于设置 NAT 访问。
 static int set_nat_access(fko_ctx_t ctx, fko_cli_options_t *options,
         const char * const access_buf);
+// set_access_buf: 用于设置访问缓冲区。
 static int set_access_buf(fko_ctx_t ctx, fko_cli_options_t *options,
         char *access_buf);
+// get_rand_port: 用于获取随机端口。
 static int get_rand_port(fko_ctx_t ctx);
+// resolve_ip_https: 用于解析 HTTPS IP 地址。
 int resolve_ip_https(fko_cli_options_t *options);
+// resolve_ip_http: 用于解析 HTTP IP 地址。
 int resolve_ip_http(fko_cli_options_t *options);
+// clean_exit: 用于清理并退出程序。
 static void clean_exit(fko_ctx_t ctx, fko_cli_options_t *opts,
     char *key, int *key_len, char *hmac_key, int *hmac_key_len,
     unsigned int exit_status);
+// zero_buf_wrapper: 用于将缓冲区清零。
 static void zero_buf_wrapper(char *buf, int len);
+
 #if HAVE_LIBFIU
 static int enable_fault_injections(fko_cli_options_t * const opts);
 #endif
