@@ -2483,14 +2483,17 @@ config_init(fko_cli_options_t *options, int argc, char **argv)
     }
 
     /* Now that we have all of our options set, we can validate them */
+    // 现在我们已经设置了所有选项，我们可以验证它们
     validate_options(options);
 
     /* Generate Rijndael + HMAC keys from /dev/random and base64 encode
     */
+   // 从/dev/random生成Rijndael + HMAC密钥并对其进行base64编码
     generate_keys(options);
 
     /* We can upgrade our settings with the parameters set on the command
      * line by the user */
+    // 我们可以通过用户在命令行上设置的参数来升级我们的设置
     if (options->save_rc_stanza == 1)
     {
         /* If we are asked to generate keys, we add them to the bitmask so

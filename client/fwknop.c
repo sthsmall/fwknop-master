@@ -105,7 +105,8 @@ static int enable_fault_injections(fko_cli_options_t * const opts);
 
 int
 main(int argc, char **argv)
-{
+{   
+    //用于保存发送消息  
     fko_ctx_t           ctx  = NULL;
     fko_ctx_t           ctx2 = NULL;
     int                 res;
@@ -139,6 +140,7 @@ main(int argc, char **argv)
 
     /* Handle previous execution arguments if required
     */
+   //处理之前的执行参数
     if(prev_exec(&options, argc, argv) != 1)
         clean_exit(ctx, &options, key, &key_len, hmac_key,
                 &hmac_key_len, EXIT_FAILURE);
@@ -149,16 +151,18 @@ main(int argc, char **argv)
 
     /* Intialize the context
     */
+   //初始化数据包       
     res = fko_new(&ctx);
     if(res != FKO_SUCCESS)
     {
         errmsg("fko_new", res);
         clean_exit(ctx, &options, key, &key_len, hmac_key,
                 &hmac_key_len, EXIT_FAILURE);
-    }
+    }       
 
     /* Display version info and exit.
     */
+   //显示版本信息
     if(options.version)
     {
         fko_get_version(ctx, &version);
@@ -172,6 +176,7 @@ main(int argc, char **argv)
 
     /* Set client timeout
     */
+   //设置超时时间
     if(options.fw_timeout >= 0)
     {
         res = fko_set_spa_client_timeout(ctx, options.fw_timeout);
@@ -185,6 +190,7 @@ main(int argc, char **argv)
 
     /* Set the SPA packet message type based on command line options
     */
+   //设置spa消息类型基于命令行选项
     res = set_message_type(ctx, &options);
     if(res != FKO_SUCCESS)
     {
@@ -195,6 +201,7 @@ main(int argc, char **argv)
 
     /* Adjust the SPA timestamp if necessary
     */
+   //调整spa时间戳
     if(options.time_offset_plus > 0)
     {
         res = fko_set_timestamp(ctx, options.time_offset_plus);
@@ -221,6 +228,7 @@ main(int argc, char **argv)
         /* Set the access message to a command that the server will
          * execute
         */
+       //设置访问消息到服务器将执行的命令
         snprintf(access_buf, MAX_LINE_LEN, "%s%s%s",
                 options.allow_ip_str, ",", options.server_command);
     }
@@ -229,6 +237,7 @@ main(int argc, char **argv)
         /* Resolve the client's public facing IP address if requestesd.
          * if this fails, consider it fatal.
         */
+       //解析客户端的公网ip地址
         if (options.resolve_ip_http_https)
         {
             if(options.resolve_http_only)
@@ -255,10 +264,14 @@ main(int argc, char **argv)
          * to be specified as well, so in this case append the string
          * "none/0" to the allow IP.
         */
+       //设置消息字符串通过结合允许ip和端口/协议
+       //fwknopd服务器允许没有端口/协议指定以及，所以在这种情况下，将字符串“none/0”附加到允许ip
+
         if(set_access_buf(ctx, &options, access_buf) != 1)
             clean_exit(ctx, &options, key, &key_len,
                     hmac_key, &hmac_key_len, EXIT_FAILURE);
     }
+    //设置spa消息
     res = fko_set_spa_message(ctx, access_buf);
     if(res != FKO_SUCCESS)
     {
@@ -269,6 +282,7 @@ main(int argc, char **argv)
 
     /* Set NAT access string
     */
+   //设置nat访问字符串
     if (options.nat_local || options.nat_access_str[0] != 0x0)
     {
         res = set_nat_access(ctx, &options, access_buf);
@@ -282,6 +296,7 @@ main(int argc, char **argv)
 
     /* Set username
     */
+   //设置用户名
     if(options.spoof_user[0] != 0x0)
     {
         res = fko_set_username(ctx, options.spoof_user);
@@ -294,7 +309,16 @@ main(int argc, char **argv)
     }
 
     /* Set up for using GPG if specified.
+    
     */
+   //设置使用gpg
+   /*
+   * 在软件开发或配置中，GPG 是一种常用的加密和签名工具，
+   * 用于保护敏感信息和验证数据的完整性。
+   * 如果在特定的设置或配置中明确指定要使用 GPG，
+   * 那么相应的操作或流程需要进行适当的 GPG 设置，
+   * 以确保正确地使用 GPG 加密、解密或签名等功能。
+   */
     if(options.use_gpg)
     {
         /* If use-gpg-agent was not specified, then remove the GPG_AGENT_INFO
@@ -401,6 +425,7 @@ main(int argc, char **argv)
 
     /* Acquire the necessary encryption/hmac keys
     */
+   //获取加密和hmac密钥
     if(get_keys(ctx, &options, key, &key_len, hmac_key, &hmac_key_len) != 1)
         clean_exit(ctx, &options, key, &key_len,
                 hmac_key, &hmac_key_len, EXIT_FAILURE);
@@ -421,6 +446,7 @@ main(int argc, char **argv)
 
     /* Finalize the context data (encrypt and encode the SPA data)
     */
+   //最终化上下文数据（加密和编码SPA数据）
     res = fko_spa_data_final(ctx, key, key_len, hmac_key, hmac_key_len);
     if(res != FKO_SUCCESS)
     {
@@ -434,6 +460,7 @@ main(int argc, char **argv)
 
     /* Display the context data.
     */
+   //显示上下文数据
     if (options.verbose || options.test)
     {
         res = dump_ctx_to_buffer(ctx, dump_buf, sizeof(dump_buf));
@@ -446,6 +473,7 @@ main(int argc, char **argv)
 
     /* Save packet data payload if requested.
     */
+   //如果请求，保存数据包数据负载。
     if (options.save_packet_file[0] != 0x0)
         write_spa_packet_data(ctx, &options);
 
@@ -916,6 +944,7 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
 
 /* Show the last command that was executed
 */
+//展示最后一次执行的命令
 static int
 show_last_command(const char * const args_save_file)
 {
@@ -954,6 +983,7 @@ show_last_command(const char * const args_save_file)
 
 /* Get the command line arguments from the previous invocation
 */
+// 从上一次调用中获取命令行参数
 static int
 run_last_args(fko_cli_options_t *options, const char * const args_save_file)
 {
@@ -970,6 +1000,14 @@ run_last_args(fko_cli_options_t *options, const char * const args_save_file)
                 args_save_file);
         return 0;
     }
+    /*
+    * fileno 是C语言标准库 <stdio.h> 中的一个函数，用于获取给定文件流（FILE 结构体指针）对应的文件描述符。
+    * 文件描述符的值在不同的上下文中有不同的含义，常见的包括：
+    * 标准输入（stdin）：文件描述符为0
+    * 标准输出（stdout）：文件描述符为1
+    * 标准错误输出（stderr）：文件描述符为2
+    * 其他已打开的文件：文件描述符从3开始依次递增
+    */
 #if HAVE_FILENO
     if(verify_file_perms_ownership(args_save_file, fileno(args_file_ptr)) != 1)
 #else
@@ -996,6 +1034,7 @@ run_last_args(fko_cli_options_t *options, const char * const args_save_file)
 
     /* Reset the options index so we can run through them again.
     */
+   //重置选项索引，以便我们可以再次运行它们。
     optind = 0;
 
     config_init(options, argc_new, argv_new);
@@ -1006,7 +1045,7 @@ run_last_args(fko_cli_options_t *options, const char * const args_save_file)
 
     return 1;
 }
-
+//用于保存文件路径
 static int
 get_save_file(char *args_save_file)
 {
@@ -1101,6 +1140,7 @@ set_message_type(fko_ctx_t ctx, fko_cli_options_t *options)
 
 /* Prompt for and receive a user password.
 */
+//提示并接收用户密码。
 static int
 get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
     char *key, int *key_len, char *hmac_key, int *hmac_key_len)

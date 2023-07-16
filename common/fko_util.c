@@ -782,7 +782,7 @@ add_argv(char **argv_new, int *argc_new, const char *new_arg)
 
     return 1;
 }
-
+//用于将字符串解析为命令行参数数组
 int
 strtoargv(const char * const args_str, char **argv_new, int *argc_new)
 {
@@ -897,21 +897,22 @@ hex_dump(const unsigned char *data, const int size)
  *
  * @return a FKO error code. FKO_SUCCESS if successful.
  */
+//将FKO上下文转储到缓冲区
 int
 dump_ctx_to_buffer(fko_ctx_t ctx, char *dump_buf, size_t dump_buf_len)
 {
     int         cp = 0;
     int         err = FKO_LAST_ERROR;
 
-    char       *rand_val        = NULL;
-    char       *username        = NULL;
-    char       *version         = NULL;
-    char       *spa_message     = NULL;
-    char       *nat_access      = NULL;
-    char       *server_auth     = NULL;
+    char       *rand_val        = NULL;//随机值
+    char       *username        = NULL;//用户名
+    char       *version         = NULL;//版本
+    char       *spa_message     = NULL;//spa消息
+    char       *nat_access      = NULL;//nat访问
+    char       *server_auth     = NULL;//服务器认证
     char       *enc_data        = NULL;
     char       *hmac_data       = NULL;
-    char       *spa_digest      = NULL;
+    char       *spa_digest      = NULL;//spa摘要
 #if HAVE_LIBGPGME
     char          *gpg_signer        = NULL;
     char          *gpg_recip         = NULL;

@@ -520,7 +520,7 @@ resolve_ip_https(fko_cli_options_t *options)
         "[-] Could not resolve IP via: '%s'", wget_ssl_cmd);
     return -1;
 }
-
+//解析http
 int
 resolve_ip_http(fko_cli_options_t *options)
 {

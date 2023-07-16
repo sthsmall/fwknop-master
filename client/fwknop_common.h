@@ -35,19 +35,23 @@
 
 /* My Name and Version
 */
+//名字和版本
 #define MY_NAME     "fwknop"
 #define MY_DESC     "Single Packet Authorization client"
 
 /* Get our program version from VERSION (defined in config.h).
 */
+//从VERSION（在config.h中定义）获取我们的程序版本。
 #define MY_VERSION VERSION
 
 /* Default config path, can override with -c
 */
+//默认配置路径，可以用-c覆盖
 #define DEF_CONFIG_FILE MY_NAME".conf"
 
 /* For time offset handling
 */
+//时间偏移处理
 #define MAX_TIME_STR_LEN        9
 #define TIME_OFFSET_SECONDS     1
 #define TIME_OFFSET_MINUTES     60
@@ -58,6 +62,10 @@
  * wget to https://www.cipherdyne.org/cgi-bin/myip, and if the user
  * permit it, to fall back to the same URL but via HTTP.
 */
+//解析允许IP - 默认情况下，这是通过HTTPS解析的
+//wget到https://www.cipherdyne.org/cgi-bin/myip，如果用户
+//允许它，回到相同的URL，但通过HTTP。
+
 #define HTTP_RESOLVE_HOST           "www.cipherdyne.org"
 #define HTTP_BACKUP_RESOLVE_HOST    "www.cipherdyne.com"
 #define HTTP_RESOLVE_URL            "/cgi-bin/myip"
@@ -70,6 +78,7 @@
 
 /* fwknop client configuration parameters and values
 */
+//fwknop客户端配置参数和值
 typedef struct fko_cli_options
 {
     char config_file[MAX_PATH_LEN];
@@ -101,6 +110,7 @@ typedef struct fko_cli_options
 
     /* Encryption keys read from a .fwknoprc stanza
     */
+   //从.fwknoprc读取的加密密钥
     char key[MAX_KEY_LEN+1];
     char key_base64[MAX_B64_KEY_LEN+1];
     int  key_len;
@@ -115,6 +125,7 @@ typedef struct fko_cli_options
 
     /* NAT access
     */
+   //NAT穿透
     char nat_access_str[MAX_PATH_LEN];
     int  nat_local;
     int  nat_port;
@@ -122,6 +133,7 @@ typedef struct fko_cli_options
 
     /* External IP resolution via HTTP
     */
+   //外部IP解析
     int  resolve_ip_http_https;
     int  resolve_http_only;
     char *resolve_url;
@@ -131,10 +143,12 @@ typedef struct fko_cli_options
 
     /* HTTP proxy support
     */
+   //http代理
     char http_proxy[HTTP_MAX_REQUEST_LEN];
 
     /* SPA packet transmission port and protocol
     */
+   //spa包传输端口和协议
     int spa_proto;
     unsigned int spa_dst_port;
     unsigned int spa_src_port; /* only used with --source-port */
@@ -146,6 +160,7 @@ typedef struct fko_cli_options
     int spa_icmp_code;  /* only used in '-P icmp' mode */
 
     /* Various command-line flags */
+    //这个是用来判断是否是debug模式的
     unsigned char   verbose; /* --verbose mode */
     unsigned char   version; /* --version */
     unsigned char   test;
