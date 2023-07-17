@@ -201,6 +201,7 @@ send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
 
 /* Send the SPA data via raw TCP packet.
 */
+//发送原始TCP数据包
 static int
 send_spa_packet_tcp_raw(const char *spa_data, const int sd_len,
     const struct sockaddr_in *saddr, const struct sockaddr_in *daddr,
@@ -315,6 +316,7 @@ send_spa_packet_tcp_raw(const char *spa_data, const int sd_len,
 
 /* Send the SPA data via raw UDP packet.
 */
+//发送原始UDP数据包
 static int
 send_spa_packet_udp_raw(const char *spa_data, const int sd_len,
     const struct sockaddr_in *saddr, const struct sockaddr_in *daddr,
@@ -415,6 +417,7 @@ send_spa_packet_udp_raw(const char *spa_data, const int sd_len,
 
 /* Send the SPA data via ICMP packet.
 */
+//发送ICMP数据包
 static int
 send_spa_packet_icmp(const char *spa_data, const int sd_len,
     const struct sockaddr_in *saddr, const struct sockaddr_in *daddr,
@@ -620,6 +623,7 @@ send_spa_packet_http(const char *spa_data, const int sd_len,
 
 /* Function used to send the SPA data.
 */
+//用于发送spa数据的函数
 int
 send_spa_packet(fko_ctx_t ctx, fko_cli_options_t *options)
 {
@@ -757,6 +761,7 @@ send_spa_packet(fko_ctx_t ctx, fko_cli_options_t *options)
 
 /* Function to write SPA packet data to the filesystem
 */
+//将SPA数据写入文件
 int write_spa_packet_data(fko_ctx_t ctx, const fko_cli_options_t *options)
 {
     FILE   *fp;

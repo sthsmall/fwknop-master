@@ -42,6 +42,7 @@
  * \param opts Main program data struct
  *
  */
+//处理SPA数据包
 void incoming_spa(fko_srv_options_t *opts);
 
 #endif  /* INCOMING_SPA_H */

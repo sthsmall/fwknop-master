@@ -913,12 +913,16 @@ check_port_proto(acc_stanza_t *acc, spa_data_t *spadat, const int stanza_num)
 
 /* Process the SPA packet data
 */
+//处理spa数据包
 void
 incoming_spa(fko_srv_options_t *opts)
-{
+{   
+    //初始化总是一个好主意，如果它将被使用
+    //重复（特别是使用fko_new_with_data（））。
     /* Always a good idea to initialize ctx to null if it will be used
      * repeatedly (especially when using fko_new_with_data()).
     */
+   
     fko_ctx_t       ctx = NULL;
 
     char            *spa_ip_demark, *raw_digest = NULL;
@@ -931,12 +935,15 @@ incoming_spa(fko_srv_options_t *opts)
 
     /* This will hold our pertinent SPA data.
     */
+   //这将保存我们的相关SPA数据
     spa_data_t spadat;
 
     /* Loop through all access stanzas looking for a match
     */
+   //循环遍历所有访问部分，寻找匹配
     acc_stanza_t        *acc = opts->acc_stanzas;
 
+    //将网络地址转换为可读字符串形式的函数
     inet_ntop(AF_INET, &(spa_pkt->packet_src_ip),
         spadat.pkt_source_ip, sizeof(spadat.pkt_source_ip));
 
@@ -947,6 +954,8 @@ incoming_spa(fko_srv_options_t *opts)
      * SPA data and/or to be reasonably sure we have a SPA packet (i.e
      * try to eliminate obvious non-spa packets).
     */
+   //在这一点上，我们想要验证并（如果需要）预处理SPA数据和/或合理地确定我们是否有一个SPA数据包
+//    （即尝试消除明显的非spa数据包）
     if(!precheck_pkt(opts, spa_pkt, &spadat, &raw_digest))
         return;
 
@@ -954,6 +963,7 @@ incoming_spa(fko_srv_options_t *opts)
      * incoming SPA packet is not a replay, see if we should grant any
      * access
     */
+   //现在我们知道有一个匹配的access.conf部分和传入的SPA数据包不是重播，看看我们是否应该授予任何访问
     while(acc)
     {
         res = FKO_SUCCESS;

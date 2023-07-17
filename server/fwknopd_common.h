@@ -46,19 +46,23 @@
 
 /* My Name and Version
 */
+//我的名字和版本
 #define MY_NAME     "fwknopd"
 #define MY_DESC     "Single Packet Authorization server"
 
 /* Get our program version from VERSION (defined in config.h).
 */
+//从VERSION（在config.h中定义）获取我们的程序版本。
 #define MY_VERSION VERSION
 
 /* Some program defaults.
 */
+//一些程序默认值。
 #ifndef DEF_CONF_DIR
   /* Our default config directory is based on SYSCONFDIR as set by the
    * configure script.
   */
+ //我们的默认配置目录基于由配置脚本设置的SYSCONFDIR。
   #define DEF_CONF_DIR      SYSCONFDIR"/"PACKAGE_NAME
 #endif
 
@@ -69,11 +73,13 @@
   /* Our default run directory is based on LOCALSTATEDIR as set by the
    * configure script. This is where we put the PID and digest cache files.
   */
+ //我们的默认运行目录基于由配置脚本设置的LOCALSTATEDIR。这是我们放置PID和摘要缓存文件的地方。
   #define DEF_RUN_DIR       SYSRUNDIR"/"PACKAGE_NAME
 #endif
 
 /* More Conf defaults
 */
+//更多Conf默认值
 #define DEF_PID_FILENAME                MY_NAME".pid"
 #if USE_FILE_CACHE
   #define DEF_DIGEST_CACHE_FILENAME       "digest.cache"
@@ -151,6 +157,7 @@
 
 /* FirewallD-specific defines
 */
+//防火墙特定定义
 #if FIREWALL_FIREWALLD
 
   #define DEF_FLUSH_FIREWD_AT_INIT         "Y"
@@ -171,6 +178,7 @@
 
 /* Iptables-specific defines
 */
+//iptables特定定义
 #elif FIREWALL_IPTABLES
 
   #define DEF_FLUSH_IPT_AT_INIT         "Y"
@@ -191,6 +199,7 @@
 
 /* Ipfw-specific defines
 */
+//  Ipfw特定定义
 #elif FIREWALL_IPFW
 
   #define DEF_FLUSH_IPFW_AT_INIT         "Y"
@@ -222,6 +231,7 @@
 
 /* fwknopd-specific limits
 */
+//fwknopd特定限制
 #define MAX_PCAP_FILTER_LEN     1024
 #define MAX_IFNAME_LEN          128
 #define MAX_SPA_PACKET_LEN      1500 /* --DSS check this? */
@@ -229,6 +239,7 @@
 
 /* The minimum possible valid SPA data size.
 */
+//最小可能的有效SPA数据大小
 #define MIN_SPA_DATA_SIZE   140
 
 /* Configuration file parameter tags.
@@ -238,6 +249,9 @@
  * Note: It is important to maintain an equivalence between this enum and the
  *       config_map[] array in server/cmd_opts.h
 */
+//配置文件参数标签
+//这将对应于配置参数数组中的条目
+//注意:重要的是要保持这个枚举和server/cmd_opts.h中的config_map[]数组之间的等价性
 enum {
     CONF_CONFIG_FILE = 0,
     CONF_OVERRIDE_CONFIG,
@@ -358,6 +372,7 @@ enum {
 /* A simple linked list of uints for the access stanza items that allow
  * multiple comma-separated entries.
 */
+//一个简单的链表，用于允许多个逗号分隔条目的访问部分条目。
 typedef struct acc_int_list
 {
     unsigned int        maddr;
@@ -368,6 +383,7 @@ typedef struct acc_int_list
 /* A simple linked list of proto and ports for the access stanza items that
  * allow multiple comma-separated entries.
 */
+//一个简单的链表，用于允许多个逗号分隔条目的访问部分条目。
 typedef struct acc_port_list
 {
     unsigned int            proto;
@@ -378,6 +394,7 @@ typedef struct acc_port_list
 /* A simple linked list of strings for the access stanza items that
  * allow multiple comma-separated entries.
 */
+//一个简单的链表，用于允许多个逗号分隔条目的访问部分条目。
 typedef struct acc_string_list
 {
     char                    *str;
@@ -386,6 +403,7 @@ typedef struct acc_string_list
 
 /* Access stanza list struct.
 */
+//访问部分列表结构。
 typedef struct acc_stanza
 {
     char                *source;
@@ -456,6 +474,7 @@ typedef struct acc_stanza
 
 /* A simple linked list of strings for command open/close cycles
 */
+//一个简单的链表，用于命令打开/关闭周期的字符串
 typedef struct cmd_cycle_list
 {
     char                    src_ip[MAX_IPV4_STR_LEN];
@@ -466,7 +485,7 @@ typedef struct cmd_cycle_list
 } cmd_cycle_list_t;
 
 /* Firewall-related data and types. */
-
+//防火墙相关数据和类型。
 #if FIREWALL_FIREWALLD
   /* --DSS XXX: These are arbitrary. We should determine appropriate values.
   */
@@ -598,6 +617,7 @@ typedef struct cmd_cycle_list
 
 /* SPA Packet info struct.
 */
+//SPA数据包信息结构。
 typedef struct spa_pkt_info
 {
     unsigned int    packet_data_len;
@@ -611,6 +631,7 @@ typedef struct spa_pkt_info
 
 /* Struct for (processed and verified) SPA data used by the server.
 */
+//服务器使用的（已处理和验证的）SPA数据的结构。
 typedef struct spa_data
 {
     char           *username;
@@ -632,11 +653,13 @@ typedef struct spa_data
 
 /* fwknopd server configuration parameters and values
 */
+//fwknopd服务器配置参数和值
 typedef struct fko_srv_options
 {
     /* The command-line options or flags that invoke an immediate response
      * then exit.
     */
+   //调用立即响应然后退出的命令行选项或标志。
     unsigned char   dump_config;        /* Dump current configuration flag */
     unsigned char   foreground;         /* Run in foreground flag */
     unsigned char   kill;               /* flag to initiate kill of fwknopd */

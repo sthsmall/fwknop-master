@@ -540,6 +540,7 @@ fko_get_spa_data(fko_ctx_t ctx, char **spa_data)
 
     /* We expect to have encrypted data to process.  If not, we bail.
     */
+   //我们期望有加密数据来处理。如果没有，我们就放弃了。
     if(ctx->encrypted_msg == NULL || ! is_valid_encoded_msg_len(
                 strnlen(ctx->encrypted_msg, MAX_SPA_ENCODED_MSG_SIZE)))
         return(FKO_ERROR_MISSING_ENCODED_DATA);
@@ -555,6 +556,8 @@ fko_get_spa_data(fko_ctx_t ctx, char **spa_data)
      * in GnuPG mode we eliminate the consistent 'hQ' base64 encoded
      * prefix
     */
+   //注意，如果使用Rijndael加密，我们省略了前10个字节（以消除一致的“Salted__”字符串），
+    //在GnuPG模式下，我们消除了一致的“hQ”base64编码前缀
     if(ctx->encryption_type == FKO_ENCRYPTION_RIJNDAEL)
         *spa_data += B64_RIJNDAEL_SALT_STR_LEN;
     else if(ctx->encryption_type == FKO_ENCRYPTION_GPG)

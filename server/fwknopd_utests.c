@@ -15,6 +15,7 @@
  * The module should fetch functions according to used modules. All of them follow the same
  * naming convention.
  */
+
 static void register_test_suites(void)
 {
     register_ts_access();

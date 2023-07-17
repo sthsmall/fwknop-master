@@ -265,7 +265,7 @@ main(int argc, char **argv)
          * "none/0" to the allow IP.
         */
        //设置消息字符串通过结合允许ip和端口/协议
-       //fwknopd服务器允许没有端口/协议指定以及，所以在这种情况下，将字符串“none/0”附加到允许ip
+       //fwknopd服务器允许没有端口/协议指定以及，所以在这种情况下附加字符串“none/0”到允许ip
 
         if(set_access_buf(ctx, &options, access_buf) != 1)
             clean_exit(ctx, &options, key, &key_len,
@@ -412,6 +412,7 @@ main(int argc, char **argv)
 
     /* Set Digest type.
     */
+   //设置摘要类型
     if(options.digest_type)
     {
         res = fko_set_spa_digest_type(ctx, options.digest_type);
@@ -635,7 +636,7 @@ main(int argc, char **argv)
                 //由于这是预期的，返回0而不是错误条件（因此调用程序如fwknop测试套件不会将其解释为不可恢复的错误），
                 //但打印错误字符串以进行调试目的。测试套件确实运行一系列使用单个密钥对进行加密和身份验证的测试，
                 //因此对于这些测试，解密变得可能。
-                
+
                 log_msg(LOG_VERBOSITY_ERROR, "GPG ERR: %s\n%s", fko_gpg_errstr(ctx2),
                     "No access to recipient private key?");
             }
@@ -758,6 +759,11 @@ set_access_buf(fko_ctx_t ctx, fko_cli_options_t *options, char *access_buf)
              * utlimate target of the incoming connection after the SPA
              * packet is sent).
             */
+        //    将访问字符串的端口替换为NAT端口，因为NAT端口是手动指定的（--nat-port）
+        //    或从随机数据中派生的（--nat-rand-port）。在NAT模式下，fwknopd服务器使
+        //    用访问字符串中的端口作为NAT的端口，并且通过此转换后的端口授予访问权限给
+        //    --nat-access IP:port所指定的目标（因此，在发送SPA数据包之后，此服务是
+        //    传入连接的最终目标）。
             ndx = strchr(options->access_str, '/');
             if(ndx == NULL)
             {
