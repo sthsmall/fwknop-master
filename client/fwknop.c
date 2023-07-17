@@ -479,6 +479,7 @@ main(int argc, char **argv)
 
     /* SPA packet random destination port handling
     */
+   //SPA数据包随机目标端口处理
     if (options.rand_port)
     {
         tmp_port = get_rand_port(ctx);
@@ -492,6 +493,8 @@ main(int argc, char **argv)
      * we're going to spoof the SPA packet source IP), then select
      * a random source port unless the source port is already set
     */
+   //如果我们使用“原始”模式之一（通常是因为我们要欺骗SPA数据包源IP），则选择随机源端口，除非源端口已经设置
+
     if ((options.spa_proto == FKO_PROTO_TCP_RAW
             || options.spa_proto == FKO_PROTO_UDP_RAW
             || options.spa_proto == FKO_PROTO_ICMP)
@@ -503,7 +506,7 @@ main(int argc, char **argv)
                     hmac_key, &hmac_key_len, EXIT_FAILURE);
         options.spa_src_port = tmp_port;
     }
-
+    //发送SPA数据包
     res = send_spa_packet(ctx, &options);
     if(res < 0)
     {

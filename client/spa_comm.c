@@ -81,6 +81,7 @@ chksum(unsigned short *buf, int nbytes)
 
 /* Send the SPA data via UDP packet.
 */
+
 static int
 send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
     const fko_cli_options_t *options)
@@ -174,7 +175,7 @@ send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
                 strerror(errno));
         return -1;
     }
-
+    //发送数据
     res = send(sock, spa_data, sd_len, 0);
 
     if(res < 0)
@@ -625,13 +626,16 @@ send_spa_packet(fko_ctx_t ctx, fko_cli_options_t *options)
     int                 res, sd_len;
     char               *spa_data;
     struct sockaddr_in  saddr, daddr;
-    char                ip_str[INET_ADDRSTRLEN] = {0};  /* String used to contain the ip address of an hostname */
+    //字符串用于包含主机名的ip地址
+    char                ip_str[INET_ADDRSTRLEN] = {0};  /* String used to contain the ip address of an hostname */ 
+    //用于设置hints以解析主机名的结构
     struct addrinfo     hints;                          /* Structure used to set hints to resolve hostname */
 #ifdef WIN32
     WSADATA wsa_data;
 #endif
 
     /* Initialize the hint buffer */
+    //初始化hints
     memset(&hints, 0 , sizeof(hints));
 
     /* Get our spa data here.
@@ -661,7 +665,7 @@ send_spa_packet(fko_ctx_t ctx, fko_cli_options_t *options)
 #endif
 
     errno = 0;
-
+    
     dump_transmit_options(options);
 
     if (options->spa_proto == FKO_PROTO_TCP || options->spa_proto == FKO_PROTO_UDP)
