@@ -522,12 +522,14 @@ main(int argc, char **argv)
     /* Run through a decode cycle in test mode (--DSS XXX: This test/decode
      * portion should be moved elsewhere).
     */
+   //在测试模式下运行解码周期（-DSS XXX：此测试/解码部分应移至其他位置）。
     if (options.test)
     {
         /************** Decoding now *****************/
 
         /* Now we create a new context based on data from the first one.
         */
+       //现在，我们根据第一个上下文中的数据创建一个新的内容。
         res = fko_get_spa_data(ctx, &spa_data);
         if(res != FKO_SUCCESS)
         {
@@ -561,6 +563,10 @@ main(int argc, char **argv)
          * This also verifies the HMAC and truncates it if there are no
          * problems.
         */
+    //    如果指定了gpg-home-dir，则必须推迟解密，如果我们使用fko_new_with_data（）函数，
+    //    因为我们需要设置gpg home dir在上下文创建之后，但在我们尝试解密数据之前。因此
+    //    ，我们要么传递NULL用于解密密钥fko_new_with_data（），要么使用fko_new（）创建一个空上下文
+    //    ，用加密数据填充它，设置选项，然后解码它。这也验证HMAC并在没有问题的情况下截断它。
         res = fko_new_with_data(&ctx2, spa_data, NULL,
             0, enc_mode, hmac_key, hmac_key_len, options.hmac_type);
         if(res != FKO_SUCCESS)
@@ -625,6 +631,11 @@ main(int argc, char **argv)
                  * tests that use a single key pair for encryption and
                  * authentication, so decryption become possible for these
                  * tests. */
+                //我们最有可能无法解密gpg加密的数据，因为我们没有访问与用于加密的公钥相关联的私钥。
+                //由于这是预期的，返回0而不是错误条件（因此调用程序如fwknop测试套件不会将其解释为不可恢复的错误），
+                //但打印错误字符串以进行调试目的。测试套件确实运行一系列使用单个密钥对进行加密和身份验证的测试，
+                //因此对于这些测试，解密变得可能。
+                
                 log_msg(LOG_VERBOSITY_ERROR, "GPG ERR: %s\n%s", fko_gpg_errstr(ctx2),
                     "No access to recipient private key?");
             }

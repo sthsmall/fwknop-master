@@ -46,25 +46,40 @@
 
 /* Prototypes
 */
+// check_dir_path：检查给定路径是否存在，并返回相应的结果。
 static int check_dir_path(const char * const path,
         const char * const path_name, const unsigned char use_basename);
+// make_dir_path：创建给定路径的目录，如果路径不存在的话。
 static int make_dir_path(const char * const path);
+// daemonize_process：将进程转换为守护进程，使其在后台运行。
 static void daemonize_process(fko_srv_options_t * const opts);
+// stop_fwknopd：停止运行fwknopd服务。
 static int stop_fwknopd(fko_srv_options_t * const opts);
+// status_fwknopd：获取fwknopd服务的状态信息。
 static int status_fwknopd(fko_srv_options_t * const opts);
+// restart_fwknopd：重启fwknopd服务。
 static int restart_fwknopd(fko_srv_options_t * const opts);
+// write_pid_file：将进程的PID（进程ID）写入PID文件中。
 static int write_pid_file(fko_srv_options_t *opts);
+// handle_signals：处理信号（如终止信号、中断信号）的函数。
 static int handle_signals(fko_srv_options_t *opts);
+// setup_pid：设置PID文件的路径和相关选项。
 static void setup_pid(fko_srv_options_t *opts);
+// init_digest_cache：初始化用于缓存数字摘要的数据结构。
 static void init_digest_cache(fko_srv_options_t *opts);
+// set_locale：设置程序的本地化（语言环境）。
 static void set_locale(fko_srv_options_t *opts);
+// get_running_pid：获取正在运行的fwknopd服务的进程ID。
 static pid_t get_running_pid(const fko_srv_options_t *opts);
 #if AFL_FUZZING
+//afl_enc_pkt_from_file，用于从文件中读取并处理加密的数据包。
 static void afl_enc_pkt_from_file(fko_srv_options_t *opts);
+//afl_pkt_from_stdin，用于从标准输入中读取并处理数据包。
 static void afl_pkt_from_stdin(fko_srv_options_t *opts);
 #endif
 
 #if HAVE_LIBFIU
+// enable_fault_injections：启用故障注入。
 static void enable_fault_injections(fko_srv_options_t * const opts);
 #endif
 
@@ -84,23 +99,26 @@ main(int argc, char **argv)
         /* Handle command line
         */
         config_init(&opts, argc, argv);
-
-#if HAVE_LIBFIU
+    //如果有libfiu，则设置任何故障注入点
+#if HAVE_LIBFIU 
         /* Set any fault injection points early
         */
+       //设置任何故障注入点
         enable_fault_injections(&opts);
 #endif
 
         /* Process any options that do their thing and exit.
         */
-
+        //处理任何选项，然后退出。
         /* Kill the currently running fwknopd process?
         */
+       //杀死当前正在运行的fwknopd进程？
         if(opts.kill == 1)
             clean_exit(&opts, NO_FW_CLEANUP, stop_fwknopd(&opts));
 
         /* Status of the currently running fwknopd process?
         */
+       //当前正在运行的fwknopd进程的状态？
         if(opts.status == 1)
             clean_exit(&opts, NO_FW_CLEANUP, status_fwknopd(&opts));
 
