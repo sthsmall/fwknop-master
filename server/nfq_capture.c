@@ -51,8 +51,8 @@ static int process_nfq_packet(struct nfq_q_handle *qh,//Netfilter Queue 队列�
         struct nfgenmsg *nfmsg,//netlink 消息的通用消息头
         struct nfq_data *nfa,//Netfilter Queue 队列中接收到的数据包
         void *data)
-{   
-    struct nfqnl_msg_packet_hdr *ph;//Netfilter Queue 库（libnetfilter_queue）交互的数据包头结构体，它通常在捕获或处理网络数据包时使用。
+{   //Netfilter Queue 库（libnetfilter_queue）交互的数据包头结构体，它通常在捕获或处理网络数据包时使用。
+    struct nfqnl_msg_packet_hdr *ph;
     int pkt_len = 0;//数据包长度
     int verdict;
     unsigned char *full_packet;
@@ -69,8 +69,11 @@ static int process_nfq_packet(struct nfq_q_handle *qh,//Netfilter Queue 队列�
 
         /* Retrieve packet payload
         */
-        pkt_len = nfq_get_payload(nfa, &full_packet);//将数据包nfa存入full_packet
 
+        //是libnetfilter_queue库中的一个函数，用于获取netfilter队列中数据包的有效载荷（payload）
+        pkt_len = nfq_get_payload(nfa, &full_packet);
+
+        //处理数据包
         process_packet(opts, pkt_len, full_packet);
 
         /* Verdict on what to do with the packet.  If it is coming from
