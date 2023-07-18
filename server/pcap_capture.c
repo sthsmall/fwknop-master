@@ -50,6 +50,7 @@
 #if USE_LIBPCAP
 
 /* The pcap capture routine.
+pcap 抓包例程
 */
 int
 pcap_capture(fko_srv_options_t *opts)

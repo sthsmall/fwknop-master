@@ -31,7 +31,7 @@
 #define FWKNOPD_COMMON_H
 
 #include "common.h"
-
+//检测是否是openbsd系统
 #if PLATFORM_OPENBSD
   #include <netinet/in.h>
 #endif
@@ -708,21 +708,24 @@ typedef struct fko_srv_options
     struct digest_cache_list *digest_cache;   /* In-memory digest cache list */
 #endif
 
-    spa_pkt_info_t  spa_pkt;            /* The current SPA packet */
+    spa_pkt_info_t  spa_pkt;            /* The current SPA packet 当前的 SPA 数据包*/
 
     /* Counter set from the command line to exit after the specified
      * number of SPA packets are processed.
+     *从命令行设置的计数器，用于在处理指定数量的 SPA 数据包后退出。
     */
     unsigned int    packet_ctr_limit;
-    unsigned int    packet_ctr;  /* counts packets with >0 payload bytes */
+    unsigned int    packet_ctr;  /* counts packets with >0 payload bytes 统计有效载荷字节数大于 0 的数据包*/
 
     /* This array holds all of the config file entry values as strings
      * indexed by their tag name.
+     *这个数组保存所有配置文件条目的值，使用标签名作为索引。
     */
     char           *config[NUMBER_OF_CONFIG_ENTRIES];
 
     /* Data elements that are derived from configuration entries - avoids
      * calling strtol_wrapper() after the config is parsed.
+     *从配置条目中派生出来的数据元素，避免在配置解析后再调用 strtol_wrapper()。
     */
     unsigned short tcpserv_port;
     unsigned short udpserv_port;
@@ -733,24 +736,31 @@ typedef struct fko_srv_options
     int            max_sniff_bytes;
     int            max_spa_packet_age;
 
-    acc_stanza_t   *acc_stanzas;       /* List of access stanzas */
+    acc_stanza_t   *acc_stanzas;       /* List of access stanzas 访问配置段的链表*/
 
     /* Firewall config info.
+    * 防火墙配置信息
     */
     struct fw_config *fw_config;
 
     /* Rule checking counter - this is for garbage cleanup mode to remove
      * any rules with an expired timer (even those that may have been
      * added by a third-party program).
+     * 规则检查计数器 - 用于垃圾清理模式，
+     * 删除任何已过期计时器的规则（甚至可能由第三方程序添加的规则）。
+     * 
     */
     unsigned int check_rules_ctr;
 
     /* Track external command execution cycles (track source IP, access.conf
      * stanza number, and instantiation time).
+     * 跟踪外部命令执行周期（跟踪源 IP、access.conf 配置段编号和实例化时间）。
     */
     cmd_cycle_list_t *cmd_cycle_list;
 
-    /* Set to 1 when messages have to go through syslog, 0 otherwise */
+    /* Set to 1 when messages have to go through syslog, 0 otherwise 
+    *  当消息必须通过 syslog 时设置为 1，否则为 0。 
+    */
     unsigned char   syslog_enable;
 
 } fko_srv_options_t;

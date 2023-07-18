@@ -43,6 +43,7 @@
 #define MIN_IPV4_WORDS  0x05
 
 /* For items not defined by this system
+  对于该系统未定义的项目
 */
 #ifndef ETHER_CRC_LEN
   #define ETHER_CRC_LEN 4

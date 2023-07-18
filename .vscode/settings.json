@@ -10,6 +10,15 @@
         "getpasswd.h": "c",
         "fcntl.h": "c",
         "fwknop_common.h": "c",
-        "crtdefs.h": "c"
+        "crtdefs.h": "c",
+        "fwknopd_common.h": "c",
+        "nfq_capture.h": "c",
+        "process_packet.h": "c",
+        "sig_handler.h": "c",
+        "fw_util.h": "c",
+        "log_msg.h": "c",
+        "fwknopd_errors.h": "c",
+        "limits.h": "c",
+        "incoming_spa.h": "c"
     }
 }
