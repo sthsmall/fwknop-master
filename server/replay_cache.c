@@ -9,7 +9,9 @@
  *          (ndbm or gdbm in ndbm compatibility mode) file to store the digest
  *          of a previously received SPA packets.
  */
-
+// 一种检查可能的重放攻击的功能，通过使用先前看到的摘要的缓存来实现。
+// 默认情况下，这个缓存是一个简单的文件，但也可以使用dbm解决方案
+// （如ndbm或以ndbm兼容模式的gdbm文件）来存储先前接收到的SPA数据包的摘要。
 /*  Fwknop is developed primarily by the people listed in the file 'AUTHORS'.
  *  Copyright (C) 2009-2015 fwknop developers and contributors. For a full
  *  list of contributors, see the file 'CREDITS'.
