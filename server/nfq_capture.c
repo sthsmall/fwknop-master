@@ -91,7 +91,7 @@ static int process_nfq_packet(struct nfq_q_handle *qh,//Netfilter Queue 队列�
 }
 
 
-/* The nfq capture routine.
+/* 
 */
 int
 nfq_capture(fko_srv_options_t *opts)
@@ -117,6 +117,7 @@ nfq_capture(fko_srv_options_t *opts)
     }
 
     /* Unbind existing nf_queue handler for AF_INET (if any)
+    *解绑已存在的AF_INET地址族的nf_queue处理程序（如果有的话）。
     */
     res = nfq_unbind_pf(nfq_h, AF_INET);
     if (res < 0)  {
@@ -124,6 +125,7 @@ nfq_capture(fko_srv_options_t *opts)
     }
 
     /* Bind the given queue connection handle to process packets.
+    *  将给定的队列连接句柄绑定到处理数据包。
     */
     res =  nfq_bind_pf(nfq_h, AF_INET);
     if ( res < 0) {
