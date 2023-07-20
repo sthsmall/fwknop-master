@@ -104,6 +104,7 @@ chksum(unsigned short *buf, int nbytes)
 /* Send the SPA data via UDP packet.
 */
 <<<<<<< HEAD
+<<<<<<< HEAD
 /*
 这是一个名为send_spa_packet_tcp_or_udp的函数，用于发送SPA数据包。
 
@@ -141,6 +142,9 @@ chksum(unsigned short *buf, int nbytes)
 
 
 */
+=======
+//发送spa
+>>>>>>> f09b0292cd2656cd80e5e6c7c601b8725d8fd234
 =======
 //发送spa
 >>>>>>> f09b0292cd2656cd80e5e6c7c601b8725d8fd234
