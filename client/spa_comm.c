@@ -4,29 +4,7 @@
  * \brief Network-related functions for the fwknop client
  */
 
-/*  Fwknop is developed primarily by the people listed in the file 'AUTHORS'.
- *  Copyright (C) 2009-2015 fwknop developers and contributors. For a full
- *  list of contributors, see the file 'CREDITS'.
- *
- *  License (GNU General Public License):
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
- *  USA
- *
- *****************************************************************************
-*/
+
 #include "spa_comm.h"
 #include "utils.h"
 
@@ -81,7 +59,7 @@ chksum(unsigned short *buf, int nbytes)
 
 /* Send the SPA data via UDP packet.
 */
-
+//发送spa
 static int
 send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
     const fko_cli_options_t *options)
@@ -284,11 +262,16 @@ send_spa_packet_tcp_raw(const char *spa_data, const int sd_len,
 
     /* Now we can compute our checksum.
     */
+   //计算校验和
     iph->check = chksum((unsigned short *)pkt_data, iph->tot_len);
 
     /* Make sure the kernel knows the header is included in the data so it
      * doesn't try to insert its own header into the packet.
     */
+   //保证内核知道头部包含在数据中，这样它就不会尝试将自己的头部插入数据包中
+   //IP_HDRINCL选项可以让内核绕过协议栈，直接将数据包发送到网络上
+
+
     if (setsockopt (sock, IPPROTO_IP, IP_HDRINCL, so_val, sizeof(one)) < 0)
         log_msg(LOG_VERBOSITY_ERROR, "send_spa_packet_tcp_raw: setsockopt HDRINCL: ", strerror(errno));
 
