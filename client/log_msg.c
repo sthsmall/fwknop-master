@@ -84,6 +84,20 @@ log_set_verbosity(int level)
  * \param level Verbosity level to used for the message.
  * \param msg   Message to print
  */
+/*
+2023/7/20 15:37:07
+
+这是一个用于日志记录的函数log_msg，接受一个整数level和一个格式化的字符串msg作为参数。
+该函数使用变长参数列表实现，可以传入任意数量的额外参数。
+
+函数中首先判断日志级别level是否小于等于全局变量log_ctx.verbosity，如果小于等于，则进行日志记录操作，否则直接返回。
+
+接下来使用va_start宏初始化变长参数列表，然后根据日志级别选择将日志输出到LOG_STREAM_STDERR或LOG_STREAM_STDOUT流中，
+使用vfprintf函数将格式化字符串和变长参数列表打印到指定的流中，然后再打印一个换行符。
+
+最后使用va_end宏结束变长参数的处理。
+
+*/
 void
 log_msg(int level, char* msg, ...)
 {

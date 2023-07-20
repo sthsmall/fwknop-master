@@ -32,6 +32,43 @@
 
 /* Long options values (for those without a short option).
 */
+/*
+
+    FKO_DIGEST_NAME：摘要算法名称。
+    ENCRYPTION_MODE：加密模式。
+    NAT_LOCAL：本地网络地址转换（NAT）设置。
+    NAT_PORT：NAT端口设置。
+    NAT_RAND_PORT：随机NAT端口设置。
+    NO_HOME_DIR：禁用家目录。
+    NO_RC_FILE：禁用配置文件。
+    TIME_OFFSET_MINUS：时间偏移负值。
+    TIME_OFFSET_PLUS：时间偏移正值。
+    SAVE_RC_STANZA：保存配置节。
+    FORCE_SAVE_RC_STANZA：强制保存配置节。
+    STANZA_LIST：配置节列表。
+    NO_SAVE_ARGS：不保存参数。
+    SHOW_LAST_ARGS：显示最后一次参数。
+    RC_FILE_PATH：配置文件路径。
+    RESOLVE_HTTP_ONLY：仅解析HTTP。
+    RESOLVE_URL：解析URL。
+    SERVER_RESOLVE_IPV4：服务器解析IPv4。
+    USE_HMAC：使用HMAC。
+    USE_WGET_USER_AGENT：使用Wget用户代理。
+    SPA_ICMP_TYPE：SPA ICMP类型。
+    SPA_ICMP_CODE：SPA ICMP代码。
+    KEY_LEN：密钥长度。
+    HMAC_DIGEST_TYPE：HMAC摘要类型。
+    HMAC_KEY_LEN：HMAC密钥长度。
+    GET_HMAC_KEY：获取HMAC密钥。
+    KEY_RIJNDAEL：Rijndael密钥。
+    KEY_RIJNDAEL_BASE64：Base64编码的Rijndael密钥。
+    KEY_HMAC_BASE64：Base64编码的HMAC密钥。
+    KEY_HMAC：HMAC密钥。
+    FD_SET_STDIN：设置标准输入文件描述符。
+    FD_SET_ALT：设置备用文件描述符。
+    FAULT_INJECTION_TAG：故障注入标签。
+
+*/
 enum {
     FKO_DIGEST_NAME     = 0x100,
     ENCRYPTION_MODE,
@@ -67,6 +104,23 @@ enum {
     FD_SET_ALT,
     FAULT_INJECTION_TAG,
 
+    /*
+    这段代码是在前面提到的枚举类型中添加了与GPG相关的常量。这些常量用于指定与GPG加密有关的设置和选项。
+
+下面是对这些常量的简要说明：
+
+    GPG_ENCRYPTION：GPG加密设置。
+    GPG_RECIP_KEY：GPG接收者密钥。
+    GPG_SIGNER_KEY：GPG签名者密钥。
+    GPG_HOME_DIR：GPG主目录。
+    GPG_EXE_PATH：GPG可执行文件路径。
+    GPG_AGENT：GPG代理。
+    GPG_ALLOW_NO_SIGNING_PW：允许无签名密码的GPG操作。
+    NOOP：只是一个标记，表示枚举的结束。
+
+通过使用这些常量，可以在程序中设置和配置与GPG加密相关的选项和参数。
+
+    */
     /* Put GPG-related items below the following line */
     GPG_ENCRYPTION      = 0x200,
     GPG_RECIP_KEY,
@@ -81,9 +135,105 @@ enum {
 
 /* Our getopt_long options string.
 */
+//具体来说，这个字符串包含了多个字母和冒号，每个字母都代表一个命令行选项。冒号表示该选项需要接收一个参数。
+//通过解析命令行参数时，可以使用这个字符串常量来指定可接受的选项和它们是否需要参数。
 #define GETOPTS_OPTION_STRING "a:A:bB:C:D:E:f:gG:hH:kK:lm:M:n:N:p:P:Q:rRsS:Tu:U:vVw:"
 
 /* Our program command-line options...
+*/
+
+/*
+当我们编写一个需要处理命令行参数的程序时，可以使用cmd_opts数组来定义可接受的命令行选项及其相关信息。
+下面是对每个元素的详细解释：
+
+{"allow-ip", 1, NULL, 'a'}
+
+    allow-ip：长选项名称，表示允许的IP地址。
+    1：需要一个参数。
+    NULL：没有标记位。
+    'a'：短选项名称。
+
+此结构体元素表示了一个命令行选项，用户可以通过--allow-ip <ip>或-a <ip>的方式指定IP地址。
+
+其他的元素按照相同的格式进行解释，具体含义如下：
+
+    "access"：长选项名称，表示访问控制。
+    "save-packet-append"：长选项名称，表示附加保存数据包。
+    "save-packet"：长选项名称，表示保存数据包。
+    "save-rc-stanza"：长选项名称，表示保存RC部分。
+    "force-stanza"：长选项名称，表示强制保存RC部分。
+    "stanza-list"：长选项名称，表示任务列表。
+    "no-save-args"：长选项名称，表示不保存参数。
+    "server-cmd"：长选项名称，表示服务器命令。
+    "digest-type"：长选项名称，表示摘要类型。
+    "destination"：长选项名称，表示目标地址。
+    "save-args-file"：长选项名称，表示保存参数文件。
+    "encryption-mode"：长选项名称，表示加密模式。
+    "fd"：长选项名称，表示文件描述符。
+    "fw-timeout"：长选项名称，表示超时时间。
+    "fault-injection-tag"：长选项名称，表示故障注入标签。
+    "gpg-encryption"：长选项名称，表示GPG加密。
+    "gpg-recipient-key"：长选项名称，表示GPG接收方密钥。
+    "gpg-signer-key"：长选项名称，表示GPG签名者密钥。
+    "gpg-home-dir"：长选项名称，表示GPG家目录。
+    "gpg-exe"：长选项名称，表示GPG可执行文件路径。
+    "gpg-agent"：长选项名称，表示GPG代理。
+    "gpg-no-signing-pw"：长选项名称，表示不使用签名密码。
+    "get-key"：长选项名称，表示获取密钥。
+    "get-hmac-key"：长选项名称，表示获取HMAC密钥。
+    "help"：长选项名称，表示帮助。
+    "http-proxy"：长选项名称，表示HTTP代理。
+    "key-gen"：长选项名称，表示生成密钥。
+    "key-gen-file"：长选项名称，表示生成密钥文件。
+    "key-rijndael"：长选项名称，表示Rijndael密钥。
+    "key-base64-rijndael"：长选项名称，表示Base64编码的Rijndael密钥。
+    "key-base64-hmac"：长选项名称，表示Base64编码的HMAC密钥。
+    "key-hmac"：长选项名称，表示HMAC密钥。
+    "key-len"：长选项名称，表示密钥长度。
+    "hmac-key-len"：长选项名称，表示HMAC密钥长度。
+    "hmac-digest-type"：长选项名称，表示HMAC摘要类型。
+    "icmp-type"：长选项名称，表示ICMP类型。
+    "icmp-code"：长选项名称，表示ICMP代码。
+    "last-cmd"：长选项名称，表示上一个命令。
+    "nat-access"：长选项名称，表示NAT访问。
+    "named-config"：长选项名称，表示命名配置。
+    "nat-local"：长选项名称，表示本地NAT。
+    "nat-port"：长选项名称，表示NAT端口。
+    "nat-rand-port"：长选项名称，表示随机NAT端口。
+    "no-home-dir"：长选项名称，表示没有家目录。
+    "no-rc-file"：长选项名称，表示没有RC文件。
+    "server-port"：长选项名称，表示服务器端口。
+    "server-proto"：长选项名称，表示服务器协议。
+    "spoof-source"：长选项名称，表示伪造源IP。
+    "spoof-src"：长选项名称，表示伪造源IP（同义词）。
+    "rc-file"：长选项名称，表示RC文件路径。
+    "rand-port"：长选项名称，表示随机端口。
+    "resolve-ip-http"：长选项名称，表示解析IP地址的HTTP。
+    "resolve-ip-https"：长选项名称，表示解析IP地址的HTTPS（同义词，默认是HTTPS）。
+    "resolve-http-only"：长选项名称，表示仅解析HTTP。
+    "resolve-url"：长选项名称，表示解析URL。
+    "server-resolve-ipv4"：长选项名称，表示服务器解析IPv4。
+    "show-last"：长选项名称，表示显示上次的参数。
+    "source-ip"：长选项名称，表示源IP。
+    "source-port"：长选项名称，表示源端口。
+    "stdin"：长选项名称，表示标准输入。
+    "test"：长选项名称，表示测试。
+    "time-offset-plus"：长选项名称，表示时间偏移增加。
+    "time-offset-minus"：长选项名称，表示时间偏移减少。
+    "user-agent"：长选项名称，表示用户代理。
+    "use-hmac"：长选项名称，表示使用HMAC。
+    "use-wget-user-agent"：长选项名称，表示使用Wget用户代理。
+    "spoof-user"：长选项名称，表示伪造用户。
+    "verbose"：长选项名称，表示详细模式。
+    "version"：长选项名称，表示版本。
+    "wget-cmd"：长选项名称，表示Wget命令。
+
+最后一个元素{0, 0, 0, 0}用于表示数组的结束，其中所有的字段都为0。
+
+通过遍历cmd_opts数组，可以在程序中获取用户输入的命令行选项及其参数，并执行相应的操作。
+例如，当用户输入--allow-ip 192.168.1.1时，程序可以解析出allow-ip选项，并将192.168.1.1作为该选项的参数进行处理。
+
+这种方式可以帮助我们编写更严谨和易用的命令行工具，提供更多的选项和灵活性。 
 */
 static struct option cmd_opts[] =
 {

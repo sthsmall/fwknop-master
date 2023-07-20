@@ -137,51 +137,51 @@ typedef struct fko_cli_options
     int  resolve_ip_http_https; //是否通过HTTP解析外部代理
     int  resolve_http_only; //是否仅使用HTTP解析外部代理
     char *resolve_url; //解析的URL
-    char http_user_agent[HTTP_MAX_USER_AGENT_LEN]; 
-    unsigned char use_wget_user_agent;
-    char *wget_bin;
+    char http_user_agent[HTTP_MAX_USER_AGENT_LEN];  //HTTP用户代理
+    unsigned char use_wget_user_agent; //是否使用Wget用户代理
+    char *wget_bin; //Wget二进制文件路径
 
     /* HTTP proxy support
     */
    //http代理
-    char http_proxy[HTTP_MAX_REQUEST_LEN];
+    char http_proxy[HTTP_MAX_REQUEST_LEN]; //HTTP代理
 
     /* SPA packet transmission port and protocol
     */
    //spa包传输端口和协议
-    int spa_proto;
-    unsigned int spa_dst_port;
-    unsigned int spa_src_port; /* only used with --source-port */
+    int spa_proto; //SPA协议的传输协议
+    unsigned int spa_dst_port; //SPA协议的目标端口
+    unsigned int spa_src_port; /* only used with --source-port */ //SPA协议的源端口（仅在使用--source-port时使用）
 
-    short digest_type;
-    int encryption_mode;
+    short digest_type; //摘要类型
+    int encryption_mode; //加密模式
 
-    int spa_icmp_type;  /* only used in '-P icmp' mode */
-    int spa_icmp_code;  /* only used in '-P icmp' mode */
+    int spa_icmp_type;  /* only used in '-P icmp' mode */ //SPA协议的ICMP类型（仅在'-P icmp'模式下使用）
+    int spa_icmp_code;  /* only used in '-P icmp' mode */ //SPA协议的ICMP代码（仅在'-P icmp'模式下使用）
 
     /* Various command-line flags */
     //这个是用来判断是否是debug模式的
-    unsigned char   verbose; /* --verbose mode */
-    unsigned char   version; /* --version */
-    unsigned char   test;
-    unsigned char   use_gpg;
-    unsigned char   use_gpg_agent;
-    unsigned char   gpg_no_signing_pw;
-    unsigned char   key_gen;
-    int             time_offset_plus;
-    int             time_offset_minus;
-    int             fw_timeout;
+    unsigned char   verbose; /* --verbose mode */ //是否启用详细模式
+    unsigned char   version; /* --version */ //是否显示版本信息
+    unsigned char   test; //是否运行测试
+    unsigned char   use_gpg; //是否使用GPG
+    unsigned char   use_gpg_agent; //是否使用GPG代理
+    unsigned char   gpg_no_signing_pw; //GPG是否不使用签名密码
+    unsigned char   key_gen; //是否生成密钥
+    int             time_offset_plus; //时间偏移量（加）
+    int             time_offset_minus; //时间偏移量（减）
+    int             fw_timeout; //防火墙超时时间
 
-    unsigned char   no_home_dir;
-    unsigned char   no_rc_file;
-    char            use_rc_stanza[MAX_LINE_LEN];
-    unsigned char   got_named_stanza;
-    unsigned char   save_rc_stanza;
-    unsigned char   force_save_rc_stanza;
-    unsigned char   stanza_list;
-    int             spa_server_resolve_ipv4;
+    unsigned char   no_home_dir; //是否禁用home目录
+    unsigned char   no_rc_file; //是否禁用rc文件
+    char            use_rc_stanza[MAX_LINE_LEN]; //使用的rc节
+    unsigned char   got_named_stanza; //是否已获取指定的节
+    unsigned char   save_rc_stanza; //是否保存rc节
+    unsigned char   force_save_rc_stanza; //是否强制保存rc节
+    unsigned char   stanza_list; //是否显示节列表
+    int             spa_server_resolve_ipv4; //是否解析SPA服务器的IPv4地址
 
-    int input_fd;
+    int input_fd; //输入文件描述符
 
     //char            config_file[MAX_PATH_LEN];
 

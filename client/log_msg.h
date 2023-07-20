@@ -28,7 +28,22 @@
 
 #ifndef LOG_MSG_H
 #define LOG_MSG_H
+/*
+这段代码定义了一个枚举类型，用于表示不同的日志级别。枚举类型是一种特殊的整数类型，它为一组相关的常量提供了有意义的名称。
 
+在这段代码中，定义了以下枚举常量：
+
+    LOG_FIRST_VERBOSITY：用于指定日志级别的起始值，值为0。
+    LOG_VERBOSITY_ERROR：表示错误日志级别，值为0。
+    LOG_VERBOSITY_WARNING：表示警告日志级别，值为1。
+    LOG_VERBOSITY_NORMAL：表示普通日志级别，值为2。
+    LOG_VERBOSITY_INFO：表示信息日志级别，值为3。
+    LOG_VERBOSITY_DEBUG：表示调试日志级别，值为4。
+    LOG_LAST_VERBOSITY：用于指定日志级别的结束值，值为5。
+
+这些枚举常量可以在代码中用作日志级别的标识，提高代码的可读性和可维护性。
+
+*/
 enum
 {
     LOG_FIRST_VERBOSITY = 0,

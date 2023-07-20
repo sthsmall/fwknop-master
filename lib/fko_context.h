@@ -63,87 +63,87 @@ typedef struct fko_gpg_sig *fko_gpg_sig_t;
  * \brief The pieces we need to make an FKO SPA data packet.
  */
 /*
-Õâ¶Î´úÂë¶¨ÒåÁËÒ»¸öÃûÎªfko_contextµÄ½á¹¹Ìå£¬¸Ã½á¹¹ÌåÓÃÓÚ´æ´¢FWKNOP£¨FireWall KNock OPerator£©ÖĞµÄÉÏÏÂÎÄĞÅÏ¢¡£FWKNOPÊÇÒ»¸öÓÃÓÚÍøÂç°²È«µÄ¹¤¾ß£¬ÔÊĞíÓÃ»§ÔÚÊÜ±£»¤µÄÖ÷»úÉÏÍ¨¹ı·¢ËÍ¼ÓÃÜµÄ"knock"ÏûÏ¢À´´ò¿ª·À»ğÇ½¹æÔòÒÔ»ñµÃ·ÃÎÊÈ¨ÏŞ¡£ÏÂÃæÖğ¸ö½âÊÍ½á¹¹ÌåÖĞ¸÷¸ö²ÎÊıµÄ×÷ÓÃ£º
+è¿™æ®µä»£ç å®šä¹‰äº†ä¸€ä¸ªåä¸ºfko_contextçš„ç»“æ„ä½“ï¼Œè¯¥ç»“æ„ä½“ç”¨äºå­˜å‚¨FWKNOPï¼ˆFireWall KNock OPeratorï¼‰ä¸­çš„ä¸Šä¸‹æ–‡ä¿¡æ¯ã€‚FWKNOPæ˜¯ä¸€ä¸ªç”¨äºç½‘ç»œå®‰å…¨çš„å·¥å…·ï¼Œå…è®¸ç”¨æˆ·åœ¨å—ä¿æŠ¤çš„ä¸»æœºä¸Šé€šè¿‡å‘é€åŠ å¯†çš„"knock"æ¶ˆæ¯æ¥æ‰“å¼€é˜²ç«å¢™è§„åˆ™ä»¥è·å¾—è®¿é—®æƒé™ã€‚ä¸‹é¢é€ä¸ªè§£é‡Šç»“æ„ä½“ä¸­å„ä¸ªå‚æ•°çš„ä½œç”¨ï¼š
 
-rand_val: Ëæ»úÖµ£¬ÓÃÓÚÉú³É°²È«ÁîÅÆµÄÒ»²¿·Ö¡£
+rand_val: éšæœºå€¼ï¼Œç”¨äºç”Ÿæˆå®‰å…¨ä»¤ç‰Œçš„ä¸€éƒ¨åˆ†ã€‚
 
-username: ÓÃ»§Ãû£¬ÓÃÓÚÉú³É°²È«ÁîÅÆµÄÒ»²¿·Ö¡£
+username: ç”¨æˆ·åï¼Œç”¨äºç”Ÿæˆå®‰å…¨ä»¤ç‰Œçš„ä¸€éƒ¨åˆ†ã€‚
 
-timestamp: Ê±¼ä´Á£¬ÓÃÓÚÉú³É°²È«ÁîÅÆµÄÒ»²¿·Ö¡£
+timestamp: æ—¶é—´æˆ³ï¼Œç”¨äºç”Ÿæˆå®‰å…¨ä»¤ç‰Œçš„ä¸€éƒ¨åˆ†ã€‚
 
-message_type: ÏûÏ¢ÀàĞÍ£¬±íÊ¾message×Ö¶ÎµÄÄÚÈİÀàĞÍ¡£
+message_type: æ¶ˆæ¯ç±»å‹ï¼Œè¡¨ç¤ºmessageå­—æ®µçš„å†…å®¹ç±»å‹ã€‚
 
-message: ÓÃ»§×Ô¶¨ÒåµÄÏûÏ¢Êı¾İ¡£
+message: ç”¨æˆ·è‡ªå®šä¹‰çš„æ¶ˆæ¯æ•°æ®ã€‚
 
-nat_access: NAT£¨Network Address Translation£©·ÃÎÊ×Ö·û´®£¬ÓÃÓÚ´¦ÀíNAT´©Í¸¡£
+nat_access: NATï¼ˆNetwork Address Translationï¼‰è®¿é—®å­—ç¬¦ä¸²ï¼Œç”¨äºå¤„ç†NATç©¿é€ã€‚
 
-server_auth: ·şÎñÆ÷ÈÏÖ¤ĞÅÏ¢¡£
+server_auth: æœåŠ¡å™¨è®¤è¯ä¿¡æ¯ã€‚
 
-client_timeout: ¿Í»§¶Ë³¬Ê±Ê±¼ä£¬±íÊ¾Ò»´ÎÇëÇóµÄÓĞĞ§ÆÚ¡£
+client_timeout: å®¢æˆ·ç«¯è¶…æ—¶æ—¶é—´ï¼Œè¡¨ç¤ºä¸€æ¬¡è¯·æ±‚çš„æœ‰æ•ˆæœŸã€‚
 
-digest_type: ÕªÒªÀàĞÍ£¬ÓÃÓÚÏûÏ¢ÕªÒªµÄËã·¨ÀàĞÍ¡£
+digest_type: æ‘˜è¦ç±»å‹ï¼Œç”¨äºæ¶ˆæ¯æ‘˜è¦çš„ç®—æ³•ç±»å‹ã€‚
 
-encryption_type: ¼ÓÃÜÀàĞÍ£¬±íÊ¾ÏûÏ¢µÄ¼ÓÃÜËã·¨ÀàĞÍ¡£
+encryption_type: åŠ å¯†ç±»å‹ï¼Œè¡¨ç¤ºæ¶ˆæ¯çš„åŠ å¯†ç®—æ³•ç±»å‹ã€‚
 
-encryption_mode: ¼ÓÃÜÄ£Ê½£¬±íÊ¾¼ÓÃÜËã·¨µÄÄ£Ê½£¨ÀıÈç£¬ECB£¬CBCµÈ£©¡£
+encryption_mode: åŠ å¯†æ¨¡å¼ï¼Œè¡¨ç¤ºåŠ å¯†ç®—æ³•çš„æ¨¡å¼ï¼ˆä¾‹å¦‚ï¼ŒECBï¼ŒCBCç­‰ï¼‰ã€‚
 
-hmac_type: HMAC£¨Hash-based Message Authentication Code£©ÀàĞÍ£¬ÓÃÓÚÏûÏ¢ÈÏÖ¤ÂëµÄËã·¨ÀàĞÍ¡£
+hmac_type: HMACï¼ˆHash-based Message Authentication Codeï¼‰ç±»å‹ï¼Œç”¨äºæ¶ˆæ¯è®¤è¯ç çš„ç®—æ³•ç±»å‹ã€‚
 
-version: °æ±¾ĞÅÏ¢¡£
+version: ç‰ˆæœ¬ä¿¡æ¯ã€‚
 
-digest: ÏûÏ¢ÕªÒª£¬ÓÃÓÚÊı¾İÍêÕûĞÔÑéÖ¤¡£
+digest: æ¶ˆæ¯æ‘˜è¦ï¼Œç”¨äºæ•°æ®å®Œæ•´æ€§éªŒè¯ã€‚
 
-digest_len: ÏûÏ¢ÕªÒªµÄ³¤¶È¡£
+digest_len: æ¶ˆæ¯æ‘˜è¦çš„é•¿åº¦ã€‚
 
-raw_digest: Ô­Ê¼¼ÓÃÜ/±àÂëÊı¾İµÄÕªÒª£¬ÓÃÓÚ·ÀÖ¹ÖØ·Å¹¥»÷¡£
+raw_digest: åŸå§‹åŠ å¯†/ç¼–ç æ•°æ®çš„æ‘˜è¦ï¼Œç”¨äºé˜²æ­¢é‡æ”¾æ”»å‡»ã€‚
 
-raw_digest_type: Ô­Ê¼¼ÓÃÜ/±àÂëÊı¾İµÄÕªÒªÀàĞÍ¡£
+raw_digest_type: åŸå§‹åŠ å¯†/ç¼–ç æ•°æ®çš„æ‘˜è¦ç±»å‹ã€‚
 
-raw_digest_len: Ô­Ê¼¼ÓÃÜ/±àÂëÊı¾İµÄÕªÒª³¤¶È¡£
+raw_digest_len: åŸå§‹åŠ å¯†/ç¼–ç æ•°æ®çš„æ‘˜è¦é•¿åº¦ã€‚
 
-encoded_msg: ±àÂëºóµÄÏûÏ¢Êı¾İ¡£
+encoded_msg: ç¼–ç åçš„æ¶ˆæ¯æ•°æ®ã€‚
 
-encoded_msg_len: ±àÂëºóµÄÏûÏ¢Êı¾İ³¤¶È¡£
+encoded_msg_len: ç¼–ç åçš„æ¶ˆæ¯æ•°æ®é•¿åº¦ã€‚
 
-encrypted_msg: ¼ÓÃÜºóµÄÏûÏ¢Êı¾İ¡£
+encrypted_msg: åŠ å¯†åçš„æ¶ˆæ¯æ•°æ®ã€‚
 
-encrypted_msg_len: ¼ÓÃÜºóµÄÏûÏ¢Êı¾İ³¤¶È¡£
+encrypted_msg_len: åŠ å¯†åçš„æ¶ˆæ¯æ•°æ®é•¿åº¦ã€‚
 
-msg_hmac: ÏûÏ¢ÈÏÖ¤Âë¡£
+msg_hmac: æ¶ˆæ¯è®¤è¯ç ã€‚
 
-msg_hmac_len: ÏûÏ¢ÈÏÖ¤ÂëµÄ³¤¶È¡£
+msg_hmac_len: æ¶ˆæ¯è®¤è¯ç çš„é•¿åº¦ã€‚
 
-added_salted_str: ±ê¼ÇÊÇ·ñÌí¼ÓÁËÑÎÖµ×Ö·û´®¡£
+added_salted_str: æ ‡è®°æ˜¯å¦æ·»åŠ äº†ç›å€¼å­—ç¬¦ä¸²ã€‚
 
-added_gpg_prefix: ±ê¼ÇÊÇ·ñÌí¼ÓÁËGPG£¨GNU Privacy Guard£©Ç°×º¡£
+added_gpg_prefix: æ ‡è®°æ˜¯å¦æ·»åŠ äº†GPGï¼ˆGNU Privacy Guardï¼‰å‰ç¼€ã€‚
 
-state: ×´Ì¬ĞÅÏ¢£¬±íÊ¾µ±Ç°ÉÏÏÂÎÄµÄ×´Ì¬¡£
+state: çŠ¶æ€ä¿¡æ¯ï¼Œè¡¨ç¤ºå½“å‰ä¸Šä¸‹æ–‡çš„çŠ¶æ€ã€‚
 
-initval: ³õÊ¼»¯Öµ¡£
+initval: åˆå§‹åŒ–å€¼ã€‚
 
-gpg_exe: GPGÖ´ĞĞ³ÌĞòÂ·¾¶¡£
+gpg_exe: GPGæ‰§è¡Œç¨‹åºè·¯å¾„ã€‚
 
-gpg_recipient: GPG½ÓÊÕÕß£¨ÓÃÓÚ¼ÓÃÜºÍ½âÃÜ£©¡£
+gpg_recipient: GPGæ¥æ”¶è€…ï¼ˆç”¨äºåŠ å¯†å’Œè§£å¯†ï¼‰ã€‚
 
-gpg_signer: GPGÇ©ÃûÕß£¨ÓÃÓÚÇ©ÃûºÍÑéÖ¤£©¡£
+gpg_signer: GPGç­¾åè€…ï¼ˆç”¨äºç­¾åå’ŒéªŒè¯ï¼‰ã€‚
 
-gpg_home_dir: GPGµÄÖ÷Ä¿Â¼¡£
+gpg_home_dir: GPGçš„ä¸»ç›®å½•ã€‚
 
-have_gpgme_context: ÊÇ·ñÓĞGPGME£¨GnuPG Made Easy£©ÉÏÏÂÎÄ¡£
+have_gpgme_context: æ˜¯å¦æœ‰GPGMEï¼ˆGnuPG Made Easyï¼‰ä¸Šä¸‹æ–‡ã€‚
 
-gpg_ctx: GPGMEÉÏÏÂÎÄ¡£
+gpg_ctx: GPGMEä¸Šä¸‹æ–‡ã€‚
 
-recipient_key: GPG½ÓÊÕÕßÃÜÔ¿¡£
+recipient_key: GPGæ¥æ”¶è€…å¯†é’¥ã€‚
 
-signer_key: GPGÇ©ÃûÕßÃÜÔ¿¡£
+signer_key: GPGç­¾åè€…å¯†é’¥ã€‚
 
-verify_gpg_sigs: ÊÇ·ñÑéÖ¤GPGÇ©Ãû¡£
+verify_gpg_sigs: æ˜¯å¦éªŒè¯GPGç­¾åã€‚
 
-ignore_gpg_sig_error: ÊÇ·ñºöÂÔGPGÇ©Ãû´íÎó¡£
+ignore_gpg_sig_error: æ˜¯å¦å¿½ç•¥GPGç­¾åé”™è¯¯ã€‚
 
-gpg_sigs: GPGÇ©ÃûĞÅÏ¢¡£
+gpg_sigs: GPGç­¾åä¿¡æ¯ã€‚
 
-gpg_err: GPG´íÎóĞÅÏ¢¡£
+gpg_err: GPGé”™è¯¯ä¿¡æ¯ã€‚
 */
 struct fko_context {
     /** \name FKO SPA user-definable message data */
