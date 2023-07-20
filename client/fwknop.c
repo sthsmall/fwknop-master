@@ -629,6 +629,7 @@ main(int argc, char **argv)
 
         /* Pull the encryption mode.
         */
+       //获取加密模式
         res = fko_get_spa_encryption_mode(ctx, &enc_mode);
         if(res != FKO_SUCCESS)
         {

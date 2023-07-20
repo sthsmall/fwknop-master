@@ -37,10 +37,11 @@
 /* Take a given string, base64-encode it and append it to the given
  * buffer.
 */
+//获取给定的字符串，对其进行 base64 编码并将其附加到给定的缓冲区。
 static int
 append_b64(char* tbuf, char *str)
 {
-    int   len = strnlen(str, MAX_SPA_ENCODED_MSG_SIZE);
+    int   len = strnlen(str, MAX_SPA_ENCODED_MSG_SIZE); //计算字符串的长度，不超过1500
     char *bs;
 
 #if HAVE_LIBFIU
@@ -54,27 +55,28 @@ append_b64(char* tbuf, char *str)
 #if HAVE_LIBFIU
     fiu_return_on("append_b64_calloc", FKO_ERROR_MEMORY_ALLOCATION);
 #endif
-
-    bs = calloc(1, ((len/3)*4)+8);
+    
+    bs = calloc(1, ((len/3)*4)+8); //为bs分配内存空间并初始化为0
     if(bs == NULL)
         return(FKO_ERROR_MEMORY_ALLOCATION);
 
-    b64_encode((unsigned char*)str, bs, len);
+    b64_encode((unsigned char*)str, bs, len); //进行base64编码
 
     /* --DSS XXX: make sure to check here if later decoding
      *            becomes a problem.
     */
-    strip_b64_eq(bs);
+    strip_b64_eq(bs); //将base64编码后的'='符号去除
 
-    strlcat(tbuf, bs, FKO_ENCODE_TMP_BUF_SIZE);
+    strlcat(tbuf, bs, FKO_ENCODE_TMP_BUF_SIZE); //将base64编码附加到缓冲区后
 
-    free(bs);
+    free(bs); //释放bs缓冲区
 
     return(FKO_SUCCESS);
 }
 
 /* Set the SPA encryption type.
 */
+//加密spa数据包
 int
 fko_encode_spa_data(fko_ctx_t ctx)
 {
@@ -125,7 +127,8 @@ fko_encode_spa_data(fko_ctx_t ctx)
 
     /* Add the base64-encoded username.
     */
-    strlcat(tbuf, ":", FKO_ENCODE_TMP_BUF_SIZE);
+    strlcat(tbuf, ":", FKO_ENCODE_TMP_BUF_SIZE); //只添加了一个冒号，为什么长度要是1024
+    //
     if((res = append_b64(tbuf, ctx->username)) != FKO_SUCCESS)
     {
         free(tbuf);
