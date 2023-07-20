@@ -55,7 +55,7 @@ static int get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
 
 // errmsg: 用于输出错误消息。
 static void errmsg(const char *msg, const int err);
-// prev_exec: 用于执行之前的命令。
+// prev_exec: 用于执行保存的最后一个命令，函数内部判断是否执行最后一个保存的命令，是否将命令行参数展示，是否保存当前的命令。
 static int prev_exec(fko_cli_options_t *options, int argc, char **argv);
 // get_save_file: 用于获取保存文件的路径。
 static int get_save_file(char *args_save_file);
@@ -87,10 +87,37 @@ static void clean_exit(fko_ctx_t ctx, fko_cli_options_t *opts,
 // zero_buf_wrapper: 用于将缓冲区清零。
 static void zero_buf_wrapper(char *buf, int len);
 
+
+/*
+这段代码是一个条件编译块，用于判断是否启用了libfiu库，并定义了一个名为enable_fault_injections的函数。
+
+根据条件编译宏HAVE_LIBFIU来确定是否启用了libfiu库。如果启用了该库，则进入条件编译块。
+
+在函数内部，定义了一个名为enable_fault_injections的函数，该函数接受一个指向fko_cli_options_t类型的指针作为参数，
+并返回一个整数值。
+
+该函数的具体实现需要根据上下文中给出的代码内容进行补充，因为当前代码中只有函数的声明，没有给出具体的实现内容。
+
+该函数的作用是在启用了libfiu库的情况下，根据传入的opts参数来进行故障注入的设置或配置。
+具体的实现需要根据代码中其他部分的逻辑来确定。
+
+*/
 #if HAVE_LIBFIU
 static int enable_fault_injections(fko_cli_options_t * const opts);
 #endif
 
+
+/*
+这段代码是一个条件编译块，用于在AFL模糊测试模式下定义两个常量。如果定义了宏AFL_FUZZING，则进入条件编译块。
+
+在条件编译块内部，定义了两个常量：
+
+    AFL_ENC_KEY：表示AFL模糊测试模式下使用的加密密钥，其取值为字符串"aflenckey"。
+    AFL_HMAC_KEY：表示AFL模糊测试模式下使用的HMAC密钥，其取值为字符串"aflhmackey"。
+
+这些常量的作用是在AFL模糊测试模式下使用固定的密钥和HMAC密钥，以确保每次模糊测试循环时都使用相同的密钥，
+避免因密钥变动而导致不一致的测试结果。
+*/
 #if AFL_FUZZING
   /* These are used in AFL fuzzing mode so the fuzzing cycle is not
    * interrupted by trying to read from stdin
@@ -99,6 +126,20 @@ static int enable_fault_injections(fko_cli_options_t * const opts);
   #define AFL_HMAC_KEY              "aflhmackey"
 #endif
 
+/*
+这段代码定义了三个宏常量：
+
+    NAT_ACCESS_STR_TEMPLATE：表示一个用于解析NAT访问字符串(ip地址和端口)的模板，
+    使用sscanf函数。其取值为"%s,%d"，其中%s表示字符串，%d表示整数。
+
+    HOSTNAME_BUFSIZE：表示主机名字符串的最大长度，其取值为64。
+
+    CTX_DUMP_BUFSIZE：表示用于FKO上下文转储的最大缓冲区大小，其取值为4096。
+
+这些宏常量用于在代码中指定特定的字符串模板和缓冲区大小，以便在编译时进行预定义和统一控制。
+这样可以提高代码的可读性和维护性，并且能够方便地对字符串和缓冲区大小进行修改。
+
+*/
 #define NAT_ACCESS_STR_TEMPLATE     "%s,%d"             /*!< Template for a nat access string ip,port with sscanf*/
 #define HOSTNAME_BUFSIZE            64                  /*!< Maximum size of a hostname string */
 #define CTX_DUMP_BUFSIZE            4096                /*!< Maximum size allocated to a FKO context dump */
@@ -106,8 +147,36 @@ static int enable_fault_injections(fko_cli_options_t * const opts);
 int
 main(int argc, char **argv)
 {   
+    /*
+    这段代码声明了一些变量和数组：
+
+    fko_ctx_t ctx = NULL; 和 fko_ctx_t ctx2 = NULL;：声明了两个类型为 fko_ctx_t 的变量 ctx 和 ctx2，
+    并将其初始化为 NULL。这些变量可能是用于表示 FK0 上下文的指针。
+
+    int res;：声明了一个名为 res 的整型变量，用于存储函数调用的返回值。
+
+    char *spa_data=NULL, *version=NULL;：声明了两个字符指针变量 spa_data 和 version，
+    并将它们初始化为 NULL。这些变量可能用于存储字符串数据。
+
+    char access_buf[MAX_LINE_LEN] = {0};：声明了一个字符数组 access_buf，长度为 MAX_LINE_LEN，
+    并将其所有元素初始化为 0。这个数组可能用于存储访问缓冲区的数据。
+
+    char key[MAX_KEY_LEN+1] = {0}; 和 char hmac_key[MAX_KEY_LEN+1] = {0};：
+    声明了两个字符数组 key 和 hmac_key，长度为 MAX_KEY_LEN+1，并将其所有元素初始化为 0。
+    这些数组可能用于存储密钥或密码相关的数据。
+
+    int key_len = 0, orig_key_len = 0, hmac_key_len = 0, enc_mode;：
+    声明了四个整型变量 key_len、orig_key_len、hmac_key_len 和 enc_mode，
+    并分别初始化为 0。这些变量可能用于存储长度或加密模式等相关信息。
+
+    int tmp_port = 0;：声明了一个整型变量 tmp_port，并初始化为 0。这个变量可能用于存储临时的端口号。
+
+    char dump_buf[CTX_DUMP_BUFSIZE];：声明了一个字符数组 dump_buf，长度为 CTX_DUMP_BUFSIZE，
+    用于存储 FK0 上下文转储的数据。
+
+    */
     //用于保存发送消息  
-    fko_ctx_t           ctx  = NULL;
+    fko_ctx_t           ctx  = NULL; //fkocontext的指针
     fko_ctx_t           ctx2 = NULL;
     int                 res;
     char               *spa_data=NULL, *version=NULL;
@@ -130,6 +199,18 @@ main(int argc, char **argv)
     */
     config_init(&options, argc, argv);
 
+/*
+这段代码是一个条件编译的代码块，当宏定义 HAVE_LIBFIU 存在时执行。它用于设置故障注入点。
+
+在这段代码中，首先调用 enable_fault_injections(&options) 函数来设置故障注入点，
+&options 是一个选项结构体的指针。如果故障注入点设置失败，那么会调用 clean_exit() 函数进行清理操作，
+传递了一些参数，包括 ctx 上下文指针、options 选项结构体指针、key 和 hmac_key 密钥相关的数据指针，
+以及退出状态码 EXIT_FAILURE。
+
+换句话说，该代码块用于在程序运行时通过故障注入来测试和模拟异常情况，以验证程序的稳定性和鲁棒性。
+这通常用于调试和测试目的。
+
+*/
 #if HAVE_LIBFIU
         /* Set any fault injection points early
         */
@@ -145,7 +226,7 @@ main(int argc, char **argv)
         clean_exit(ctx, &options, key, &key_len, hmac_key,
                 &hmac_key_len, EXIT_FAILURE);
 
-    if(options.show_last_command)
+    if(options.show_last_command) //显示 fwknop 使用的最后一个命令行参数
         clean_exit(ctx, &options, key, &key_len, hmac_key,
                 &hmac_key_len, EXIT_SUCCESS);
 
@@ -667,7 +748,27 @@ main(int argc, char **argv)
 
     return EXIT_SUCCESS;  /* quiet down a gcc warning */
 }
+/**
+ * 这是一个名为 free_configs 的函数，用于释放 fko_cli_options_t 结构体中的资源。
 
+具体的操作包括：
+
+    检查 opts->resolve_url 是否为 NULL，如果不为 NULL，则调用 free 函数释放该指针指向的内存。
+
+    检查 opts->wget_bin 是否为 NULL，如果不为 NULL，则调用 free 函数释放该指针指向的内存。
+
+    调用 zero_buf_wrapper 函数将 opts->key 数组中的数据清零，这里假设 zero_buf_wrapper 
+    函数的作用是将指定的缓冲区清零。
+
+    类似地，使用 zero_buf_wrapper 函数将 opts->key_base64、opts->hmac_key、
+    opts->hmac_key_base64、opts->gpg_recipient_key、opts->gpg_signer_key、
+    opts->gpg_home_dir 和 opts->server_command 对应的缓冲区数据清零。
+
+这段代码的目的是在释放 fko_cli_options_t 结构体之前，确保相关的指针和数组内容被正确清理和释放，
+以避免内存泄漏和悬挂指针的问题。
+
+ * 
+*/
 void
 free_configs(fko_cli_options_t *opts)
 {
@@ -684,7 +785,34 @@ free_configs(fko_cli_options_t *opts)
     zero_buf_wrapper(opts->gpg_home_dir, MAX_PATH_LEN);
     zero_buf_wrapper(opts->server_command, MAX_LINE_LEN);
 }
+/*
+这是一个名为 get_rand_port 的函数，用于获取一个随机的端口号。
 
+具体的操作包括：
+
+    声明了一个字符串指针 rand_val 并将其初始化为 NULL，声明了一个字符数组 port_str 并将其初始化为全零。
+
+    声明了一些整型变量 tmpint、is_err、port 和 res，并初始化为 0。
+
+    调用 fko_get_rand_value 函数获取一个随机值并将结果保存在 rand_val 中，
+    同时将返回值保存在 res 中。如果返回值不等于 FKO_SUCCESS，则输出错误信息并返回 -1。
+
+    使用 strlcpy 函数将 rand_val 复制到 port_str 中，确保复制的长度不超过 port_str 数组的大小。
+
+    使用 strtol_wrapper 函数将 port_str 转换成整数型值并保存在 tmpint 中，
+    同时将返回值保存在 is_err 中。如果 is_err 不等于 FKO_SUCCESS，则输出错误信息并返回 -1。
+
+    将 tmpint 对应的端口号转换成一个介于 1024 和 65535 之间的随机值，并保存在 port 中。
+
+    使用 fko_set_rand_value 函数将 ctx 中的随机值设为 NULL，以确保下次调用时会生成一个新的随机值。
+    同时将返回值保存在 res 中。如果返回值不等于 FKO_SUCCESS，则输出错误信息并返回 -1。
+
+    返回获取到的随机端口号 port。
+
+这段代码的目的是获取一个随机的端口号，并确保每次调用 get_rand_port 函数时都能获得不同的随机值，
+以增加安全性和保护 SPA 数据的加密内容。
+
+*/
 static int
 get_rand_port(fko_ctx_t ctx)
 {
@@ -731,6 +859,48 @@ get_rand_port(fko_ctx_t ctx)
 }
 
 /* Set access buf
+*/
+/**
+ 这是一个名为 set_access_buf 的静态函数，用于设置访问缓冲区。
+
+具体的操作包括：
+
+    声明了一些局部变量，包括指针 ndx，字符数组 tmp_nat_port（长度为 MAX_PORT_STR_LEN+1），
+    整型变量 nat_port。并将 tmp_nat_port 数组初始化为全零。
+
+    首先检查 options->access_str 是否不为空。如果不为空，进入条件语句。
+
+    在选项 options 中判断是否启用了随机端口模式 nat_rand_port。如果是，
+    则调用 get_rand_port 函数获取一个随机端口号，并将结果保存在 nat_port 中；
+    同时将 nat_port 的值赋给 options->nat_port。如果没有启用随机端口模式，
+    则判断 options->nat_port 是否非零，如果非零，则将值赋给 nat_port。
+
+    判断 nat_port 的值是否在有效的端口范围内（大于0且小于等于 MAX_PORT）。
+    如果是，则进行下一步操作；否则，将 access_buf 设置为包含 options->allow_ip_str、
+    逗号和 options->access_str 的字符串，然后返回 1。
+
+    使用 strchr 函数在 options->access_str 中查找字符 '/' 的位置，并将结果保存在 ndx 中。
+    如果未找到字符 '/'，则输出错误信息并返回 0。
+
+    使用 snprintf 函数将 options->allow_ip_str 和逗号拼接到 access_buf 中。
+
+    将 options->access_str（从开头到字符 '/'）追加到 access_buf 中，确保长度足够。
+
+    使用 strchr 函数查找第一个字符 '/' 之后是否还有其他字符 '/'. 如果有，则输出错误信息并返回 0。
+
+    使用 snprintf 函数将 nat_port 转换为字符串并保存在 tmp_nat_port 中。
+
+    将 tmp_nat_port 追加到 access_buf 中，确保长度足够。
+
+    如果 options->access_str 为空，则重新设置 access_buf 为包含 options->allow_ip_str、
+    逗号和字符串 "none/0" 的内容。
+
+    返回 1 表示成功设置访问缓冲区。
+
+这个函数的作用是根据输入的选项 options 设置访问缓冲区 access_buf，
+并根据选项中的不同设置来调整访问字符串（options->access_str）中的端口号或生成新的访问字符串。
+
+ * 
 */
 static int
 set_access_buf(fko_ctx_t ctx, fko_cli_options_t *options, char *access_buf)
@@ -807,6 +977,21 @@ set_access_buf(fko_ctx_t ctx, fko_cli_options_t *options, char *access_buf)
 
 /* Set NAT access string
 */
+/**
+ * 这是一段用C语言编写的函数，实现了设置NAT（网络地址转换）访问的功能。
+ * 该函数接受一个上下文对象fko_ctx_t ctx、一个命令行选项对象fko_cli_options_t *options和
+ * 一个表示访问信息的字符串const char * const access_buf作为参数。函数首先初始化一些变量，
+ * 然后解析命令行选项中的访问信息。如果解析不成功，会返回相应的错误代码。
+接着，函数会根据命令行选项中是否指定了本地NAT转换和访问字符串，来生成NAT访问的字符串。
+如果没有指定访问字符串，则会检查是否指定了NAT访问字符串。如果指定了NAT访问字符串，
+则会解析主机和端口，并验证其有效性。最后，函数会输出一个日志信息，
+显示分配给该访问的随机端口，并调用相关的函数设置NAT访问。
+
+该函数的具体实现可能依赖于其他头文件和函数定义。
+
+ * 
+*/
+
 static int
 set_nat_access(fko_ctx_t ctx, fko_cli_options_t *options, const char * const access_buf)
 {
@@ -924,6 +1109,27 @@ set_nat_access(fko_ctx_t ctx, fko_cli_options_t *options, const char * const acc
     return fko_set_spa_nat_access(ctx, nat_access_buf);
 }
 
+
+/**
+ * 这是一个用C语言编写的函数，用于执行前一个命令或显示前一个命令。
+ * 该函数接受一个命令行选项对象fko_cli_options_t *options、参数数量int argc和参数数组char **argv作为输入。
+
+函数首先初始化一些变量，然后检查是否指定了保存参数文件的路径。
+如果指定了保存参数文件的路径，则将其复制到args_save_file数组中；
+如果未指定保存参数文件的路径，则根据配置选择的模式来确定保存参数文件的路径。
+如果配置为--no-home-dir模式，则必须使用-E选项设置保存参数文件的路径；
+否则，将调用get_save_file函数确定保存参数文件的路径。
+
+然后，根据命令行选项的不同，函数执行相应的操作。
+如果设置了--run-last-command选项，则调用run_last_args函数执行前一个命令；
+如果设置了--show-last-command选项，则调用show_last_command函数显示前一个命令；
+如果没有设置--no-save-args选项，则调用save_args函数保存当前命令的参数到文件中。
+
+最后，函数返回执行结果。
+
+请注意，该函数的具体实现可能依赖于其他头文件和函数定义。
+
+*/
 static int
 prev_exec(fko_cli_options_t *options, int argc, char **argv)
 {
@@ -932,6 +1138,7 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
 
     if(options->args_save_file[0] != 0x0)
     {
+        //将命令行参数保存到指定的文件路径
         strlcpy(args_save_file, options->args_save_file, sizeof(args_save_file));
     }
     else
@@ -962,9 +1169,29 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
     return res;
 }
 
+
 /* Show the last command that was executed
 */
 //展示最后一次执行的命令
+/**
+ * 这是一个用C语言编写的函数，用于显示上一个命令。
+ * 该函数接受一个保存参数文件路径的字符串const char * const args_save_file作为输入。
+
+函数首先初始化一些变量，然后尝试打开保存参数文件。
+如果无法打开文件，则输出错误信息并返回0。
+
+接下来，函数会验证文件的权限和所属权。如果权限或所属权不正确，则关闭文件并返回0。
+
+然后，函数尝试从文件中读取一行内容，并将其存储在args_str数组中。
+如果成功读取了一行内容，则输出日志信息，显示上一个命令；
+否则，输出错误信息并关闭文件，然后返回0。
+
+最后，函数关闭文件，并返回1表示执行成功。
+
+请注意，该函数依赖于其他函数和头文件的定义，包括log_msg函数和相关的文件操作函数。
+
+ * 
+*/
 static int
 show_last_command(const char * const args_save_file)
 {
@@ -1065,7 +1292,34 @@ run_last_args(fko_cli_options_t *options, const char * const args_save_file)
 
     return 1;
 }
+
+
 //用于保存文件路径
+/*
+这是一个用C语言编写的函数，用于运行上一个命令的参数。
+该函数接受一个fko_cli_options_t类型的结构体指针options和
+一个保存参数文件路径的字符串const char * const args_save_file作为输入。
+
+函数首先初始化一些变量，并尝试打开保存参数文件。如果无法打开文件，则输出错误信息并返回0。
+
+接下来，函数会验证文件的权限和所属权。如果权限或所属权不正确，则关闭文件并返回0。
+
+然后，函数尝试从文件中读取一行内容，并将其存储在args_str数组中。
+如果成功读取了一行内容，则将args_str转换为命令行参数，并存储在argv_new数组中。
+如果转换过程中出现错误，则将args_broken设置为1。
+
+接着，函数关闭文件，并根据args_broken的值决定返回0还是继续执行。
+
+然后，函数重置选项索引，以便可以再次运行命令。
+
+接着，函数使用新的参数初始化配置，并释放之前分配的内存。
+
+最后，函数返回1表示执行成功。
+
+请注意，该函数依赖于其他函数和头文件的定义，包括log_msg函数、verify_file_perms_ownership函数和相关的文件操作函数。
+此外，函数还使用了optind全局变量和自定义的config_init函数和free_argv函数。
+
+*/
 static int
 get_save_file(char *args_save_file)
 {
@@ -1087,6 +1341,26 @@ get_save_file(char *args_save_file)
 }
 
 /* Save our command line arguments
+*/
+/**
+ 这是一个用C语言编写的函数，用于将命令行参数保存到文件中。
+ 该函数接受命令行参数的数量argc、命令行参数数组**argv和保存参数文件路径的
+ 字符串const char * const args_save_file作为输入。
+
+函数首先初始化一些变量，并尝试以写入方式打开参数保存文件。如果无法打开文件，则输出错误信息并返回0。
+
+然后，函数使用一个循环将每个命令行参数连接成一个字符串，并将其存储在args_str数组中。
+如果参数字符串的长度超过了最大长度限制，则输出错误信息并关闭文件，然后返回0。
+
+接着，函数在参数字符串的末尾添加一个换行符，并将参数字符串写入参数保存文件。
+如果写入的字节数与预期的字节数不一致，则输出警告信息。
+
+最后，函数关闭文件，并返回1表示保存成功。
+
+请注意，该函数依赖于其他函数和头文件的定义，包括log_msg函数、open函数、close函数、strlcat函数和write函数。
+此外，函数还使用了自定义的宏定义LOG_VERBOSITY_ERROR、LOG_VERBOSITY_WARNING、MAX_LINE_LEN和MAX_PATH_LEN。
+
+ * 
 */
 static int
 save_args(int argc, char **argv, const char * const args_save_file)
@@ -1123,6 +1397,26 @@ save_args(int argc, char **argv, const char * const args_save_file)
 }
 
 /* Set the SPA packet message type
+*/
+/*
+ 这是一个用C语言编写的函数，用于设置消息类型。
+ 该函数接受一个fko_ctx_t类型的上下文ctx和一个fko_cli_options_t类型的结构体指针options作为输入。
+
+函数首先声明一个短整型变量message_type。
+
+然后，函数根据条件判断来确定消息类型。
+首先检查options->server_command[0]是否为空，如果不为空，则将消息类型设置为FKO_COMMAND_MSG。
+接着，检查options->nat_local是否为真，如果为真，则进一步检查options->fw_timeout是否大于等于零。
+如果是，则将消息类型设置为FKO_CLIENT_TIMEOUT_LOCAL_NAT_ACCESS_MSG，否则将消息类型设置为FKO_LOCAL_NAT_ACCESS_MSG。
+然后，检查options->nat_access_str[0]是否为空，如果不为空，则再次检查options->fw_timeout的值来确定消息类型。
+最后，如果以上条件都不满足，则根据options->fw_timeout的值将消息类型设置为相应的类型。
+
+最后，函数调用fko_set_spa_message_type函数，将上下文和消息类型作为参数，以设置消息类型，并返回该函数的返回值。
+
+请注意，该函数依赖于其他函数和头文件的定义，包括fko_ctx_t类型、fko_cli_options_t类型和 
+fko_set_spa_message_type函数的定义。此外，函数还使用了结构体指针options的成员变量 
+server_command、nat_local、nat_access_str和fw_timeout。
+ 
 */
 static int
 set_message_type(fko_ctx_t ctx, fko_cli_options_t *options)
@@ -1161,6 +1455,29 @@ set_message_type(fko_ctx_t ctx, fko_cli_options_t *options)
 /* Prompt for and receive a user password.
 */
 //提示并接收用户密码。
+/*
+    这段代码是一个函数get_keys，用于获取密钥和HMAC密钥。
+
+首先，它会先清空key和hmac_key数组，然后通过一系列条件判断来确定密钥来源和长度。
+
+    如果options结构体中的have_key字段为真，那么将options->key拷贝到key数组中，并获取密钥长度。
+    如果options结构体中的have_base64_key字段为真，那么将对options->key_base64进行Base64解码，
+    并将解码结果拷贝到key数组中，并获取密钥长度。
+    如果options结构体中的get_key_file字段不为空，那么从文件中读取密钥。
+    如果options结构体中的use_gpg字段为真，那么根据不同情况获取签名密钥。
+    其他情况下，从用户输入中获取加密密钥。
+
+接着，如果options结构体中的have_hmac_key字段为真，那么将options->hmac_key拷贝到hmac_key数组中，并获取HMAC密钥长度。
+如果options结构体中的have_hmac_base64_key字段为真，
+那么将对options->hmac_key_base64进行Base64解码，
+并将解码结果拷贝到hmac_key数组中，并获取HMAC密钥长度。
+如果options结构体中的use_hmac字段为真，那么根据不同情况获取HMAC密钥。
+
+最后，如果使用了HMAC密钥，会检查密钥长度是否合法，并确保加密密钥和HMAC密钥不相同。
+然后，设置SPA（Secure Packet Acceleration）的HMAC类型。
+
+函数返回1表示成功获取密钥，返回0表示获取失败
+*/
 static int
 get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
     char *key, int *key_len, char *hmac_key, int *hmac_key_len)
@@ -1330,12 +1647,41 @@ get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
 
 /* Display an FKO error message.
 */
+/*
+这段代码定义了一个名为errmsg的函数，用于输出错误信息。
+
+函数有两个参数：msg和err。msg是一个字符串，用来描述错误信息，err是一个整数，表示错误代码。
+
+函数内部调用了log_msg函数来输出错误信息。使用log_msg函数，并传入LOG_VERBOSITY_ERROR作为日志级别，
+以及格式化字符串作为日志内容。
+
+格式化字符串中包含了MY_NAME，它表示程序的名称。然后依次输出msg、err和fko_errstr(err)的值。
+其中，fko_errstr(err)是一个用于根据错误码获取错误描述的函数。
+
+这个函数的作用是将错误信息格式化后输出到日志中。
+
+*/
 void
 errmsg(const char *msg, const int err) {
     log_msg(LOG_VERBOSITY_ERROR, "%s: %s: Error %i - %s",
         MY_NAME, msg, err, fko_errstr(err));
 }
 
+/*
+这段代码定义了一个名为zero_buf_wrapper的函数，用于将缓冲区中的数据清零。
+
+函数有两个参数：buf和len，分别表示待清零的缓冲区指针和缓冲区长度。
+
+首先，函数会进行输入参数的检查。如果buf为空指针或者len为0，则直接返回，不进行清零操作。
+
+接下来，调用了zero_buf函数来将缓冲区中的数据清零。如果清零操作返回的错误码为FKO_ERROR_ZERO_OUT_DATA，
+则说明清零操作失败，此时会输出相应的错误信息到日志中。
+
+最后，函数返回，结束执行。
+
+这个函数的作用是通过调用zero_buf函数来将缓冲区中的敏感数据清零，并在清零失败时输出错误信息到日志中。
+
+*/
 static void
 zero_buf_wrapper(char *buf, int len)
 {
@@ -1350,6 +1696,29 @@ zero_buf_wrapper(char *buf, int len)
     return;
 }
 
+/*
+2023/7/20 10:41:09
+
+这段代码是一个条件编译块，用于在编译时判断是否启用了libfiu库，并定义了一个名为enable_fault_injections的函数。
+
+首先，通过检查预处理宏HAVE_LIBFIU来确定是否启用了libfiu库。如果启用了该库，则进入条件编译块。
+
+在函数内部，首先定义了一个整数类型的变量rv并将其初始化为1。
+
+接着，通过判断opts->fault_injection_tag的值是否为空字符串来确定是否设置了故障注入标签。
+如果设置了标签，则输出相应的日志信息。
+
+然后，调用fiu_init函数来初始化libfiu库。如果初始化失败，则输出警告日志，并将rv的值设为0。
+
+接下来，调用fiu_enable函数来设置故障注入标签的开启状态。如果设置失败，则输出警告日志，并将rv的值设为0。
+
+最后，函数返回rv，表示是否成功启用故障注入功能。
+
+该函数的作用是在启用了libfiu库的情况下，根据配置中的故障注入标签来进行故障注入。
+首先初始化libfiu库，然后根据标签开启相应的故障注入功能，并在设置失败时输出警告日志。
+函数返回值表示是否成功启用了故障注入。
+
+*/
 #if HAVE_LIBFIU
 static int
 enable_fault_injections(fko_cli_options_t * const opts)
@@ -1378,6 +1747,28 @@ enable_fault_injections(fko_cli_options_t * const opts)
 #endif
 
 /* free up memory and exit
+*/
+/*
+2023/7/20 10:42:33
+
+这段代码定义了一个名为clean_exit的函数，用于在程序退出时进行清理工作。
+
+在函数内部，首先通过条件编译块判断是否启用了libfiu库。
+如果启用了该库，并且设置了故障注入标签，则调用fiu_disable函数来禁用该标签的故障注入功能。
+
+接着，调用fko_destroy函数销毁传入的上下文对象ctx，如果返回值为FKO_ERROR_ZERO_OUT_DATA，
+则输出错误日志表示无法将敏感数据缓冲区清零。
+
+然后，调用free_configs函数来释放由opts指针指向的配置数据的内存。
+
+接下来，调用zero_buf_wrapper函数将密钥缓冲区和HMAC密钥缓冲区清零。之后，将密钥长度和HMAC密钥长度都设置为0。
+
+最后，使用exit函数退出程序，并传入指定的退出状态码exit_status。
+
+该函数的作用是在程序退出时进行必要的清理工作。根据条件判断是否启用了libfiu库，
+并根据配置中的故障注入标签禁用相应的故障注入功能。然后，销毁上下文对象、释放内存、清零敏感数据缓冲区，
+最后退出程序并返回指定的退出状态码。
+
 */
 static void
 clean_exit(fko_ctx_t ctx, fko_cli_options_t *opts,

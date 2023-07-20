@@ -19,6 +19,11 @@
         "log_msg.h": "c",
         "fwknopd_errors.h": "c",
         "limits.h": "c",
-        "incoming_spa.h": "c"
+        "incoming_spa.h": "c",
+<<<<<<< HEAD
+        "cstdlib": "c"
+=======
+        "fko_util.h": "c"
+>>>>>>> c3a57a9d414e5ad4dc25655c744db4d66c7a2c61
     }
 }

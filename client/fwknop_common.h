@@ -81,29 +81,29 @@
 //fwknop客户端配置参数和值
 typedef struct fko_cli_options
 {
-    char config_file[MAX_PATH_LEN];
-    char access_str[MAX_PATH_LEN];
-    char rc_file[MAX_PATH_LEN];
-    char key_gen_file[MAX_PATH_LEN];
-    char server_command[MAX_LINE_LEN];
-    char get_key_file[MAX_PATH_LEN];
-    char get_hmac_key_file[MAX_PATH_LEN];
-    char save_packet_file[MAX_PATH_LEN];
-    int  save_packet_file_append;
-    int  show_last_command;
-    int  run_last_command;
-    char args_save_file[MAX_PATH_LEN];
-    int  no_save_args;
-    int  use_hmac;
-    char spa_server_str[MAX_SERVER_STR_LEN];  /* may be a hostname */
-    char allow_ip_str[MAX_IPV4_STR_LEN];
-    char spoof_ip_src_str[MAX_IPV4_STR_LEN];
-    char spoof_user[MAX_USERNAME_LEN];
-    int  rand_port;
-    char gpg_recipient_key[MAX_GPG_KEY_ID];
-    char gpg_signer_key[MAX_GPG_KEY_ID];
-    char gpg_home_dir[MAX_PATH_LEN];
-    char gpg_exe[MAX_PATH_LEN];
+    char config_file[MAX_PATH_LEN]; //配置文件的路径
+    char access_str[MAX_PATH_LEN]; //访问字符串
+    char rc_file[MAX_PATH_LEN]; //指定 fwknop rc 文件的路径
+    char key_gen_file[MAX_PATH_LEN]; //密钥生成文件的路径
+    char server_command[MAX_LINE_LEN]; //服务器命令
+    char get_key_file[MAX_PATH_LEN]; //从指定文件加载加密密钥/密码
+    char get_hmac_key_file[MAX_PATH_LEN]; //从指定文件加载 HMAC 密钥/密码
+    char save_packet_file[MAX_PATH_LEN]; //指示 fwknop 客户端将新创建的 SPA 数据包写出到指定的文件的路径
+    int  save_packet_file_append; //保存数据包时是否追加模式
+    int  show_last_command; //是否显示最后一条命令
+    int  run_last_command; //是否运行最后一条命令
+    char args_save_file[MAX_PATH_LEN]; //参数保存文件的路径
+    int  no_save_args; //是否不保存参数
+    int  use_hmac; //是否使用HMAC
+    char spa_server_str[MAX_SERVER_STR_LEN];  /* may be a hostname */ //SPA服务器字符串，可能是主机名
+    char allow_ip_str[MAX_IPV4_STR_LEN]; //允许的IP字符串
+    char spoof_ip_src_str[MAX_IPV4_STR_LEN]; //欺骗 fwknop 客户端发送 SPA 数据包的源地址
+    char spoof_user[MAX_USERNAME_LEN]; //欺骗 fwknop 客户端发送 SPA 数据包的用户名
+    int  rand_port; //是否使用随机端口
+    char gpg_recipient_key[MAX_GPG_KEY_ID]; //GPG接收者密钥
+    char gpg_signer_key[MAX_GPG_KEY_ID]; //GPG签名者密钥
+    char gpg_home_dir[MAX_PATH_LEN]; //GPG的主目录路径
+    char gpg_exe[MAX_PATH_LEN]; //GPG执行文件路径
 #if HAVE_LIBFIU
     char fault_injection_tag[MAX_FAULT_TAG_LEN];
 #endif
@@ -111,33 +111,33 @@ typedef struct fko_cli_options
     /* Encryption keys read from a .fwknoprc stanza
     */
    //从.fwknoprc读取的加密密钥
-    char key[MAX_KEY_LEN+1];
-    char key_base64[MAX_B64_KEY_LEN+1];
-    int  key_len;
-    char hmac_key[MAX_KEY_LEN+1];
-    char hmac_key_base64[MAX_B64_KEY_LEN+1];
-    int  hmac_key_len;
-    int  have_key;
-    int  have_base64_key;
-    int  have_hmac_key;
-    int  have_hmac_base64_key;
-    int  hmac_type;
+    char key[MAX_KEY_LEN+1]; //加密密钥
+    char key_base64[MAX_B64_KEY_LEN+1]; //加密密钥base64编码
+    int  key_len; //加密密钥长度
+    char hmac_key[MAX_KEY_LEN+1]; //HMAC密钥(哈希密钥)
+    char hmac_key_base64[MAX_B64_KEY_LEN+1]; //HMAC密钥的base64编码
+    int  hmac_key_len; //HMAC密钥长度
+    int  have_key; //是否已有加密密钥
+    int  have_base64_key; //是否有加密密钥的base64编码
+    int  have_hmac_key; //是否有HMAC的密钥
+    int  have_hmac_base64_key; //是否有HMAC密钥的base64编码
+    int  hmac_type; //HMAC类型(应该是指定用哪种哈希算法)
 
     /* NAT access
     */
    //NAT穿透
-    char nat_access_str[MAX_PATH_LEN];
-    int  nat_local;
-    int  nat_port;
-    int  nat_rand_port;
+    char nat_access_str[MAX_PATH_LEN]; //NAT的类型
+    int  nat_local; //是否为本地NAT，便于转发及修改数据包
+    int  nat_port; //NAT端口号
+    int  nat_rand_port; //是否启用随机端口
 
     /* External IP resolution via HTTP
     */
    //外部IP解析
-    int  resolve_ip_http_https;
-    int  resolve_http_only;
-    char *resolve_url;
-    char http_user_agent[HTTP_MAX_USER_AGENT_LEN];
+    int  resolve_ip_http_https; //是否通过HTTP解析外部代理
+    int  resolve_http_only; //是否仅使用HTTP解析外部代理
+    char *resolve_url; //解析的URL
+    char http_user_agent[HTTP_MAX_USER_AGENT_LEN]; 
     unsigned char use_wget_user_agent;
     char *wget_bin;
 
