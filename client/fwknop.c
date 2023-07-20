@@ -55,7 +55,7 @@ static int get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
 
 // errmsg: 用于输出错误消息。
 static void errmsg(const char *msg, const int err);
-// prev_exec: 用于执行之前的命令。
+// prev_exec: 用于执行保存的最后一个命令，函数内部判断是否执行最后一个保存的命令，是否将命令行参数展示，是否保存当前的命令。
 static int prev_exec(fko_cli_options_t *options, int argc, char **argv);
 // get_save_file: 用于获取保存文件的路径。
 static int get_save_file(char *args_save_file);
@@ -107,7 +107,7 @@ int
 main(int argc, char **argv)
 {   
     //用于保存发送消息  
-    fko_ctx_t           ctx  = NULL;
+    fko_ctx_t           ctx  = NULL; //fkocontext的指针
     fko_ctx_t           ctx2 = NULL;
     int                 res;
     char               *spa_data=NULL, *version=NULL;
