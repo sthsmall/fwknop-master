@@ -1145,7 +1145,7 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
 
     if(options->args_save_file[0] != 0x0)
     {
-        //将命令行参数保存到指定的文件路径
+        
         strlcpy(args_save_file, options->args_save_file, sizeof(args_save_file));
     }
     else
