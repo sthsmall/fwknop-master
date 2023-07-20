@@ -35,6 +35,7 @@
 
 /* Initialize an fko context.
 */
+//初始化一个新的fko文本
 int
 fko_new(fko_ctx_t *r_ctx)
 {
@@ -46,7 +47,7 @@ fko_new(fko_ctx_t *r_ctx)
     fiu_return_on("fko_new_calloc", FKO_ERROR_MEMORY_ALLOCATION);
 #endif
 
-    ctx = calloc(1, sizeof *ctx);
+    ctx = calloc(1, sizeof *ctx); //分配内存并初始化
     if(ctx == NULL)
         return(FKO_ERROR_MEMORY_ALLOCATION);
 
@@ -56,6 +57,7 @@ fko_new(fko_ctx_t *r_ctx)
      *       functions can operate properly. If there are any problems during
      *       initialization, then fko_destroy() is called which will clean up
      *       the context.
+     * 提前初始化以便fko_set_xxx函数能成功运行，如果在初始化遇到了错误，调用fko_destroy函数销毁
     */
     ctx->initval = FKO_CTX_INITIALIZED;
 

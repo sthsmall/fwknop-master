@@ -62,12 +62,95 @@ typedef struct fko_gpg_sig *fko_gpg_sig_t;
  *
  * \brief The pieces we need to make an FKO SPA data packet.
  */
+/*
+这段代码定义了一个名为fko_context的结构体，该结构体用于存储FWKNOP（FireWall KNock OPerator）中的上下文信息。FWKNOP是一个用于网络安全的工具，允许用户在受保护的主机上通过发送加密的"knock"消息来打开防火墙规则以获得访问权限。下面逐个解释结构体中各个参数的作用：
+
+rand_val: 随机值，用于生成安全令牌的一部分。
+
+username: 用户名，用于生成安全令牌的一部分。
+
+timestamp: 时间戳，用于生成安全令牌的一部分。
+
+message_type: 消息类型，表示message字段的内容类型。
+
+message: 用户自定义的消息数据。
+
+nat_access: NAT（Network Address Translation）访问字符串，用于处理NAT穿透。
+
+server_auth: 服务器认证信息。
+
+client_timeout: 客户端超时时间，表示一次请求的有效期。
+
+digest_type: 摘要类型，用于消息摘要的算法类型。
+
+encryption_type: 加密类型，表示消息的加密算法类型。
+
+encryption_mode: 加密模式，表示加密算法的模式（例如，ECB，CBC等）。
+
+hmac_type: HMAC（Hash-based Message Authentication Code）类型，用于消息认证码的算法类型。
+
+version: 版本信息。
+
+digest: 消息摘要，用于数据完整性验证。
+
+digest_len: 消息摘要的长度。
+
+raw_digest: 原始加密/编码数据的摘要，用于防止重放攻击。
+
+raw_digest_type: 原始加密/编码数据的摘要类型。
+
+raw_digest_len: 原始加密/编码数据的摘要长度。
+
+encoded_msg: 编码后的消息数据。
+
+encoded_msg_len: 编码后的消息数据长度。
+
+encrypted_msg: 加密后的消息数据。
+
+encrypted_msg_len: 加密后的消息数据长度。
+
+msg_hmac: 消息认证码。
+
+msg_hmac_len: 消息认证码的长度。
+
+added_salted_str: 标记是否添加了盐值字符串。
+
+added_gpg_prefix: 标记是否添加了GPG（GNU Privacy Guard）前缀。
+
+state: 状态信息，表示当前上下文的状态。
+
+initval: 初始化值。
+
+gpg_exe: GPG执行程序路径。
+
+gpg_recipient: GPG接收者（用于加密和解密）。
+
+gpg_signer: GPG签名者（用于签名和验证）。
+
+gpg_home_dir: GPG的主目录。
+
+have_gpgme_context: 是否有GPGME（GnuPG Made Easy）上下文。
+
+gpg_ctx: GPGME上下文。
+
+recipient_key: GPG接收者密钥。
+
+signer_key: GPG签名者密钥。
+
+verify_gpg_sigs: 是否验证GPG签名。
+
+ignore_gpg_sig_error: 是否忽略GPG签名错误。
+
+gpg_sigs: GPG签名信息。
+
+gpg_err: GPG错误信息。
+*/
 struct fko_context {
     /** \name FKO SPA user-definable message data */
 
     /*@{*/
     char           *rand_val;
-    char           *username;
+    char           *username; 
     time_t          timestamp;
     short           message_type;
     char           *message;
