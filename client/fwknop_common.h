@@ -111,32 +111,32 @@ typedef struct fko_cli_options
     /* Encryption keys read from a .fwknoprc stanza
     */
    //从.fwknoprc读取的加密密钥
-    char key[MAX_KEY_LEN+1];
-    char key_base64[MAX_B64_KEY_LEN+1];
-    int  key_len;
-    char hmac_key[MAX_KEY_LEN+1];
-    char hmac_key_base64[MAX_B64_KEY_LEN+1];
-    int  hmac_key_len;
-    int  have_key;
-    int  have_base64_key;
-    int  have_hmac_key;
-    int  have_hmac_base64_key;
-    int  hmac_type;
+    char key[MAX_KEY_LEN+1]; //加密密钥
+    char key_base64[MAX_B64_KEY_LEN+1]; //加密密钥base64编码
+    int  key_len; //加密密钥长度
+    char hmac_key[MAX_KEY_LEN+1]; //HMAC密钥(哈希密钥)
+    char hmac_key_base64[MAX_B64_KEY_LEN+1]; //HMAC密钥的base64编码
+    int  hmac_key_len; //HMAC密钥长度
+    int  have_key; //是否已有加密密钥
+    int  have_base64_key; //是否有加密密钥的base64编码
+    int  have_hmac_key; //是否有HMAC的密钥
+    int  have_hmac_base64_key; //是否有HMAC密钥的base64编码
+    int  hmac_type; //HMAC类型(应该是指定用哪种哈希算法)
 
     /* NAT access
     */
    //NAT穿透
-    char nat_access_str[MAX_PATH_LEN];
-    int  nat_local;
-    int  nat_port;
-    int  nat_rand_port;
+    char nat_access_str[MAX_PATH_LEN]; //NAT的类型？？
+    int  nat_local; //是否为本地NAT，便于转发及修改数据包
+    int  nat_port; //NAT端口号
+    int  nat_rand_port; //是否启用随机端口
 
     /* External IP resolution via HTTP
     */
    //外部IP解析
-    int  resolve_ip_http_https;
-    int  resolve_http_only;
-    char *resolve_url;
+    int  resolve_ip_http_https; //是否通过HTTP解析外部代理
+    int  resolve_http_only; //是否仅使用HTTP解析外部代理
+    char *resolve_url; //解析的URL
     char http_user_agent[HTTP_MAX_USER_AGENT_LEN];
     unsigned char use_wget_user_agent;
     char *wget_bin;

@@ -145,7 +145,7 @@ main(int argc, char **argv)
         clean_exit(ctx, &options, key, &key_len, hmac_key,
                 &hmac_key_len, EXIT_FAILURE);
 
-    if(options.show_last_command)
+    if(options.show_last_command) //显示 fwknop 使用的最后一个命令行参数
         clean_exit(ctx, &options, key, &key_len, hmac_key,
                 &hmac_key_len, EXIT_SUCCESS);
 
@@ -932,6 +932,7 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
 
     if(options->args_save_file[0] != 0x0)
     {
+        //将命令行参数保存到指定的文件路径
         strlcpy(args_save_file, options->args_save_file, sizeof(args_save_file));
     }
     else
