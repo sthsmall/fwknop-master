@@ -481,6 +481,7 @@ gpg_decrypt(fko_ctx_t ctx, const char *dec_key)
 
 /* Set the SPA encryption type.
 */
+//设置spa加密模式
 int
 fko_set_spa_encryption_type(fko_ctx_t ctx, const short encrypt_type)
 {
@@ -490,13 +491,14 @@ fko_set_spa_encryption_type(fko_ctx_t ctx, const short encrypt_type)
 #endif
     /* Must be initialized
     */
-    if(!CTX_INITIALIZED(ctx))
+    if(!CTX_INITIALIZED(ctx))//有没有经过初始化
         return(FKO_ERROR_CTX_NOT_INITIALIZED);
 
 #if HAVE_LIBFIU
     fiu_return_on("fko_set_spa_encryption_type_val",
             FKO_ERROR_INVALID_DATA_ENCRYPT_TYPE_VALIDFAIL);
 #endif
+    //判断加密模式是否是有效的
     if(encrypt_type < 0 || encrypt_type >= FKO_LAST_ENCRYPTION_TYPE)
         return(FKO_ERROR_INVALID_DATA_ENCRYPT_TYPE_VALIDFAIL);
 
@@ -552,6 +554,7 @@ fko_set_spa_encryption_mode(fko_ctx_t ctx, const int encrypt_mode)
 
 /* Return the SPA encryption mode.
 */
+//设置SPA数据包加密格式，这种格式是指用哪种加密算法，例如AES、DES等
 int
 fko_get_spa_encryption_mode(fko_ctx_t ctx, int *enc_mode)
 {
@@ -690,6 +693,7 @@ fko_encryption_type(const char * const enc_data)
 
 /* Set the GPG recipient key name.
 */
+//设置GPG加密的收件人，并获取相应的GPG密钥
 int
 fko_set_gpg_recipient(fko_ctx_t ctx, const char * const recip)
 {
@@ -734,6 +738,7 @@ fko_set_gpg_recipient(fko_ctx_t ctx, const char * const recip)
 
 /* Set the GPG home dir.
 */
+//设置gpg可执行文件的目录
 int
 fko_set_gpg_exe(fko_ctx_t ctx, const char * const gpg_exe)
 {
@@ -883,7 +888,7 @@ fko_set_gpg_home_dir(fko_ctx_t ctx, const char * const gpg_home_dir)
 
     /* If we are unable to stat the given dir, then return with error.
     */
-    if(stat(gpg_home_dir, &st) != 0)
+    if(stat(gpg_home_dir, &st) != 0) //获取文件状态信息
         return(FKO_ERROR_GPGME_BAD_HOME_DIR);
 
     if(!S_ISDIR(st.st_mode))

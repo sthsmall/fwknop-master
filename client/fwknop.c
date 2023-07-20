@@ -178,13 +178,13 @@ main(int argc, char **argv)
     //用于保存发送消息  
     fko_ctx_t           ctx  = NULL; //fkocontext的指针
     fko_ctx_t           ctx2 = NULL;
-    int                 res;
-    char               *spa_data=NULL, *version=NULL;
-    char                access_buf[MAX_LINE_LEN] = {0};
-    char                key[MAX_KEY_LEN+1]       = {0};
-    char                hmac_key[MAX_KEY_LEN+1]  = {0};
-    int                 key_len = 0, orig_key_len = 0, hmac_key_len = 0, enc_mode;
-    int                 tmp_port = 0;
+    int                 res; //用于判断函数调用是否成功
+    char               *spa_data=NULL, *version=NULL; //用于存储SPA数据和版本信息
+    char                access_buf[MAX_LINE_LEN] = {0}; //存储访问控制规则
+    char                key[MAX_KEY_LEN+1]       = {0}; //存储加密密钥
+    char                hmac_key[MAX_KEY_LEN+1]  = {0}; //HMAC密钥
+    int                 key_len = 0, orig_key_len = 0, hmac_key_len = 0, enc_mode; //存储密钥的长度
+    int                 tmp_port = 0; //存储加密模式
     char                dump_buf[CTX_DUMP_BUFSIZE];
 
     //这个结构体用于保存命令行参数
@@ -410,8 +410,8 @@ main(int argc, char **argv)
             unsetenv("GPG_AGENT_INFO");
 #endif
 
-        res = fko_set_spa_encryption_type(ctx, FKO_ENCRYPTION_GPG);
-        if(res != FKO_SUCCESS)
+        res = fko_set_spa_encryption_type(ctx, FKO_ENCRYPTION_GPG); //设置spa加密模式，例如对称加密，此时加密模式为2
+        if(res != FKO_SUCCESS) //报错
         {
             errmsg("fko_set_spa_encryption_type", res);
             clean_exit(ctx, &options, key, &key_len,
@@ -420,6 +420,7 @@ main(int argc, char **argv)
 
         /* Set gpg path if necessary
         */
+       //设置gpb的可执行文件的路径
         if(strlen(options.gpg_exe) > 0)
         {
             res = fko_set_gpg_exe(ctx, options.gpg_exe);
@@ -435,6 +436,7 @@ main(int argc, char **argv)
          * this has to occur before calling any of the other GPG-related
          * functions.
         */
+       //如果已经指定了gpg的主目录，使用指定的主目录
         if(strlen(options.gpg_home_dir) > 0)
         {
             res = fko_set_gpg_home_dir(ctx, options.gpg_home_dir);
@@ -445,7 +447,7 @@ main(int argc, char **argv)
                         hmac_key, &hmac_key_len, EXIT_FAILURE);
             }
         }
-
+        //设置GPG加密的收件人，并获取相应的GPG密钥
         res = fko_set_gpg_recipient(ctx, options.gpg_recipient_key);
         if(res != FKO_SUCCESS)
         {
@@ -459,6 +461,7 @@ main(int argc, char **argv)
 
         if(strlen(options.gpg_signer_key) > 0)
         {
+            //设置签名者密钥
             res = fko_set_gpg_signer(ctx, options.gpg_signer_key);
             if(res != FKO_SUCCESS)
             {
@@ -471,6 +474,7 @@ main(int argc, char **argv)
             }
         }
 
+        //设置SPA数据包加密格式，这种格式是指用哪种加密算法，例如AES、DES等
         res = fko_set_spa_encryption_mode(ctx, FKO_ENC_MODE_ASYMMETRIC);
         if(res != FKO_SUCCESS)
         {
@@ -479,9 +483,10 @@ main(int argc, char **argv)
                     hmac_key, &hmac_key_len, EXIT_FAILURE);
         }
     }
-
+    //如果加密模式存在且不使用gpg加密数据
     if(options.encryption_mode && !options.use_gpg)
     {
+        //直接设置SPA加密格式
         res = fko_set_spa_encryption_mode(ctx, options.encryption_mode);
         if(res != FKO_SUCCESS)
         {
@@ -513,7 +518,8 @@ main(int argc, char **argv)
                 hmac_key, &hmac_key_len, EXIT_FAILURE);
 
     orig_key_len = key_len;
-
+    
+    //判断加密格式和密钥格式有没有是否符合要求
     if(options.encryption_mode == FKO_ENC_MODE_CBC_LEGACY_IV
             && key_len > 16)
     {
@@ -582,6 +588,7 @@ main(int argc, char **argv)
             || options.spa_proto == FKO_PROTO_ICMP)
             && !options.spa_src_port)
     {
+        //获取随机端口
         tmp_port = get_rand_port(ctx);
         if(tmp_port < 0)
             clean_exit(ctx, &options, key, &orig_key_len,
