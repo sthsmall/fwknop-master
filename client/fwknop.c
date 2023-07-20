@@ -63,7 +63,7 @@ static int get_save_file(char *args_save_file);
 static int show_last_command(const char * const args_save_file);
 // save_args: 用于保存命令行参数。
 static int save_args(int argc, char **argv, const char * const args_save_file);
-// run_last_args: 用于运行最后保存的命令行参数。
+// run_last_args: 从上一次调用中获取命令行参数
 static int run_last_args(fko_cli_options_t *options,
         const char * const args_save_file);
 // set_message_type: 用于设置消息类型。

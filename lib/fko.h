@@ -541,12 +541,15 @@ DLL_API int fko_set_spa_nat_access(fko_ctx_t ctx, const char * const nat_access)
 DLL_API int fko_set_spa_server_auth(fko_ctx_t ctx, const char * const server_auth);
 
 /**
- * \brief Sets the SPA client timeout value.
+ * \brief Sets the SPA client timeout value.设置SPA（单数据包授权）客户端超时值。
  *
  * If the timeout is set to a value greater than 0, it is assumed the
  * 'spa_message_type' setting should be one of the "TIMEOUT" variants.
  * This function will change the 'message_type' to the appropriate setting if necessary.
  * However, it is recommended you set the correct 'message_type' ahead of time.
+ * 如果超时值设置为大于0的数，假设 'spa_message_type' 设置应该是 "TIMEOUT" 变体之一。
+ * 如果有必要，该函数将根据情况更改 'message_type' 为适当的设置。
+ * 然而，建议您事先设置正确的 'message_type'。 
  *
  * \param ctx The FKO context to modify
  * \param timeout The timeout value in seconds to be pushed into the FKO context
