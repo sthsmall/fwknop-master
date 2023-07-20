@@ -48,6 +48,18 @@
   #define AFL_SET_RESOLVE_HOST "192.168.12.123" /* force to non-routable IP */
 #endif
 
+
+/*
+这段代码定义了一个名为 url 的结构体。该结构体包含了三个成员变量：port、host 和 path。
+
+port 是一个字符串数组，长度为 MAX_PORT_STR_LEN+1，用于存储端口号。host 是一个字符串数组，
+长度为 MAX_URL_HOST_LEN+1，用于存储主机名或 IP 地址。path 是一个字符串数组，长度为 MAX_URL_PATH_LEN+1，用于存储路径信息。
+
+这个结构体用于表示一个 URL 的各个组成部分，包括端口号、主机名和路径信息。
+通过将这些信息存储在结构体中，可以方便地对 URL 进行处理和操作。
+每个成员变量都有预定义的最大长度，以确保足够的空间来存储对应的信息。
+
+*/
 struct url
 {
     char    port[MAX_PORT_STR_LEN+1];
@@ -55,6 +67,23 @@ struct url
     char    path[MAX_URL_PATH_LEN+1];
 };
 
+/*
+2023/7/20 15:29:56
+
+这段代码是一个函数try_url，它用于尝试解析 URL 的外部 IP 地址。函数的主要步骤如下：
+
+    初始化变量和数据结构。
+    构建 HTTP 请求，并发送给指定的 URL。
+    接收并处理从服务器返回的 HTTP 响应。
+    解析响应中的 IP 地址，并验证其格式和值的合法性。
+    如果解析成功，将解析到的 IP 地址存储在 options->allow_ip_str 中，并返回1。
+    如果解析失败，返回-1。
+
+需要注意的是，该函数依赖于一些外部的库和定义，例如<sys/types.h>、<sys/socket.h>等。
+此外，函数中还包含了一些错误处理和日志记录的代码。
+
+
+*/
 static int
 try_url(struct url *url, fko_cli_options_t *options)
 {
@@ -238,6 +267,22 @@ try_url(struct url *url, fko_cli_options_t *options)
     }
 }
 
+/*
+2023/7/20 15:33:04
+
+这段代码是一个函数parse_url，用于解析传入的 URL 字符串，并提取出其中的主机名、端口号和路径信息。函数的主要步骤如下：
+
+    首先判断 URL 字符串是否以 "https://" 或 "http://" 开头，如果是，则跳过该部分。
+    检查是否指定了端口号（通过冒号进行分隔），如果指定了，则提取出端口号，并将其存储在 url->port 中。
+    如果URL字符串以 "/" 结尾，则删除末尾的斜杠。
+    查找 URL 字符串中的第一个 "/"，确定主机名和路径的长度。
+    将主机名和路径分别拷贝到 url->host 和 url->path 中，并确保长度不超过预定义的最大值。
+    如果没有指定路径，则将默认路径设为 "/".
+
+函数使用了一些辅助函数和宏定义，例如strncasecmp、strchr、strtol_wrapper等。
+需要注意的是，函数中的一些边界检查和错误处理的代码依赖于外部的定义和库。
+因此，在实际使用时，可能需要根据实际情况进行适当的修改和补充。
+*/
 static int
 parse_url(char *res_url, struct url* url)
 {
@@ -521,6 +566,24 @@ resolve_ip_https(fko_cli_options_t *options)
     return -1;
 }
 //解析http
+/*
+这是一个C语言函数，用于通过HTTPS解析IP地址。函数接受一个名为options的结构体指针作为参数，并返回一个整数。
+
+函数中定义了一些变量，包括o1, o2, o3, o4用于存储IP地址的四个部分，got_resp表示是否成功获取到响应，i用作循环计数器，
+resp用于存储wget的输出结果，url用于验证URL的有效性，wget_ssl_cmd用于存储wget命令。
+
+函数首先检查是否已经指定了wget_bin路径，如果指定了则将其赋值给wget_ssl_cmd变量，如果没有指定则使用默认路径。
+然后根据use_wget_user_agent标志决定是否更改wget的默认User-Agent。之后拼接命令行参数和URL到wget_ssl_cmd。
+
+接下来根据编译选项判断是否处于AFL Fuzzing模式，如果是，则直接返回预设的IP地址。
+
+然后根据编译选项选择使用execvp()或popen()函数执行wget命令，并从输出中读取解析得到的IP地址。
+
+最后将解析得到的IP地址存储到options->allow_ip_str变量中，并返回相应的结果。
+
+注意：这段代码是一个片段，可能会缺少一些必要的头文件和其他依赖项。
+
+*/
 int
 resolve_ip_http(fko_cli_options_t *options)
 {
