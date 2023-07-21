@@ -57,13 +57,13 @@ static int get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
 static void errmsg(const char *msg, const int err);
 // prev_exec: 用于执行保存的最后一个命令，函数内部判断是否执行最后一个保存的命令，是否将命令行参数展示，是否保存当前的命令。
 static int prev_exec(fko_cli_options_t *options, int argc, char **argv);
-// get_save_file: 用于获取保存文件的路径。
+// get_save_file: 获取不同操作系统默认的保存文件路径。
 static int get_save_file(char *args_save_file);
 // show_last_command: 用于显示最后一条命令。
 static int show_last_command(const char * const args_save_file);
 // save_args: 用于保存命令行参数。
 static int save_args(int argc, char **argv, const char * const args_save_file);
-// run_last_args: 用于运行最后保存的命令行参数。
+// run_last_args: 从上一次调用中获取命令行参数
 static int run_last_args(fko_cli_options_t *options,
         const char * const args_save_file);
 // set_message_type: 用于设置消息类型。
@@ -1149,12 +1149,12 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
     int        res = 1;
 
     if(options->args_save_file[0] != 0x0)
-    {
-        //将命令行参数保存到指定的文件路径
+    {//配置了保存路径
+        
         strlcpy(args_save_file, options->args_save_file, sizeof(args_save_file));
     }
     else
-    {
+    {//没有配置保存路径
         if(options->no_home_dir)
         {
             log_msg(LOG_VERBOSITY_ERROR,
@@ -1306,32 +1306,8 @@ run_last_args(fko_cli_options_t *options, const char * const args_save_file)
 }
 
 
-//用于保存文件路径
-/*
-这是一个用C语言编写的函数，用于运行上一个命令的参数。
-该函数接受一个fko_cli_options_t类型的结构体指针options和
-一个保存参数文件路径的字符串const char * const args_save_file作为输入。
+//获取不同操作系统默认的保存文件路径
 
-函数首先初始化一些变量，并尝试打开保存参数文件。如果无法打开文件，则输出错误信息并返回0。
-
-接下来，函数会验证文件的权限和所属权。如果权限或所属权不正确，则关闭文件并返回0。
-
-然后，函数尝试从文件中读取一行内容，并将其存储在args_str数组中。
-如果成功读取了一行内容，则将args_str转换为命令行参数，并存储在argv_new数组中。
-如果转换过程中出现错误，则将args_broken设置为1。
-
-接着，函数关闭文件，并根据args_broken的值决定返回0还是继续执行。
-
-然后，函数重置选项索引，以便可以再次运行命令。
-
-接着，函数使用新的参数初始化配置，并释放之前分配的内存。
-
-最后，函数返回1表示执行成功。
-
-请注意，该函数依赖于其他函数和头文件的定义，包括log_msg函数、verify_file_perms_ownership函数和相关的文件操作函数。
-此外，函数还使用了optind全局变量和自定义的config_init函数和free_argv函数。
-
-*/
 static int
 get_save_file(char *args_save_file)
 {
