@@ -183,8 +183,8 @@ main(int argc, char **argv)
     char                access_buf[MAX_LINE_LEN] = {0}; //存储访问控制规则
     char                key[MAX_KEY_LEN+1]       = {0}; //存储加密密钥
     char                hmac_key[MAX_KEY_LEN+1]  = {0}; //HMAC密钥
-    int                 key_len = 0, orig_key_len = 0, hmac_key_len = 0, enc_mode; //存储密钥的长度
-    int                 tmp_port = 0; //存储加密模式
+    int                 key_len = 0, orig_key_len = 0, hmac_key_len = 0, enc_mode; //存储密钥的长度、加密模式
+    int                 tmp_port = 0; //存储临时端口
     char                dump_buf[CTX_DUMP_BUFSIZE];
 
     //这个结构体用于保存命令行参数
@@ -669,7 +669,7 @@ main(int argc, char **argv)
             clean_exit(ctx, &options, key, &orig_key_len,
                 hmac_key, &hmac_key_len, EXIT_FAILURE);
         }
-
+        //设置加密模式
         res = fko_set_spa_encryption_mode(ctx2, enc_mode);
         if(res != FKO_SUCCESS)
         {
@@ -684,10 +684,13 @@ main(int argc, char **argv)
 
         /* See if we are using gpg and if we need to set the GPG home dir.
         */
+       //如果使用gpg加密
         if(options.use_gpg)
         {
+            //自定义了gpg主目录
             if(strlen(options.gpg_home_dir) > 0)
             {
+                //给ctx2设置gpg主目录
                 res = fko_set_gpg_home_dir(ctx2, options.gpg_home_dir);
                 if(res != FKO_SUCCESS)
                 {
@@ -703,6 +706,7 @@ main(int argc, char **argv)
         }
 
         /* Decrypt
+        解密
         */
         res = fko_decrypt_spa_data(ctx2, key, key_len);
 

@@ -581,16 +581,19 @@ fko_encrypt_spa_data(fko_ctx_t ctx, const char * const enc_key,
 
     /* Must be initialized
     */
+   //必须初始化过
     if(!CTX_INITIALIZED(ctx))
         return(FKO_ERROR_CTX_NOT_INITIALIZED);
-
+    //密钥长度必须大于0
     if(enc_key_len < 0)
         return(FKO_ERROR_INVALID_KEY_LEN);
 
     /* If there is no encoded data or the SPA data has been modified,
      * go ahead and re-encode here.
     */
+   //还没有加密数据或者spa数据被修改
     if(ctx->encoded_msg == NULL || FKO_IS_SPA_DATA_MODIFIED(ctx))
+        //加密spa数据包
         res = fko_encode_spa_data(ctx);
 
     if(res != FKO_SUCCESS)

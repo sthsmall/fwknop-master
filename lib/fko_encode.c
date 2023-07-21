@@ -84,6 +84,8 @@ fko_encode_spa_data(fko_ctx_t ctx)
     char   *tbuf;
 
 #if HAVE_LIBFIU
+//libfiu是什么？
+    //如果 libfiu 选择注入 "fko_encode_spa_data_init" 故障，就会返回错误码
     fiu_return_on("fko_encode_spa_data_init", FKO_ERROR_CTX_NOT_INITIALIZED);
 #endif
     /* Must be initialized
