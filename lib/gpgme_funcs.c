@@ -179,6 +179,38 @@ process_sigs(fko_ctx_t fko_ctx, gpgme_verify_result_t vres)
 
 /* Get the GPG key for the given name or ID.
 */
+/*
+
+    首先创建一个用于密钥列表的gpgme上下文对象list_ctx以及两个密钥对象key和key2。
+    调用init_gpgme函数初始化gpgme库，如果初始化失败，则根据signer参数返回相应的错误代码。
+    根据signer参数选择使用签名者或接收者的名称，并将其赋值给name变量。
+    调用gpgme_op_keylist_start函数开始获取密钥列表，传入list_ctx和name参数。
+    如果操作出错，则释放list_ctx资源，设置上下文对象的gpg_err成员为错误代码，并根据signer参数返回相应的错误代码。
+    使用gpgme_op_keylist_next函数从密钥列表中获取第一个密钥，并将其赋值给key变量。
+    如果获取密钥时发生错误，则设置上下文对象的gpg_err成员为错误代码，并根据signer参数返回相应的错误代码。
+    使用gpgme_op_keylist_next函数尝试获取下一个匹配的密钥。如果成功获取到下一个密钥，
+    则说明指定的密钥名称存在歧义，需要返回错误代码。在此情况下，释放之前获取的密钥对象资源，
+    设置上下文对象的gpg_err成员为错误代码，并根据signer参数返回相应的错误代码。
+    调用gpgme_op_keylist_end函数结束密钥列表操作。
+    释放之前获取的密钥对象资源。
+    将获取到的密钥赋值给mykey指针所指向的变量。
+    返回成功的状态代码FKO_SUCCESS。
+
+在fwknop中，客户端需要生成密钥是为了进行身份验证和加密通信。
+
+生成密钥的过程可以分为两个步骤：生成公钥和私钥。
+
+    公钥是用于向防火墙发送请求的一部分，防火墙使用公钥来验证客户端的身份。
+    私钥是保密的，并且只有客户端知道。私钥用于对发送给防火墙的请求进行数字签名，
+    以确保数据的完整性和真实性。
+
+生成密钥对后，客户端将公钥提供给服务器端（即防火墙），而私钥则应妥善保管，不应与他人共享。
+
+通过使用密钥对进行身份验证和加密通信，fwknop客户端可以确保与防火墙之间的安全通信。
+只有拥有正确私钥的客户端才能成功发送请求并与防火墙进行受保护的通信。
+
+
+*/
 int
 get_gpg_key(fko_ctx_t fko_ctx, gpgme_key_t *mykey, const int signer)
 {

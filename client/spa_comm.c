@@ -148,6 +148,8 @@ chksum(unsigned short *buf, int nbytes)
 =======
 //发送spa
 >>>>>>> f09b0292cd2656cd80e5e6c7c601b8725d8fd234
+
+//该函数是发送的不是原始的udp或者tcp的数据包
 static int
 send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
     const fko_cli_options_t *options)
@@ -156,17 +158,35 @@ send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
     struct  addrinfo *result=NULL, *rp, hints;
     char    port_str[MAX_PORT_STR_LEN+1] = {0};
 
-    if (options->test)
+    if (options->test)          //这里会判断是否开启了test，开启了就会直接打印日志，终止函数，这样主函数中的test代码就会执行
     {
         log_msg(LOG_VERBOSITY_NORMAL,
             "test mode enabled, SPA packet not actually sent.");
         return res;
     }
 
-    memset(&hints, 0, sizeof(struct addrinfo));
+    memset(&hints, 0, sizeof(struct addrinfo));//用于将一块内存区域的值设置为指定的字节值。
 
     hints.ai_family   = AF_INET; /* Allow IPv4 only */
+   
+    //如果是UDP，设置udp相关的
+    /*
+    这段代码是根据给定的条件设置hints结构体中与套接字类型和协议相关的字段，以便在使用UDP协议发送SPA数据包时使用。
 
+    根据代码片段提供的信息，当options->spa_proto等于FKO_PROTO_UDP时，即当SPA协议为UDP时，会执行以下操作：
+
+    将hints结构体中的ai_socktype字段设置为SOCK_DGRAM，表示使用数据报套接字类型（UDP）。
+
+    将hints结构体中的ai_protocol字段设置为IPPROTO_UDP，表示要使用UDP协议。
+
+    通过这样的设置，后续在创建套接字并进行网络通信时，可以根据hints的值选择正确的套接字类型和协议，
+    确保SPA数据包通过UDP协议进行发送。
+
+    需要注意的是，这段代码片段只是设置了相关的hints字段，并没有展示完整的套接字创建和网络通信的过程。
+    完整的代码可能会在后续的步骤中使用hints来创建套接字、进行绑定、发送数据等操作。
+
+    
+    */
     if (options->spa_proto == FKO_PROTO_UDP)
     {
         /* Send the SPA data packet via an single UDP packet - this is the
@@ -183,6 +203,9 @@ send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
         hints.ai_protocol = IPPROTO_TCP;
     }
 
+    //在提供的代码中，snprintf函数被用于将整数值options->spa_dst_port转换为字符串形式，
+    //并将结果存储到port_str中。该函数保证不会超过MAX_PORT_STR_LEN限定的字符串长度。
+    //通过该函数就可以获得string类型的目标端口号
     snprintf(port_str, MAX_PORT_STR_LEN+1, "%d", options->spa_dst_port);
 
 #if AFL_FUZZING
@@ -192,7 +215,12 @@ send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
         "AFL fuzzing enabled, SPA packet not actually sent.");
     return res;
 #endif
+    /*
+        这段代码使用getaddrinfo函数根据给定的服务器地址和端口号获取与之对应的网络地址信息。
 
+        getaddrinfo是一个C语言中的库函数，用于将主机名（或IP地址）和服务名（或端口号）
+        转换为适用于网络通信的地址结构。
+    */
     error = getaddrinfo(options->spa_server_str, port_str, &hints, &result);
 
     if (error != 0)
@@ -200,12 +228,34 @@ send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
         log_msg(LOG_VERBOSITY_ERROR, "error in getaddrinfo: %s", gai_strerror(error));
         return -1;
     }
+    /*
+    for循环：
 
+        这段代码是一个循环，用于遍历result链表中的地址信息结构体，并尝试创建套接字并进行连接操作。代码逻辑如下：
+
+    遍历result链表中的每个地址信息结构体（rp = result; rp != NULL; rp = rp->ai_next）。
+    如果设置了--server-resolve-ipv4选项，判断地址族不是IPv4的情况，跳过当前循环，继续下一次循环。
+    使用socket函数创建套接字，并将返回的套接字描述符保存在sock变量中。如果创建失败（sock < 0），则继续下一次循环。
+    使用connect函数尝试连接到指定地址（rp->ai_addr）和端口（rp->ai_addrlen）。如果连接成功（返回值不为-1），
+    设置sock_success为1，跳出循环。
+    如果连接失败，则关闭套接字，并继续下一次循环。
+    循环结束后，释放地址信息结构体占用的资源（通过调用freeaddrinfo函数）。
+    如果sock_success为0，表示没有成功创建套接字或连接，打印错误消息，并返回-1。
+    如果成功创建套接字且连接成功，则使用send函数发送数据到服务器。
+    如果发送数据失败（res < 0），打印错误消息。
+    如果发送的字节数与数据长度不一致（res != sd_len），打印警告消息。
+
+    这段代码的作用是根据给定的地址信息，创建套接字并尝试连接服务器，并发送数据。其中，result是一个addrinfo结构体链表，
+    保存了一些网络相关的信息，例如主机名、端口号等。具体的操作需要根据实际需求和后续代码进行相应调整。
+
+    
+    */
     for (rp = result; rp != NULL; rp = rp->ai_next) {
         /* Apply --server-resolve-ipv4 criteria
         */
         if(options->spa_server_resolve_ipv4)
         {
+            //只会循环IPv4的协议族
             if(rp->ai_family != AF_INET)
             {
                 log_msg(LOG_VERBOSITY_DEBUG, "Non-IPv4 resolution");
@@ -218,6 +268,25 @@ send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
         if (sock < 0)
             continue;
 
+        /*
+        为UDP套接字调用connect函数的好处是：
+
+        简化发送数据的过程：通过调用send函数，可以直接将数据发送给已连接的目标地址，而无需每次发送数据时都指定目标地址。
+        进行错误检查：如果连接失败，可以及时得知连接错误，并采取相应的处理措施。
+        如果不设置连接的话，需要使用sendto函数，并且要指定目标IP
+
+        */
+        /*注意这里只要连接成功，就会退出循环
+        而且不管是tcp或者是udp都会去连接
+        这里的协议可以是 TCP（传输控制协议）或 UDP（用户数据报协议），取决于在创建 addrinfo 结构体时设置的 ai_socktype 字段。
+
+        如果 ai_socktype 设置为 SOCK_STREAM，则 connect 函数将尝试使用 TCP 协议建立连接。
+        如果 ai_socktype 设置为 SOCK_DGRAM，则 connect 函数将尝试使用 UDP 协议建立连接。
+
+        在调用 connect 函数之前，通常会通过 getaddrinfo 函数获取地址信息，并在其中设置 ai_socktype 字段以指定所需的套接字类型。
+        根据设置的套接字类型，connect 函数将使用相应的协议来建立连接。
+
+       */
         if ((error = (connect(sock, rp->ai_addr, rp->ai_addrlen) != -1)))
         {
             sock_success = 1;
@@ -232,6 +301,7 @@ send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
 #endif
         }
     }
+    //循环结束，释放空间
     if(result != NULL)
         freeaddrinfo(result);
 
@@ -242,6 +312,7 @@ send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
         return -1;
     }
     //发送数据
+    //这里可能是tcp也可能是udp，具体的形式，要看上面设置的协议，统一使用send函数就可以发送
     res = send(sock, spa_data, sd_len, 0);
 
     if(res < 0)
@@ -259,6 +330,7 @@ send_spa_packet_tcp_or_udp(const char *spa_data, const int sd_len,
 #ifdef WIN32
     closesocket(sock);
 #else
+    //最后释放socket
     close(sock);
 #endif
 
@@ -479,7 +551,7 @@ send_spa_packet_tcp_raw(const char *spa_data, const int sd_len,
 
     关闭套接字，释放资源。
 
-
+    这个发送的是原始的UDP数据包
 */
 static int
 send_spa_packet_udp_raw(const char *spa_data, const int sd_len,
@@ -582,6 +654,27 @@ send_spa_packet_udp_raw(const char *spa_data, const int sd_len,
 /* Send the SPA data via ICMP packet.
 */
 //发送ICMP数据包
+/*
+
+这段代码是用于通过ICMP协议发送SPA数据包的函数。下面是代码的执行流程：
+
+    首先，检查当前的操作系统是否为Windows，如果是，则打印错误信息并返回-1，因为Windows暂时不支持原始套接字操作。
+    创建一个原始套接字，使用 socket 函数来创建。设置套接字的协议为IPPROTO_RAW，这样可以直接操作IP层的数据。
+    如果 options->test 为真，则表示测试模式启用，不实际发送SPA数据包。此时，打印相应的日志信息并返回0。
+    将SPA数据拷贝到 pkt_data 缓冲区的正确位置。
+    填充IP头部的各个字段，例如版本号、服务类型、总长度、标识符、生存时间等。
+    填充ICMP头部的各个字段，例如类型、代码、校验和等。如果ICMP类型为ICMP_ECHO（即Ping请求）且代码为0，还需要设置ICMP的标识符和序列号。
+    计算IP头部和ICMP头部的校验和。
+    使用 setsockopt 函数设置套接字选项，将IP报文头部包含在数据中，以避免内核自动填充IP头部。
+    调用 sendto 函数发送数据包。
+    检查发送结果。如果发送失败，则打印错误信息。如果发送成功但发送的字节数与SPA数据长度不一致，则打印警告信息。
+    关闭套接字。
+    返回发送结果。
+
+这段代码的作用是使用ICMP协议发送SPA数据包。它创建一个原始套接字，并填充IP头部和ICMP头部的字段，然后发送数据包。
+
+
+*/
 static int
 send_spa_packet_icmp(const char *spa_data, const int sd_len,
     const struct sockaddr_in *saddr, const struct sockaddr_in *daddr,
@@ -683,40 +776,29 @@ send_spa_packet_icmp(const char *spa_data, const int sd_len,
 
 #endif /* !WIN32 */
 }
+
+/* Send the SPA data packet via an HTTP request
+*/
 /*
 
-当需要通过网络发送SPA数据包时，可以使用send_spa_packet_icmp函数。
-该函数的参数包括SPA数据、SPA数据长度、源IP地址、目的IP地址以及其他一些选项。
+    首先，函数开始时定义了一些变量。http_buf是用来存放HTTP请求内容的字符数组，初始化为全0。spa_data_copy是用来保存拷贝的SPA数据的指针，初始时为空。
+    接下来，通过调用malloc函数在堆上分配了一块大小为sd_len+1的内存用于存放拷贝的SPA数据。如果分配失败，则打印错误信息并返回-1。
+    使用memcpy函数将原始的SPA数据拷贝到spa_data_copy所指向的内存块中，并在最后添加终止符。这样做是为了修改spa_data_copy中的数据，而不影响到原始的SPA数据。
+    遍历spa_data_copy中的每个字符，将其中的"+"替换为"-"，将"/"替换为"_"。这是因为在HTTP请求中，这些字符需要进行转义。
+    判断options->http_proxy是否为空，以确定是否需要发送SPA数据包通过HTTP代理。如果为空，则表示不使用代理。
+    此时，使用snprintf函数将HTTP请求的内容格式化到http_buf中。
+    格式化的内容包括请求行、请求头部和空行。其中，spa_data_copy表示的是请求的资源路径，options->http_user_agent表示浏览器的User-Agent信息，
+    options->spa_server_str表示主机名或IP地址。
+    如果options->http_proxy不为空，表示需要通过HTTP代理发送SPA数据包。首先判断代理地址是否以"http://"开头，如果是，则将其去掉。
+    然后，查找代理地址中是否有":"，若有则分离出代理的主机名或IP地址和端口号，并且将代理的主机名或IP地址赋值给options->spa_server_str。
+    最后，使用snprintf函数将HTTP请求的内容格式化到http_buf中。其中的格式化内容与上述情况类似，只是请求行中的资源路径前面加上了代理的主机名或IP地址。
+    释放spa_data_copy指向的内存块。
+    如果options->test为真，则表示测试模式启用，不实际发送SPA数据包。此时，打印HTTP请求内容，然后返回0。
+    否则，调用send_spa_packet_tcp_or_udp函数将HTTP请求内容发送出去，并返回发送结果。
 
-函数首先判断是否在Windows系统上运行，因为在Windows系统上原始数据包的发送需要特殊处理。
-如果是，则输出错误日志并返回-1表示不支持。接下来，在非Windows系统上，函数声明了一些变量和数据结构，
-然后创建了一个原始套接字（raw socket）。
+    这段代码的作用是根据配置选项，通过HTTP协议发送SPA数据包。如果不使用HTTP代理，则直接将SPA数据包封装成HTTP请求发送出去；
+    如果使用HTTP代理，则将SPA数据包封装成HTTP请求，并指定代理服务器。
 
-接下来，函数将SPA数据复制到数据包中，并填充IP头部和ICMP头部。IP头部使用struct iphdr结构体表示，
-ICMP头部使用struct icmphdr结构体表示。hdrlen变量表示IP头部和ICMP头部的大小。
-
-填充IP头部的字段包括版本号、服务类型、总长度、标识符、生存时间（TTL）、协议等。
-其中，IP头部的校验和字段先暂时设置为0，后续会计算正确的校验和。
-
-填充ICMP头部的字段包括类型、代码、校验和等。如果ICMP类型是回显请求（ICMP_ECHO）且代码是0，
-则还会填充回显请求的标识符和序列号字段。
-
-接下来，函数计算IP头部和ICMP头部的校验和，并将结果赋值给对应的字段。
-
-然后，函数设置原始套接字的选项，确保内核知道数据包中已经包含了IP头部，以避免内核再次插入自己的头部。
-
-最后，函数使用sendto函数将数据包发送到目标地址，并根据发送结果输出相应的日志信息。
-发送完成后，关闭套接字。
-
-需要注意的是，在Windows系统上，由于不支持原始数据包的发送，因此函数会直接返回不支持的错误信息。
-因此，该函数在Windows系统上无法执行发送操作。
-
-整体来说，send_spa_packet_icmp函数用于构造并发送SPA数据包的ICMP数据包。它通过创建原始套接字、
-填充IP头部和ICMP头部的字段、计算校验和等操作，实现了发送SPA数据的功能。
-
-
-*/
-/* Send the SPA data packet via an HTTP request
 */
 static int
 send_spa_packet_http(const char *spa_data, const int sd_len,
@@ -840,6 +922,7 @@ send_spa_packet_http(const char *spa_data, const int sd_len,
 
 
 */
+//使用该函数可以封装前面的几种协议的函数
 int
 send_spa_packet(fko_ctx_t ctx, fko_cli_options_t *options)
 {

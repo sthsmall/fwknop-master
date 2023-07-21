@@ -36,6 +36,31 @@
 /* Initialize an fko context.
 */
 //初始化一个新的fko文本
+/*
+这段代码是一个函数 fko_new 的实现，用于创建并初始化一个 fko_ctx_t 上下文结构体对象。
+
+首先，定义了一个局部变量 ctx 并初始化为 NULL。
+
+接着，调用 calloc 函数分配了一块内存，用于存储 ctx 结构体对象，并将其初始化为全零。
+如果内存分配失败，则返回错误码 FKO_ERROR_MEMORY_ALLOCATION。
+
+然后，设定了一些默认值和状态，设置了上下文的初始状态为 FKO_CTX_INITIALIZED。
+
+之后，使用 strdup 函数复制了一个字符串常量 FKO_PROTOCOL_VERSION 到 ver 变量中，并将其赋值给上下文对象的 version 成员变量。
+如果内存分配失败，则销毁上下文对象并返回错误码 FKO_ERROR_MEMORY_ALLOCATION。
+
+接下来，调用 fko_set_rand_value 函数设置上下文对象的随机值。如果设置失败，则销毁上下文对象并返回对应的错误码。
+
+然后，调用 fko_set_username、fko_set_timestamp、fko_set_spa_digest_type 等函数依次设置上下文对象的用户名、
+时间戳、默认摘要类型、默认消息类型以及默认加密类型等。
+
+最后，设置了一些特定条件下的操作，如开启 GPG 签名验证等。
+
+最终，将创建并初始化完成的上下文对象通过指针 r_ctx 返回。
+
+函数执行成功时返回 FKO_SUCCESS，否则根据具体错误情况返回相应的错误码。
+
+*/
 int
 fko_new(fko_ctx_t *r_ctx)
 {
@@ -159,6 +184,33 @@ fko_new(fko_ctx_t *r_ctx)
 /* Initialize an fko context with external (encrypted/encoded) data.
  * This is used to create a context with the purpose of decoding
  * and parsing the provided data into the context data.
+*/
+/*
+这段代码是一个名为 fko_new_with_data 的函数实现，用于创建并初始化一个 fko_ctx_t 上下文结构体对象，并传入一些数据。
+
+首先，定义了一个局部变量 ctx 并初始化为 NULL。
+
+然后，根据输入的参数进行各种错误检查和处理。例如，如果 enc_msg 是空指针，则返回错误码 FKO_ERROR_INVALID_DATA_FUNCS_NEW_ENCMSG_MISSING。
+如果 dec_key_len 或 hmac_key_len 小于零，则返回错误码 FKO_ERROR_INVALID_KEY_LEN。
+
+接着，使用 calloc 函数分配了一块内存，用于存储 ctx 结构体对象，并将其初始化为全零。如果内存分配失败，则返回错误码 FKO_ERROR_MEMORY_ALLOCATION。
+
+然后，计算了 enc_msg 的长度，并进行一些长度有效性检查。
+
+接下来，将传入的数据存储到上下文对象的相应成员变量中。例如，将 enc_msg 复制到 ctx->encrypted_msg 中，并设置其长度为 enc_msg_len。
+
+然后，根据需要设置默认的加密模式和 HMAC 摘要类型等。
+
+之后，根据需要检验 HMAC。
+
+最终，根据传入的解密密钥进行解密操作，并根据结果进行相应的处理。
+
+最后，将创建并初始化完成的上下文对象通过指针 r_ctx 返回。
+
+函数执行成功时返回 FKO_SUCCESS，否则根据具体错误情况返回相应的错误码。
+
+这段代码是对名为 enc_msg 的消息进行加密操作。具体来说，它将 enc_msg 复制到上下文对象的 encrypted_msg 字段中，并使用提供的加密模式对其进行加密处理。
+在函数的后续部分，如果传入了解密密钥，则还会对消息进行解密和解码操作。因此，可以说这段代码实现了对消息的加密和解密功能。
 */
 int
 fko_new_with_data(fko_ctx_t *r_ctx, const char * const enc_msg,
@@ -370,6 +422,22 @@ fko_destroy(fko_ctx_t ctx)
 /* Generate Rijndael and HMAC keys from /dev/random and base64
  * encode them
 */
+/*
+这段代码是一个实现密钥生成的函数。它接收一些参数，包括 key_base64、key_len、hmac_key_base64、hmac_key_len 和 hmac_type，并返回一个整数。
+
+在函数中，首先声明了用于存储密钥和HMAC 密钥的变量 key 和 hmac_key，它们分别是 RIJNDAEL_MAX_KEYSIZE 和 SHA512_BLOCK_LEN 字节大小的无符号字符数组。
+然后，对传入的密钥长度和HMAC 密钥长度进行处理，如果它们等于默认值 FKO_DEFAULT_KEY_LEN，则将其替换为相应的长度。
+接下来，根据 hmac_type 的不同取值，确定了 HMAC 密钥的长度。
+
+然后会对密钥长度和HMAC 密钥长度进行有效性验证，确保它们在有效范围内。如果验证失败，则返回相应的错误代码。
+
+之后，调用 get_random_data 函数生成随机的密钥和HMAC 密钥。生成的密钥和HMAC 密钥会被编码成 Base64 格式，
+并存储到相应的输出参数 key_base64 和 hmac_key_base64 中。
+
+最后，函数返回 FKO_SUCCESS 表示密钥生成成功。
+
+总结来说，这段代码实现了生成密钥和HMAC 密钥，并将其以 Base64 编码格式返回的功能。
+*/
 int
 fko_key_gen(char * const key_base64, const int key_len,
         char * const hmac_key_base64, const int hmac_key_len,
@@ -421,6 +489,9 @@ fko_key_gen(char * const key_base64, const int key_len,
 
 /* Provide an FKO wrapper around base64 encode/decode functions
 */
+
+
+*/
 int
 fko_base64_encode(unsigned char * const in, char * const out, int in_len)
 {
@@ -464,6 +535,31 @@ fko_get_version(fko_ctx_t ctx, char **version)
 /* Final update and encoding of data in the context.
  * This does require all requisite fields be properly
  * set.
+*/
+
+/*
+这段代码是一个名为 fko_spa_data_final 的函数，它用于最终处理 SPA（Secure Password Authentication）数据。
+该函数接受一个 fko_ctx_t 类型的上下文参数 ctx，以及两个加密密钥参数 enc_key 和 hmac_key，
+以及对应的密钥长度参数 enc_key_len 和 hmac_key_len。函数返回一个整数。
+
+在函数中，首先通过条件编译判断上下文是否已初始化。如果未初始化，则返回错误代码 FKO_ERROR_CTX_NOT_INITIALIZED。
+
+然后，检查传入的加密密钥长度是否小于 0，如果是，则返回错误代码 FKO_ERROR_INVALID_KEY_LEN。
+
+接着，调用 fko_encrypt_spa_data 函数对 SPA 数据进行加密。加密成功后，检查上下文中的哈希类型是否为已知类型。
+如果哈希类型不为未知类型，则执行以下操作：
+
+    检查传入的哈希密钥长度是否小于 0，如果是，则返回错误代码 FKO_ERROR_INVALID_KEY_LEN。
+    检查哈希密钥是否为空指针，如果是，则返回错误代码 FKO_ERROR_INVALID_KEY_LEN。
+    调用 fko_set_spa_hmac 函数设置 SPA 数据的哈希值。
+    如果设置哈希值成功，则将哈希值追加到已经进行过 Base64 编码和去除尾部 '=' 字符的加密数据中。
+    更新上下文中的加密数据和加密数据长度。
+
+最后，函数返回加密和哈希操作的结果。
+
+综上所述，这段代码实现了最终处理 SPA 数据的功能，包括对数据进行加密和追加哈希值。
+代码中还包含了对错误情况的处理和对上下文状态的检查。
+
 */
 int
 fko_spa_data_final(fko_ctx_t ctx,
@@ -520,6 +616,27 @@ fko_spa_data_final(fko_ctx_t ctx,
 
 /* Return the fko SPA encrypted data.
 */
+/*
+在这个函数中，上下文 ctx 的作用是存储与 SPA 数据相关的信息和状态。该上下文参数 ctx 是一个 fko_ctx_t 类型的结构体，在函数调用之前需要先初始化。
+
+上下文对象 ctx 存储了一些关键的数据，包括加密后的 SPA 数据、加密类型等。它的作用是提供函数执行所需的信息和状态，以便正确地处理 SPA 数据。
+
+在函数中，上下文被用于以下几个方面：
+
+    检查上下文是否已初始化：通过检查上下文的初始化状态，可以确保函数在处理 SPA 数据之前，
+    上下文对象已经经过正确的初始化。如果上下文未初始化，则函数会返回错误代码。
+
+    获取加密数据：函数通过访问上下文对象中的 encrypted_msg 成员来获取加密数据。
+    这个成员存储了加密后的 SPA 数据，函数将其赋值给 spa_data 返回给调用者。
+
+    检查加密类型：根据上下文中的 encryption_type 成员，判断加密类型是 Rijndael 还是 GnuPG。
+    根据不同类型的加密规则，调整返回的 SPA 数据指针的位置。
+
+总之，上下文在这个函数中的作用是提供必要的数据和状态，以便函数能够正确地处理和返回 SPA 数据。
+它承载了与 SPA 数据相关的信息，帮助函数在正确的上下文环境中执行操作。
+
+该函数并没有加密数据，而是通过上下文来获取加密的SPA，并通过该函数返回加密的SPA
+*/
 int
 fko_get_spa_data(fko_ctx_t ctx, char **spa_data)
 {
@@ -569,6 +686,30 @@ fko_get_spa_data(fko_ctx_t ctx, char **spa_data)
 }
 
 /* Set the fko SPA encrypted data.
+*/
+/*
+这段代码是一个名为 fko_set_spa_data 的函数，用于设置 SPA（Secure Password Authentication）数据。
+函数接受一个 fko_ctx_t 类型的上下文参数 ctx 和一个指向常量字符的指针 enc_msg 参数，用于传入加密后的 SPA 数据。函数返回一个整数。
+
+在函数中，首先通过条件编译判断上下文是否已初始化。如果未初始化，则返回错误代码 FKO_ERROR_CTX_NOT_INITIALIZED。
+
+然后，检查传入的 enc_msg 是否为空指针，如果是，则返回错误代码 FKO_ERROR_INVALID_DATA_FUNCS_SET_MSGLEN_VALIDFAIL。
+
+接着，通过 strnlen 函数获取 enc_msg 的长度，并将其赋值给 enc_msg_len 变量。
+
+然后，调用 is_valid_encoded_msg_len 函数验证 enc_msg_len 是否符合规定的有效长度。如果长度不合法，
+则返回错误代码 FKO_ERROR_INVALID_DATA_FUNCS_SET_MSGLEN_VALIDFAIL。
+
+接下来，检查上下文中的 encrypted_msg 是否已存在，如果存在，则释放之前分配的内存。
+
+然后，将 enc_msg 中的数据拷贝到上下文的 encrypted_msg 成员中，并将其长度赋值给 encrypted_msg_len。
+
+最后，如果内存分配失败，则返回错误代码 FKO_ERROR_MEMORY_ALLOCATION，否则返回成功代码 FKO_SUCCESS。
+
+综上所述，这段代码实现了设置加密后的 SPA 数据的功能，包括检查上下文状态、验证输入参数、拷贝数据到上下文中。
+如果一切正常，函数会成功设置 SPA 数据并返回成功代码。
+
+
 */
 int
 fko_set_spa_data(fko_ctx_t ctx, const char * const enc_msg)

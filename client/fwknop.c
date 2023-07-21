@@ -129,10 +129,9 @@ static int enable_fault_injections(fko_cli_options_t * const opts);
 /*
 这段代码定义了三个宏常量：
 
-    NAT_ACCESS_STR_TEMPLATE：表示一个用于解析NAT访问字符串(ip地址和端口)的模板，
-    使用sscanf函数。其取值为"%s,%d"，其中%s表示字符串，%d表示整数。
+    
 
-    HOSTNAME_BUFSIZE：表示主机名字符串的最大长度，其取值为64。
+    
 
     CTX_DUMP_BUFSIZE：表示用于FKO上下文转储的最大缓冲区大小，其取值为4096。
 
@@ -140,9 +139,10 @@ static int enable_fault_injections(fko_cli_options_t * const opts);
 这样可以提高代码的可读性和维护性，并且能够方便地对字符串和缓冲区大小进行修改。
 
 */
-#define NAT_ACCESS_STR_TEMPLATE     "%s,%d"             /*!< Template for a nat access string ip,port with sscanf*/
-#define HOSTNAME_BUFSIZE            64                  /*!< Maximum size of a hostname string */
-#define CTX_DUMP_BUFSIZE            4096                /*!< Maximum size allocated to a FKO context dump */
+#define NAT_ACCESS_STR_TEMPLATE     "%s,%d"             //NAT_ACCESS_STR_TEMPLATE：表示一个用于解析NAT访问字符串(ip地址和端口)的模板，
+                                                        //使用sscanf函数。其取值为"%s,%d"，其中%s表示字符串，%d表示整数。
+#define HOSTNAME_BUFSIZE            64                  //HOSTNAME_BUFSIZE：表示主机名字符串的最大长度，其取值为64。
+#define CTX_DUMP_BUFSIZE            4096               //CTX_DUMP_BUFSIZE：表示用于FKO上下文转储的最大缓冲区大小，其取值为4096。
 
 int
 main(int argc, char **argv)
@@ -185,18 +185,21 @@ main(int argc, char **argv)
     char                hmac_key[MAX_KEY_LEN+1]  = {0}; //HMAC密钥
     int                 key_len = 0, orig_key_len = 0, hmac_key_len = 0, enc_mode; //存储密钥的长度
     int                 tmp_port = 0; //存储加密模式
-    char                dump_buf[CTX_DUMP_BUFSIZE];
+    char                dump_buf[CTX_DUMP_BUFSIZE]; //存储上下文转储数据
 
-    //这个结构体用于保存命令行参数
+    //fwknop客户端配置参数和值
     fko_cli_options_t   options;
 
+
+    //将客户端配置参数值初始化为0
     memset(&options, 0x0, sizeof(fko_cli_options_t));
     //初始化消息模块
-    /* Initialize the log module */
+    //设置日志级别为普通日志级别 -lkx
     log_new();
     //处理命令行  
     /* Handle command line
     */
+   //将命令行参数和客户端配置信息，传递给config进行初始化 -lkx
     config_init(&options, argc, argv);
 
 /*
@@ -222,10 +225,12 @@ main(int argc, char **argv)
     /* Handle previous execution arguments if required
     */
    //处理之前的执行参数
+   //该函数主要用来显示上一个命令，或者执行上一个命令，或者保存当前命令到命令参数表 -lkx
     if(prev_exec(&options, argc, argv) != 1)
+        //执行退出程序前的必要清理工作
         clean_exit(ctx, &options, key, &key_len, hmac_key,
                 &hmac_key_len, EXIT_FAILURE);
-
+    //这里如果命令行设置了show_last_command，就直接结束程序了，为啥？ -lkx
     if(options.show_last_command) //显示 fwknop 使用的最后一个命令行参数
         clean_exit(ctx, &options, key, &key_len, hmac_key,
                 &hmac_key_len, EXIT_SUCCESS);
@@ -257,7 +262,7 @@ main(int argc, char **argv)
 
     /* Set client timeout
     */
-   //设置超时时间
+   //设置超时时间，超时就自动断开
     if(options.fw_timeout >= 0)
     {
         res = fko_set_spa_client_timeout(ctx, options.fw_timeout);
@@ -272,6 +277,7 @@ main(int argc, char **argv)
     /* Set the SPA packet message type based on command line options
     */
    //设置spa消息类型基于命令行选项
+   //设置消息类型是为了指定并约定在 SPA 通信中使用的消息的类型，以实现不同用途和格式的消息交互，并控制通信流程和支持系统的扩展性
     res = set_message_type(ctx, &options);
     if(res != FKO_SUCCESS)
     {
@@ -315,10 +321,21 @@ main(int argc, char **argv)
     }
     else
     {
+
         /* Resolve the client's public facing IP address if requestesd.
          * if this fails, consider it fatal.
         */
-       //解析客户端的公网ip地址
+    //解析客户端的公网ip地址
+    /*
+       获取到客户端的公网IP地址之后，可以进行一系列操作，包括但不限于以下几个方面：
+
+    访问控制：通过公网IP地址可以对客户端进行访问控制。你可以根据客户端的公网IP地址来限制或允许其访问特定的资源、
+    服务或功能。例如，你可以设置防火墙规则、访问列表或白名单，以基于IP地址对客户端进行访问控制。
+
+    安全验证：公网IP地址也可以用于安全验证机制。你可以将公网IP地址用作身份验证的一部分，
+    以确保只有特定的客户端可以通过验证并访问敏感信息或受限资源。
+
+       */
         if (options.resolve_ip_http_https)
         {
             if(options.resolve_http_only)
@@ -364,6 +381,12 @@ main(int argc, char **argv)
     /* Set NAT access string
     */
    //设置nat访问字符串
+   /*
+   设置NAT访问字符串的目的是为了实现私有网络和公网之间的连接和通信，
+   提供互联网访问、安全性、地址管理和网络扩展等功能。这样可以更好地控制和管理网络流量，
+   并确保私有网络内的设备通过共享的公网IP地址有效地与互联网上的其他主机进行通信。
+   
+   */
     if (options.nat_local || options.nat_access_str[0] != 0x0)
     {
         res = set_nat_access(ctx, &options, access_buf);
@@ -407,10 +430,10 @@ main(int argc, char **argv)
         */
 #ifndef WIN32
         if(!options.use_gpg_agent)
-            unsetenv("GPG_AGENT_INFO");
+            unsetenv("GPG_AGENT_INFO"); //删除环境变量
 #endif
-
-        res = fko_set_spa_encryption_type(ctx, FKO_ENCRYPTION_GPG); //设置spa加密模式，例如对称加密，此时加密模式为2
+        //设置gpg加密模式，一种非对称加密模式
+        res = fko_set_spa_encryption_type(ctx, FKO_ENCRYPTION_GPG); //设置spa加密模式
         if(res != FKO_SUCCESS) //报错
         {
             errmsg("fko_set_spa_encryption_type", res);
@@ -475,7 +498,7 @@ main(int argc, char **argv)
         }
 
         //设置SPA数据包加密格式，这种格式是指用哪种加密算法，例如AES、DES等
-        res = fko_set_spa_encryption_mode(ctx, FKO_ENC_MODE_ASYMMETRIC);
+        res = fko_set_spa_encryption_mode(ctx, FKO_ENC_MODE_ASYMMETRIC);//这里只是说了使用非对称加密，没有具体指出
         if(res != FKO_SUCCESS)
         {
             errmsg("fko_set_spa_encryption_mode", res);
@@ -559,15 +582,62 @@ main(int argc, char **argv)
                     fko_errstr(res));
     }
 
+
+
+
+
     /* Save packet data payload if requested.
     */
-   //如果请求，保存数据包数据负载。
+   //如果请求，保存数据包数据负载。？？？
+    /*
+    数据包的负载是指在网络通信中传输的实际数据部分，通常是需要发送或接收的有效信息。
+    在网络协议中，数据包通常由首部和负载两部分组成，首部包含了协议相关的控制信息，而负载则包含了实际传输的数据。
+
+保存数据包负载的目的可以有多个：
+
+    调试和故障排除：在网络通信过程中，如果出现问题或异常情况，保存数据包负载可以帮助开发人员进行调试和故障排除。
+    通过分析保存的数据包负载，可以检查数据是否被正确传输、解析和处理，从而找出问题所在。
+
+    分析网络流量：保存数据包负载可以用于网络流量分析。通过分析保存的数据包，
+    可以获取有关通信双方之间的交互细节、协议使用情况、传输的数据类型等信息。
+    这对于网络性能优化、安全审计、行为分析等方面非常有用。
+
+    法律合规和取证：在一些场景下，需要保存数据包负载以满足法律合规要求或作为取证的依据。
+    例如，在网络安全事件调查中，保存数据包负载可以用于追踪攻击来源和行为，
+    提供证据以支持调查和法律追诉。
+
+综上所述，保存数据包负载对于网络调试、流量分析和法律合规等方面都具有重要的作用。
+   
+    */
+
     if (options.save_packet_file[0] != 0x0)
         write_spa_packet_data(ctx, &options);
 
     /* SPA packet random destination port handling
     */
-   //SPA数据包随机目标端口处理
+
+
+   //SPA数据包随机目标端口处理,生成一个随机端口，放到options中
+   /*
+   在某些情况下，将随机端口的生成放在客户端可能是有一定必要性的。
+
+首先，生成随机端口可以增加数据包的多样性和随机性。如果服务器端固定分配目标端口，
+攻击者可能会利用这个可预测的端口信息进行潜在的攻击。通
+过在客户端生成随机端口，可以增加攻击者猜测端口号的难度，提高网络传输的安全性。
+
+其次，客户端生成随机端口可以减轻服务器负担。如果服务器需要为每个连接或请求生成随机端口，
+会增加服务器的计算和资源消耗。而将生成随机端口的任务放在客户端完成，可以分摊服务器的负担，提高服务器的处理能力和性能。
+
+此外，在特定的应用场景中，需要将目标端口信息从客户端传递到服务器端。例如，当客户端与服务器建立连接时，
+需要指定目标端口以确定服务端口。在这种情况下，客户端生成随机端口可以直接将生成的端口信息传递给服务器，
+避免了额外的通信和交互。
+
+综上所述，客户端生成随机端口可以增加安全性，减轻服务器负担，并满足特定应用场景的需求。
+然而，具体是否在客户端生成随机端口，取决于系统设计和实际需求。在某些情况下，
+仍然可能需要在服务器端生成随机端口来满足特定的安全要求或业务需求。
+
+   
+   */
     if (options.rand_port)
     {
         tmp_port = get_rand_port(ctx);
@@ -582,20 +652,39 @@ main(int argc, char **argv)
      * a random source port unless the source port is already set
     */
    //如果我们使用“原始”模式之一（通常是因为我们要欺骗SPA数据包源IP），则选择随机源端口，除非源端口已经设置
+   /*
+   换句话说，当以"raw"模式发送SPA数据包时，如果源端口还没有被设置过，那么就会随机选择一个源端口。
+   这是为了增加欺骗/伪造的隐蔽性和安全性。同时，在已经设置过源端口的情况下，不再改变源端口的值。
+   */
 
+    /*
+    如果options.spa_proto的值是FKO_PROTO_TCP_RAW、FKO_PROTO_UDP_RAW或FKO_PROTO_ICMP，
+    并且options.spa_src_port的值为0（即还没有设置源端口），则会执行以下操作：
+
+    调用get_rand_port(ctx)函数获取一个随机端口，并将返回的端口号赋值给tmp_port变量。
+    如果获取随机端口失败（tmp_port小于0），则会调用clean_exit()函数进行清理操作，并退出程序。
+    将tmp_port的值赋给options.spa_src_port，即将随机端口设置为源端口。
+
+    这段代码的作用是在使用"raw"模式发送TCP、UDP或ICMP的SPA数据包时，
+    如果源端口还未设置，则会生成一个随机端口，并将其设置为源端口。
+    这样可以确保在发送伪造的SPA数据包时，源端口具有随机性，增加欺骗性和安全性。
+    
+    */
     if ((options.spa_proto == FKO_PROTO_TCP_RAW
             || options.spa_proto == FKO_PROTO_UDP_RAW
             || options.spa_proto == FKO_PROTO_ICMP)
             && !options.spa_src_port)
     {
-        //获取随机端口
+        //获取随机源端口，也即是客户端发送spa数据包的端口，而不是服务器接收数据包的端口
         tmp_port = get_rand_port(ctx);
         if(tmp_port < 0)
             clean_exit(ctx, &options, key, &orig_key_len,
                     hmac_key, &hmac_key_len, EXIT_FAILURE);
         options.spa_src_port = tmp_port;
     }
-    //发送SPA数据包
+
+
+    //发送SPA数据包，该函数会判断使用哪种协议发送数据
     res = send_spa_packet(ctx, &options);
     if(res < 0)
     {
@@ -612,6 +701,24 @@ main(int argc, char **argv)
      * portion should be moved elsewhere).
     */
    //在测试模式下运行解码周期（-DSS XXX：此测试/解码部分应移至其他位置）。
+    /*
+        这段代码是一个条件语句的代码块。如果options.test为真，则执行以下操作：
+
+    调用fko_get_spa_data()函数获取第一个上下文的数据，并将结果存储在spa_data中。
+    调用fko_get_spa_encryption_mode()函数获取加密模式，并将结果存储在enc_mode中。
+    判断是否使用了gpg-home-dir，如果是，则推迟解密过程，先创建一个空的上下文ctx2，然后使用加密数据填充它，并设置选项，最后解密数据。
+    如果使用了gpg并且需要设置GPG home dir，则调用fko_set_gpg_home_dir()函数设置ctx2的GPG home dir。
+    调用fko_decrypt_spa_data()函数对ctx2中的数据进行解密。
+    如果解密过程出现错误，则根据错误类型打印错误信息。
+    如果options.verbose为真，则在详细模式下将解密后的数据打印出来。
+    销毁ctx2。
+    执行一些清理工作。
+    返回EXIT_SUCCESS。
+
+    整个代码块的功能是对加密数据进行解密，并在需要时打印解密后的数据。
+    
+    */
+
     if (options.test)
     {
         /************** Decoding now *****************/
@@ -755,6 +862,8 @@ main(int argc, char **argv)
 
     return EXIT_SUCCESS;  /* quiet down a gcc warning */
 }
+
+
 /**
  * 这是一个名为 free_configs 的函数，用于释放 fko_cli_options_t 结构体中的资源。
 
@@ -783,7 +892,7 @@ free_configs(fko_cli_options_t *opts)
         free(opts->resolve_url);
     if (opts->wget_bin != NULL)
         free(opts->wget_bin);
-    zero_buf_wrapper(opts->key, MAX_KEY_LEN+1);
+    zero_buf_wrapper(opts->key, MAX_KEY_LEN+1); //zero_buf_wrapper用来清空缓冲区
     zero_buf_wrapper(opts->key_base64, MAX_B64_KEY_LEN+1);
     zero_buf_wrapper(opts->hmac_key, MAX_KEY_LEN+1);
     zero_buf_wrapper(opts->hmac_key_base64, MAX_B64_KEY_LEN+1);
@@ -820,6 +929,7 @@ free_configs(fko_cli_options_t *opts)
 以增加安全性和保护 SPA 数据的加密内容。
 
 */
+//注意：这里生成的是随机目标端口号，而不是源端口号
 static int
 get_rand_port(fko_ctx_t ctx)
 {

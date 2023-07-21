@@ -62,6 +62,18 @@ extern "C" {
  * \brief Supported FKO Message types...
  */
 
+/*
+
+    FKO_COMMAND_MSG: 表示命令消息，对应整数值 0。
+    FKO_ACCESS_MSG: 表示访问消息，对应整数值 1。
+    FKO_NAT_ACCESS_MSG: 表示 NAT 访问消息，对应整数值 2。
+    FKO_CLIENT_TIMEOUT_ACCESS_MSG: 表示带超时的访问消息，对应整数值 3。
+    FKO_CLIENT_TIMEOUT_NAT_ACCESS_MSG: 表示带超时的 NAT 访问消息，对应整数值 4。
+    FKO_LOCAL_NAT_ACCESS_MSG: 表示本地 NAT 访问消息，对应整数值 5。
+    FKO_CLIENT_TIMEOUT_LOCAL_NAT_ACCESS_MSG: 表示带超时的本地 NAT 访问消息，对应整数值 6。
+    FKO_LAST_MSG_TYPE: 用于标识枚举类型的结束，没有实际的对应整数值。
+
+*/
 typedef enum {
     FKO_COMMAND_MSG = 0, /**< Command message */
     FKO_ACCESS_MSG, /**< Access message */
@@ -79,6 +91,21 @@ typedef enum {
  *
  * \brief Supported digest types...
  */
+
+/*
+
+    FKO_DIGEST_INVALID_DATA: 表示无效的摘要类型，对应整数值 -1。
+    FKO_DIGEST_UNKNOWN: 表示未知的摘要类型，对应整数值 0。
+    FKO_DIGEST_MD5: 表示 MD5 摘要类型，对应整数值 1。
+    FKO_DIGEST_SHA1: 表示 SHA1 摘要类型，对应整数值 2。
+    FKO_DIGEST_SHA256: 表示 SHA256 摘要类型，对应整数值 3。
+    FKO_DIGEST_SHA384: 表示 SHA384 摘要类型，对应整数值 4。
+    FKO_DIGEST_SHA512: 表示 SHA512 摘要类型，对应整数值 5。
+    FKO_DIGEST_SHA3_256: 表示 SHA3 256 摘要类型，对应整数值 6。
+    FKO_DIGEST_SHA3_512: 表示 SHA3 512 摘要类型，对应整数值 7。
+    FKO_LAST_DIGEST_TYPE: 用于标识枚举类型的结束，没有实际的对应整数值。
+
+*/
 typedef enum {
     FKO_DIGEST_INVALID_DATA = -1, /**< Invalid digest type*/
     FKO_DIGEST_UNKNOWN = 0, /**< Unknown digest type*/
@@ -97,6 +124,21 @@ typedef enum {
  * \enum fko_hmac_type_t
  *
  * \brief Supported hmac digest types...
+*/
+/*
+
+    FKO_HMAC_INVALID_DATA: 表示无效的 HMAC 类型，对应整数值 -1。
+    FKO_HMAC_UNKNOWN: 表示未知的 HMAC 类型，对应整数值 0。
+    FKO_HMAC_MD5: 表示 MD5 HMAC 类型，对应整数值 1。
+    FKO_HMAC_SHA1: 表示 SHA1 HMAC 类型，对应整数值 2。
+    FKO_HMAC_SHA256: 表示 SHA256 HMAC 类型，对应整数值 3。
+    FKO_HMAC_SHA384: 表示 SHA384 HMAC 类型，对应整数值 4。
+    FKO_HMAC_SHA512: 表示 SHA512 HMAC 类型，对应整数值 5。
+    FKO_HMAC_SHA3_256: 表示 SHA3 256 HMAC 类型，对应整数值 6。
+    FKO_HMAC_SHA3_512: 表示 SHA3 512 HMAC 类型，对应整数值 7。
+    FKO_LAST_HMAC_MODE: 用于标识枚举类型的结束，没有实际的对应整数值。
+
+
 */
 typedef enum {
     FKO_HMAC_INVALID_DATA = -1, /**< Invalid HMAC type*/
@@ -117,6 +159,15 @@ typedef enum {
  *
  * \brief Supported encryption types...
 */
+/*
+
+    FKO_ENCRYPTION_INVALID_DATA: 表示无效的加密类型，对应整数值 -1。
+    FKO_ENCRYPTION_UNKNOWN: 表示未知的加密类型，对应整数值 0。
+    FKO_ENCRYPTION_RIJNDAEL: 表示 Rijndael（AES）加密类型，对应整数值 1。
+    FKO_ENCRYPTION_GPG: 表示 GPG 加密类型，对应整数值 2。
+    FKO_LAST_ENCRYPTION_TYPE: 用于标识枚举类型的结束，没有实际的对应整数值。
+
+*/
 typedef enum {
     FKO_ENCRYPTION_INVALID_DATA = -1, /**< Invalid encryption type*/
     FKO_ENCRYPTION_UNKNOWN = 0, /**< Unknown encryption type*/
@@ -130,6 +181,20 @@ typedef enum {
  * \enum fko_encryption_mode_t
  *
  * \brief Symmetric encryption modes to correspond to rijndael.h
+*/
+/*
+
+    FKO_ENC_MODE_UNKNOWN：未知的加密模式。
+    FKO_ENC_MODE_ECB：电子密码本（Electronic Code Book）加密模式。
+    FKO_ENC_MODE_CBC：密码分组链接（Cipher Block Chaining）加密模式。
+    FKO_ENC_MODE_CFB：密码反馈（Cipher Feedback）加密模式。
+    FKO_ENC_MODE_PCBC：传播密码分组链接（Propagating Cipher Block Chaining）加密模式。
+    FKO_ENC_MODE_OFB：输出反馈（Output Feedback）加密模式。
+    FKO_ENC_MODE_CTR：计数器（Counter）加密模式。
+    FKO_ENC_MODE_ASYMMETRIC：非对称加密模式（此处为GPG占位符）。
+    FKO_ENC_MODE_CBC_LEGACY_IV：旧的零填充策略使用的密码分组链接加密模式。
+    FKO_LAST_ENC_MODE：保留作为最后一个加密模式。
+
 */
 typedef enum {
     FKO_ENC_MODE_UNKNOWN = 0, /**< Unknown encryption mode*/

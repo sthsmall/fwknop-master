@@ -482,6 +482,7 @@ gpg_decrypt(fko_ctx_t ctx, const char *dec_key)
 /* Set the SPA encryption type.
 */
 //设置spa加密模式
+
 int
 fko_set_spa_encryption_type(fko_ctx_t ctx, const short encrypt_type)
 {

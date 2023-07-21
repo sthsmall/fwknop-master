@@ -63,7 +63,9 @@ typedef struct fko_gpg_sig *fko_gpg_sig_t;
  * \brief The pieces we need to make an FKO SPA data packet.
  */
 /*
-这段代码定义了一个名为fko_context的结构体，该结构体用于存储FWKNOP（FireWall KNock OPerator）中的上下文信息。FWKNOP是一个用于网络安全的工具，允许用户在受保护的主机上通过发送加密的"knock"消息来打开防火墙规则以获得访问权限。下面逐个解释结构体中各个参数的作用：
+这段代码定义了一个名为fko_context的结构体，该结构体用于存储FWKNOP（FireWall KNock OPerator）中的上下文信息
+FWKNOP是一个用于网络安全的工具，允许用户在受保护的主机上通过发送加密的"knock"消息来打开防火墙规则以获得访问权限。
+下面逐个解释结构体中各个参数的作用：
 
 rand_val: 随机值，用于生成安全令牌的一部分。
 
