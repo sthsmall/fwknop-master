@@ -31,6 +31,7 @@
 #include "fko.h"
 
 /* Set the SPA Client Timeout data
+*设置 SPA客户端超时数据。
 */
 int
 fko_set_spa_client_timeout(fko_ctx_t ctx, const int timeout)
