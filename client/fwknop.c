@@ -427,6 +427,7 @@ main(int argc, char **argv)
     {
         /* If use-gpg-agent was not specified, then remove the GPG_AGENT_INFO
          * ENV variable if it exists.
+         *如果未指定"use-gpg-agent"，则如果存在"GPG_AGENT_INFO"环境变量，则将其删除。
         */
 #ifndef WIN32
         if(!options.use_gpg_agent)

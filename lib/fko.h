@@ -1194,6 +1194,10 @@ DLL_API int fko_get_version(fko_ctx_t ctx, char **version);
  * default, _libfko_ forces _gpgme_ to use 'gpg' in case _gpgme_ was
  * compiled to use 'gpg2' as its default engine.  You can use this
  * function to override and set what GPG executable _gpgme_ will use.
+ * 设置 _gpgme_ 将使用的 GPG 可执行文件的路径。
+ * 默认情况下，如果 _gpgme_ 编译时使用 'gpg2' 作为其默认引擎，
+ * libfko 强制 _gpgme_ 使用 'gpg'。
+ * 您可以使用此函数来覆盖并设置 _gpgme_ 将使用的 GPG 可执行文件。
  *
  * \param ctx The FKO context to modify
  * \param The path to the GPG executable
