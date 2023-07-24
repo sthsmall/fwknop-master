@@ -40,6 +40,10 @@
  * will be copied.  Always NUL terminates (unless siz <= strlen(dst)).
  * Returns strlen(src) + MIN(siz, strlen(initial dst)).
  * If retval >= siz, truncation occurred.
+ * 将src附加到大小为 siz 的字符串 dst（与strncat不同，siz是dst的完整大小，而不是剩余空间）。
+ * 最多复制siz-1个字符。始终在末尾添加NUL（除非siz <= strlen(dst)）。
+ * 返回strlen(src) + MIN(siz, strlen(初始dst))。
+ * 如果返回值 >= siz，则发生截断。
  */
 size_t
 strlcat(char *dst, const char *src, size_t siz)
