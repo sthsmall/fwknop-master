@@ -96,7 +96,7 @@ typedef struct fko_cli_options
     int  no_save_args; //是否不保存参数
     int  use_hmac; //是否使用HMAC
     char spa_server_str[MAX_SERVER_STR_LEN];  /* may be a hostname */ //SPA服务器字符串，可能是主机名
-    char allow_ip_str[MAX_IPV4_STR_LEN]; //允许的IP字符串
+    char allow_ip_str[MAX_IPV4_STR_LEN]; //允许的IP字符串，即本机ip地址
     char spoof_ip_src_str[MAX_IPV4_STR_LEN]; //欺骗 fwknop 客户端发送 SPA 数据包的源地址
     char spoof_user[MAX_USERNAME_LEN]; //欺骗 fwknop 客户端发送 SPA 数据包的用户名
     int  rand_port; //是否使用随机端口

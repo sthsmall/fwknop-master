@@ -525,7 +525,7 @@ DLL_API int fko_spa_data_final(fko_ctx_t ctx, const char * const enc_key,
 DLL_API int fko_set_rand_value(fko_ctx_t ctx, const char * const val);
 
 /**
- * \brief Set FKO username
+ * \brief Set FKO username 设置FKO用户名
  *
  * Set the username field of the SPA data.  If USERNAME is NULL,
  * libfko will first look for the environment variable 'SPOOF_USER'
@@ -534,7 +534,11 @@ DLL_API int fko_set_rand_value(fko_ctx_t ctx, const char * const val);
  * 'getlogin', then fallback to the environment variables 'LOGNAME' or
  * 'USER'.  If none of those work, the function will return
  * 'FKO_ERROR_USERNAME_UNKNOWN'.
- *
+ * 设置spa应用程序数据的用户名字段。如果USERNAME为空，
+ * libfko将首先查找环境变量'SPOOF_USER'，如果找到则使用其值。
+ * 否则，它将尝试使用各种方法来确定用户名，从'cuser'或'getlogin'开始，
+ * 然后回退到环境变量'LOGNAME'或'USER'。如果所有这些方法都不起作用，
+ * 该函数将返回'FKO_ERROR_USERNAME_UNKNOWN'。
  * \param ctx the FKO context to modify
  * \param spoof_user The username to set in the FKO context
  *
