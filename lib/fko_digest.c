@@ -122,6 +122,7 @@ fko_get_raw_spa_digest_type(fko_ctx_t ctx, short *raw_digest_type)
     return(FKO_SUCCESS);
 }
 
+//将数据进行签名
 static int
 set_digest(char *data, char **digest, short digest_type, int *digest_len)
 {
@@ -230,6 +231,7 @@ set_digest(char *data, char **digest, short digest_type, int *digest_len)
     return(FKO_SUCCESS);
 }
 
+//设置spa消息摘要
 int
 fko_set_spa_digest(fko_ctx_t ctx)
 {
@@ -243,6 +245,7 @@ fko_set_spa_digest(fko_ctx_t ctx)
 
     /* Must have encoded message data to start with.
     */
+   //判断是否编码过
     if(ctx->encoded_msg == NULL)
         return(FKO_ERROR_MISSING_ENCODED_DATA);
 
@@ -250,6 +253,7 @@ fko_set_spa_digest(fko_ctx_t ctx)
     fiu_return_on("fko_set_spa_digest_encoded", FKO_ERROR_MISSING_ENCODED_DATA);
 #endif
 
+    //将编码过后的消息进行哈希生成消息摘要
     return set_digest(ctx->encoded_msg, &ctx->digest,
         ctx->digest_type, &ctx->digest_len);
 }

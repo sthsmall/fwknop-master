@@ -399,6 +399,7 @@ rijndael_encrypt(RIJNDAEL_context *ctx,
         const uint8_t *plaintext,
         uint8_t *ciphertext)
 {
+    //标准的Festival算法
     int r, j;
     uint32_t wtxt[4], t[4];		/* working ciphertext */
     uint32_t e;
@@ -406,6 +407,7 @@ rijndael_encrypt(RIJNDAEL_context *ctx,
     key_addition_8to32(plaintext, &(ctx->keys[0]), wtxt);
     for (r=1; r<ctx->nrounds; r++) {
         for (j=0; j<4; j++) {
+            //直接字节代换+行移位+列混淆
             t[j] = dtbl[wtxt[j] & 0xff] ^
                 ROTRBYTE(dtbl[(wtxt[idx[1][j]] >> 8) & 0xff]^
                         ROTRBYTE(dtbl[(wtxt[idx[2][j]] >> 16) & 0xff] ^
@@ -415,6 +417,7 @@ rijndael_encrypt(RIJNDAEL_context *ctx,
     }
     /* last round is special: there is no mixcolumn, so we can't use the big
        tables. */
+    //最后一轮没有列混淆？？
     for (j=0; j<4; j++) {
         e = wtxt[j] & 0xff;
         e |= (wtxt[idx[1][j]]) & (0xff  << 8 );
@@ -475,6 +478,7 @@ block_encrypt(RIJNDAEL_context *ctx, uint8_t *input, int inputlen,
 
     nblocks = inputlen / RIJNDAEL_BLOCKSIZE;
 
+    //根据不同的加密模式选择对应的数据处理方式，之后进行加密
     switch (ctx->mode) {
         case MODE_ECB:		/* electronic code book */
             for (i = 0; i<nblocks; i++) {

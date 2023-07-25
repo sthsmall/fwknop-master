@@ -581,6 +581,7 @@ fko_spa_data_final(fko_ctx_t ctx,
 
     /* Now calculate hmac if so configured
     */
+   //如果设置了要使用HMAC
     if (res == FKO_SUCCESS && ctx->hmac_type != FKO_HMAC_UNKNOWN)
     {
         if(hmac_key_len < 0)
@@ -589,6 +590,7 @@ fko_spa_data_final(fko_ctx_t ctx,
         if(hmac_key == NULL)
             return(FKO_ERROR_INVALID_KEY_LEN);
 
+        //将encrypt_msg生成消息摘要
         res = fko_set_spa_hmac(ctx, hmac_key, hmac_key_len);
 
         if (res == FKO_SUCCESS)
@@ -604,6 +606,7 @@ fko_spa_data_final(fko_ctx_t ctx,
             if (tbuf == NULL)
                 return(FKO_ERROR_MEMORY_ALLOCATION);
 
+            //将tbuf设置成encrypted_msg+msg_hmac的形式
             strlcat(tbuf, ctx->msg_hmac, data_with_hmac_len);
 
             ctx->encrypted_msg     = tbuf;

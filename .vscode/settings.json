@@ -21,5 +21,6 @@
         "limits.h": "c",
         "incoming_spa.h": "c",
         "cstdlib": "c"
-    }
+    },
+    "workbench.editor.wrapTabs": true
 }

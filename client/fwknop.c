@@ -262,7 +262,7 @@ main(int argc, char **argv)
 
     /* Set client timeout
     */
-   //设置超时时间，超时就自动断开 ? 
+   //设置超时时间，超时就自动断开 
     if(options.fw_timeout >= 0)
     {
         res = fko_set_spa_client_timeout(ctx, options.fw_timeout);
@@ -325,7 +325,7 @@ main(int argc, char **argv)
         /* Resolve the client's public facing IP address if requestesd.
          * if this fails, consider it fatal.
         */
-    //解析客户端的公网ip地址 
+    //todo 解析客户端的公网ip地址 --lkx？？？ 关于这个解析公网ip和下面的net访问字符串不太理解
     /*
        获取到客户端的公网IP地址之后，可以进行一系列操作，包括但不限于以下几个方面：
 

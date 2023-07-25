@@ -90,13 +90,13 @@ typedef struct fko_cli_options
     char get_hmac_key_file[MAX_PATH_LEN]; //从指定文件加载 HMAC 密钥/密码
     char save_packet_file[MAX_PATH_LEN]; //指示 fwknop 客户端将新创建的 SPA 数据包写出到指定的文件的路径
     int  save_packet_file_append; //保存数据包时是否追加模式
-    int  show_last_command; //是否显示最后一条命令
-    int  run_last_command; //是否运行最后一条命令
+    int  show_last_command; //是否显示上次运行的命令
+    int  run_last_command; //是否使用上次使用的命令行参数
     char args_save_file[MAX_PATH_LEN]; //参数保存文件的路径
     int  no_save_args; //是否不保存参数
     int  use_hmac; //是否使用HMAC
     char spa_server_str[MAX_SERVER_STR_LEN];  /* may be a hostname */ //SPA服务器字符串，可能是主机名
-    char allow_ip_str[MAX_IPV4_STR_LEN]; //允许的IP字符串
+    char allow_ip_str[MAX_IPV4_STR_LEN]; //允许的IP字符串，即本机ip地址
     char spoof_ip_src_str[MAX_IPV4_STR_LEN]; //欺骗 fwknop 客户端发送 SPA 数据包的源地址
     char spoof_user[MAX_USERNAME_LEN]; //欺骗 fwknop 客户端发送 SPA 数据包的用户名
     int  rand_port; //是否使用随机端口
