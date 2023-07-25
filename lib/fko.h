@@ -62,6 +62,18 @@ extern "C" {
  * \brief Supported FKO Message types...
  */
 
+/*
+
+    FKO_COMMAND_MSG: 表示命令消息，对应整数值 0。
+    FKO_ACCESS_MSG: 表示访问消息，对应整数值 1。
+    FKO_NAT_ACCESS_MSG: 表示 NAT 访问消息，对应整数值 2。
+    FKO_CLIENT_TIMEOUT_ACCESS_MSG: 表示带超时的访问消息，对应整数值 3。
+    FKO_CLIENT_TIMEOUT_NAT_ACCESS_MSG: 表示带超时的 NAT 访问消息，对应整数值 4。
+    FKO_LOCAL_NAT_ACCESS_MSG: 表示本地 NAT 访问消息，对应整数值 5。
+    FKO_CLIENT_TIMEOUT_LOCAL_NAT_ACCESS_MSG: 表示带超时的本地 NAT 访问消息，对应整数值 6。
+    FKO_LAST_MSG_TYPE: 用于标识枚举类型的结束，没有实际的对应整数值。
+
+*/
 typedef enum {
     FKO_COMMAND_MSG = 0, /**< Command message */
     FKO_ACCESS_MSG, /**< Access message */
@@ -79,6 +91,21 @@ typedef enum {
  *
  * \brief Supported digest types...
  */
+
+/*
+
+    FKO_DIGEST_INVALID_DATA: 表示无效的摘要类型，对应整数值 -1。
+    FKO_DIGEST_UNKNOWN: 表示未知的摘要类型，对应整数值 0。
+    FKO_DIGEST_MD5: 表示 MD5 摘要类型，对应整数值 1。
+    FKO_DIGEST_SHA1: 表示 SHA1 摘要类型，对应整数值 2。
+    FKO_DIGEST_SHA256: 表示 SHA256 摘要类型，对应整数值 3。
+    FKO_DIGEST_SHA384: 表示 SHA384 摘要类型，对应整数值 4。
+    FKO_DIGEST_SHA512: 表示 SHA512 摘要类型，对应整数值 5。
+    FKO_DIGEST_SHA3_256: 表示 SHA3 256 摘要类型，对应整数值 6。
+    FKO_DIGEST_SHA3_512: 表示 SHA3 512 摘要类型，对应整数值 7。
+    FKO_LAST_DIGEST_TYPE: 用于标识枚举类型的结束，没有实际的对应整数值。
+
+*/
 typedef enum {
     FKO_DIGEST_INVALID_DATA = -1, /**< Invalid digest type*/
     FKO_DIGEST_UNKNOWN = 0, /**< Unknown digest type*/
@@ -97,6 +124,21 @@ typedef enum {
  * \enum fko_hmac_type_t
  *
  * \brief Supported hmac digest types...
+*/
+/*
+
+    FKO_HMAC_INVALID_DATA: 表示无效的 HMAC 类型，对应整数值 -1。
+    FKO_HMAC_UNKNOWN: 表示未知的 HMAC 类型，对应整数值 0。
+    FKO_HMAC_MD5: 表示 MD5 HMAC 类型，对应整数值 1。
+    FKO_HMAC_SHA1: 表示 SHA1 HMAC 类型，对应整数值 2。
+    FKO_HMAC_SHA256: 表示 SHA256 HMAC 类型，对应整数值 3。
+    FKO_HMAC_SHA384: 表示 SHA384 HMAC 类型，对应整数值 4。
+    FKO_HMAC_SHA512: 表示 SHA512 HMAC 类型，对应整数值 5。
+    FKO_HMAC_SHA3_256: 表示 SHA3 256 HMAC 类型，对应整数值 6。
+    FKO_HMAC_SHA3_512: 表示 SHA3 512 HMAC 类型，对应整数值 7。
+    FKO_LAST_HMAC_MODE: 用于标识枚举类型的结束，没有实际的对应整数值。
+
+
 */
 typedef enum {
     FKO_HMAC_INVALID_DATA = -1, /**< Invalid HMAC type*/
@@ -117,6 +159,15 @@ typedef enum {
  *
  * \brief Supported encryption types...
 */
+/*
+
+    FKO_ENCRYPTION_INVALID_DATA: 表示无效的加密类型，对应整数值 -1。
+    FKO_ENCRYPTION_UNKNOWN: 表示未知的加密类型，对应整数值 0。
+    FKO_ENCRYPTION_RIJNDAEL: 表示 Rijndael（AES）加密类型，对应整数值 1。
+    FKO_ENCRYPTION_GPG: 表示 GPG 加密类型，对应整数值 2。
+    FKO_LAST_ENCRYPTION_TYPE: 用于标识枚举类型的结束，没有实际的对应整数值。
+
+*/
 typedef enum {
     FKO_ENCRYPTION_INVALID_DATA = -1, /**< Invalid encryption type*/
     FKO_ENCRYPTION_UNKNOWN = 0, /**< Unknown encryption type*/
@@ -130,6 +181,20 @@ typedef enum {
  * \enum fko_encryption_mode_t
  *
  * \brief Symmetric encryption modes to correspond to rijndael.h
+*/
+/*
+
+    FKO_ENC_MODE_UNKNOWN：未知的加密模式。
+    FKO_ENC_MODE_ECB：电子密码本（Electronic Code Book）加密模式。
+    FKO_ENC_MODE_CBC：密码分组链接（Cipher Block Chaining）加密模式。
+    FKO_ENC_MODE_CFB：密码反馈（Cipher Feedback）加密模式。
+    FKO_ENC_MODE_PCBC：传播密码分组链接（Propagating Cipher Block Chaining）加密模式。
+    FKO_ENC_MODE_OFB：输出反馈（Output Feedback）加密模式。
+    FKO_ENC_MODE_CTR：计数器（Counter）加密模式。
+    FKO_ENC_MODE_ASYMMETRIC：非对称加密模式（此处为GPG占位符）。
+    FKO_ENC_MODE_CBC_LEGACY_IV：旧的零填充策略使用的密码分组链接加密模式。
+    FKO_LAST_ENC_MODE：保留作为最后一个加密模式。
+
 */
 typedef enum {
     FKO_ENC_MODE_UNKNOWN = 0, /**< Unknown encryption mode*/
@@ -460,7 +525,7 @@ DLL_API int fko_spa_data_final(fko_ctx_t ctx, const char * const enc_key,
 DLL_API int fko_set_rand_value(fko_ctx_t ctx, const char * const val);
 
 /**
- * \brief Set FKO username
+ * \brief Set FKO username 设置FKO用户名
  *
  * Set the username field of the SPA data.  If USERNAME is NULL,
  * libfko will first look for the environment variable 'SPOOF_USER'
@@ -469,7 +534,11 @@ DLL_API int fko_set_rand_value(fko_ctx_t ctx, const char * const val);
  * 'getlogin', then fallback to the environment variables 'LOGNAME' or
  * 'USER'.  If none of those work, the function will return
  * 'FKO_ERROR_USERNAME_UNKNOWN'.
- *
+ * 设置spa应用程序数据的用户名字段。如果USERNAME为空，
+ * libfko将首先查找环境变量'SPOOF_USER'，如果找到则使用其值。
+ * 否则，它将尝试使用各种方法来确定用户名，从'cuser'或'getlogin'开始，
+ * 然后回退到环境变量'LOGNAME'或'USER'。如果所有这些方法都不起作用，
+ * 该函数将返回'FKO_ERROR_USERNAME_UNKNOWN'。
  * \param ctx the FKO context to modify
  * \param spoof_user The username to set in the FKO context
  *
@@ -1129,6 +1198,10 @@ DLL_API int fko_get_version(fko_ctx_t ctx, char **version);
  * default, _libfko_ forces _gpgme_ to use 'gpg' in case _gpgme_ was
  * compiled to use 'gpg2' as its default engine.  You can use this
  * function to override and set what GPG executable _gpgme_ will use.
+ * 设置 _gpgme_ 将使用的 GPG 可执行文件的路径。
+ * 默认情况下，如果 _gpgme_ 编译时使用 'gpg2' 作为其默认引擎，
+ * libfko 强制 _gpgme_ 使用 'gpg'。
+ * 您可以使用此函数来覆盖并设置 _gpgme_ 将使用的 GPG 可执行文件。
  *
  * \param ctx The FKO context to modify
  * \param The path to the GPG executable

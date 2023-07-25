@@ -162,6 +162,37 @@ fko_get_spa_message_type(fko_ctx_t ctx, short *msg_type)
 
 /* Set the SPA MESSAGE data
 */
+/*
+这段代码是一个名为fko_set_spa_message的函数，用于设置一个名为msg的字符串作为SPA（Single Page Application）消息。
+
+该函数的主要功能如下：
+
+    首先，它会对传入的上下文参数ctx进行初始化检查，确保上下文已经正确初始化。若上下文未初始化，
+    则返回错误码 FKO_ERROR_CTX_NOT_INITIALIZED。
+
+    然后，它会对传入的消息字符串进行有效性校验，包括检查字符串是否为空、长度是否超过最大允许长度等。
+    如果消息字符串为空或长度为零，则返回错误码 FKO_ERROR_INVALID_DATA_MESSAGE_EMPTY。
+    如果消息长度超过了最大允许长度，则返回错误码 FKO_ERROR_DATA_TOO_LARGE。
+
+    接下来，根据上下文中的消息类型（message_type），对消息字符串进行基本的类型和格式校验。
+    如果是命令消息（FKO_COMMAND_MSG），则调用validate_cmd_msg函数进行验证；
+    否则，调用validate_access_msg函数进行验证。如果验证出错，返回对应的错误码。
+
+    如果之前的调用中已经存在消息（message），则释放其内存。
+
+    使用strdup函数将传入的消息字符串复制到上下文的message中。
+
+    设置上下文状态为已修改。
+
+    最后，检查内存分配结果，如果分配失败，则返回错误码 FKO_ERROR_MEMORY_ALLOCATION。
+
+    若执行成功，返回成功的错误码 FKO_SUCCESS。
+
+该函数的作用是将传入的消息字符串设置到给定的上下文中，并进行相应的验证和内存处理。
+根据不同的情况，它会返回不同的错误码以指示可能出现的问题。
+
+
+*/
 int
 fko_set_spa_message(fko_ctx_t ctx, const char * const msg)
 {

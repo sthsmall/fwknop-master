@@ -19,6 +19,8 @@
         "log_msg.h": "c",
         "fwknopd_errors.h": "c",
         "limits.h": "c",
-        "incoming_spa.h": "c"
-    }
+        "incoming_spa.h": "c",
+        "cstdlib": "c"
+    },
+    "workbench.editor.wrapTabs": true
 }

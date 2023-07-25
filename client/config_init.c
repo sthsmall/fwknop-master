@@ -188,6 +188,8 @@ static fko_var_t fko_var_array[FWKNOP_CLI_LAST_ARG] =
 /* Array to define which conf. variables are critical and should not be
  * overwritten when a stanza is updated using the --save-rc-stanza arg
  * without the user validation */
+/* 数组用于定义哪些配置变量是关键的，当使用 --save-rc-stanza 参数
+更新一个段落时，这些变量不应该被覆盖，而无需用户验证 */
 static int critical_var_array[] =
 {
     FWKNOP_CLI_ARG_KEY_RIJNDAEL,
@@ -201,8 +203,8 @@ static int critical_var_array[] =
 };
 
 /**
- * @brief Generate Rijndael + HMAC keys from /dev/urandom (base64 encoded).
- *
+ * @brief Generate Rijndael + HMAC keys from /dev/urandom (base64 encoded).  
+ * 从 /dev/urandom 生成 Rijndael + HMAC 密钥（base64 编码）
  * @param options FKO command line option structure
  */
 static void
@@ -2522,6 +2524,80 @@ usage(void)
     log_msg(LOG_VERBOSITY_NORMAL,
             "\n%s client version %s\n%s - http://%s/fwknop/\n",
             MY_NAME, MY_VERSION, MY_DESC, HTTP_RESOLVE_HOST);
+    /*中文的日志解释
+      "Usage: fwknop -A <port list> [-s|-R|-a] -D <spa_server> [options]\n\n"
+      " -n, --named-config          指定在'$HOME/.fwknoprc'文件中提供一个命名配置节，以提供一部分或全部配置参数。\n"
+      "                             如果在命令行上设置了更多参数，配置将相应更新。\n"
+      " -A, --access                在服务器上提供要打开的端口/协议列表（例如 'tcp/22'）。\n"
+      " -a, --allow-ip              在SPA数据包中指定允许的IP地址（例如 '123.2.3.4'）。\n"
+      " -D, --destination           指定fwknop服务器的主机名或IP地址。\n"
+      " --use-hmac                  为出站的SPA数据包添加HMAC以进行认证加密。\n"
+      " -h, --help                  打印此用法信息并退出。\n"
+      " -B, --save-packet           将生成的数据包数据保存到指定的文件中。\n"
+      " -b, --save-packet-append    将生成的数据包数据追加到使用 -B 选项指定的文件中。\n"
+      " -C, --server-cmd            指定fwknop服务器将代表fwknop客户端执行的命令。\n"
+      " -N, --nat-access            获得内部服务的NAT访问权限。\n"
+      " -p, --server-port           设置出站SPA数据包的目标端口。\n"
+      " -P, --server-proto          设置出站SPA数据包的协议（udp、tcp、http、tcpraw、icmp）。\n"
+      "                             注意：'tcpraw'和'icmp'模式使用原始套接字，因此需要使用root权限。\n"
+      " -s, --source-ip             告诉fwknopd服务器接受SPA数据包所包含的源IP作为需要访问的IP（不推荐，并且fwknopd服务器可以忽略这样的请求）。\n"
+      " -S, --source-port           设置出站SPA数据包的源端口。\n"
+      " -Q, --spoof-source          设置出站SPA数据包的源IP。\n"
+      " -R, --resolve-ip-https      通过连接到URL（例如默认的：https://" HTTP_RESOLVE_HOST HTTP_RESOLVE_URL）解析外部网络IP。\n"
+      "                             使用wget的--secure-protocol模式（SSL）。URL可以通过--resolve-url选项覆盖。\n"
+      "     --resolve-http-only     强制通过HTTP而不是HTTPS（通过上面提到的URL）来解析外部IP。\n"
+      "                             不推荐使用，因为如果IP解析HTTP连接在传输过程中被第三方更改，会使fwknop容易受到中间人攻击。\n"
+      "     --resolve-url           覆盖用于解析源IP地址的默认URL。\n"
+      " -u, --user-agent            为了解析-R中的外部IP或通过HTTP发送SPA数据包，设置HTTP User-Agent。\n"
+      "                             如果未使用此选项，默认值是 Fwknop/<version>。\n"
+      "     --use-wget-user-agent   使用默认的wget User-Agent字符串，而不是Fwknop/<version>。\n"
+      " -w, --wget-cmd              在-R模式下手动设置wget的路径。\n"
+      " -H, --http-proxy            通过此HTTP代理主机发送SPA数据包。端口也可以通过在主机/IP后面加上\":<port>\"来指定。\n"
+      " -U, --spoof-user            设置出站SPA数据包中的用户名。\n"
+      " -l, --last-cmd              以与上次执行fwknop时相同的命令行参数运行fwknop客户端\n"
+      "                             （参数从~/.fwknop.run文件中读取）。\n"
+      " -G, --get-key               从文件中加载加密密钥/密码。\n"
+      "     --stdin                 从stdin读取加密密钥/密码。\n"
+      "     --fd                    指定从中读取加密密钥/密码的文件描述符。\n"
+      " -k, --key-gen               生成SPA Rijndael + HMAC密钥。\n"
+      " -K, --key-gen-file          将生成的Rijndael + HMAC密钥写入文件。\n"
+      "     --key-rijndael          指定Rijndael密钥。由于密码对实用程序（如Unix下的'ps'）可见，此形式仅在安全性不重要时使用。\n"
+      "     --key-base64-rijndael   指定Base64编码的Rijndael密钥。由于密码对实用程序（如Unix下的'ps'）可见，此形式仅在安全性不重要时使用。\n"
+      "     --key-base64-hmac       指定Base64编码的HMAC密钥。由于密码对实用程序（如Unix下的'ps'）可见，此形式仅在安全性不重要时使用。\n"
+      " -r, --rand-port             通过随机分配的端口发送SPA数据包（服务器端需要比默认的udp 62201更广泛的pcap过滤器）。\n"
+      " -T, --test                  构建SPA数据包但不通过网络发送。\n"
+      " -v, --verbose               设置详细模式（可以多次指定）。\n"
+      " -V, --version               打印版本号。\n"
+      " -m, --digest-type           指定要使用的消息摘要算法（md5、sha1、sha256、sha384或sha512）。默认是sha256。\n"
+      " -M, --encryption-mode       指定AES用于加密SPA数据包时的加密模式。\n"
+      "                             默认是CBC模式，但也可以选择其他模式，如CFB或OFB，只要在服务器端的access.conf文件中也指定了相应模式。\n"
+      "                             注意：可以使用字符串“legacy”来指定使用旧版本的*fwknop* 2.5之前使用的初始化向量策略来生成SPA数据包。\n"
+      " -f, --fw-timeout            从客户端端指定SPA服务器防火墙超时时间。\n"
+      "     --hmac-digest-type      设置HMAC摘要算法（默认是sha256）。选项为md5、sha1、sha256、sha384或sha512。\n"
+      "     --icmp-type             设置ICMP类型（与'-P icmp'一起使用）。\n"
+      "     --icmp-code             设置ICMP代码（与'-P icmp'一起使用）。\n"
+      "     --gpg-encryption        使用GPG加密（默认是Rijndael）。\n"
+      "     --gpg-recipient-key     指定接收者GPG密钥的名称或ID。\n"
+      "     --gpg-signer-key        指定签名者的GPG密钥名称或ID。\n"
+      "     --gpg-no-signing-pw     允许没有与GPG密钥关联的签名密码。\n"
+      "     --gpg-home-dir          指定GPG的主目录。\n"
+      "     --gpg-agent             如果可用，使用GPG代理。\n"
+      "     --gpg-exe               设置GPG二进制文件的路径。\n"
+      "     --no-save-args          不要将fwknop命令行参数保存到$HOME/fwknop.run文件中。\n"
+      "     --rc-file               指定fwknop rc文件的路径（默认是$HOME/.fwknoprc）。\n"
+      "     --server-resolve-ipv4   当使用主机名时，强制从DNS解析出SPA服务器的IPv4地址。\n"
+      "     --save-rc-stanza        将命令行参数保存到通过-n选项指定的$HOME/.fwknoprc节中。\n"
+      "     --force-stanza          与--save-rc-stanza一起使用，用于覆盖指定节的所有变量。\n"
+      "     --stanza-list           显示$HOME/.fwknoprc中找到的节列表。\n"
+      "     --nat-local             通过fwknopd服务器系统上的转发端口访问本地服务。\n"
+      "     --nat-port              指定用于NAT访问服务的端口。\n"
+      "     --nat-rand-port         由fwknop客户端分配一个随机端口以进行NAT访问。\n"
+      "     --no-home-dir           不允许fwknop客户端寻找用户的主目录。\n"
+      "     --no-rc-file            在没有引用~/.fwknoprc文件的情况下执行fwknop客户端操作。\n"
+      "     --show-last             显示上次fwknop命令行参数。\n"
+      "     --time-offset-plus      从出站的SPA数据包时间戳中添加时间。\n"
+      "     --time-offset-minus     从出站的SPA数据包时间戳中减去时间。\n"
+    */
     log_msg(LOG_VERBOSITY_NORMAL,
       "Usage: fwknop -A <port list> [-s|-R|-a] -D <spa_server> [options]\n\n"
       " -n, --named-config          Specify a named configuration stanza in the\n"
