@@ -325,7 +325,7 @@ main(int argc, char **argv)
         /* Resolve the client's public facing IP address if requestesd.
          * if this fails, consider it fatal.
         */
-    //解析客户端的公网ip地址
+    //todo 解析客户端的公网ip地址 --lkx？？？ 关于这个解析公网ip和下面的net访问字符串不太理解
     /*
        获取到客户端的公网IP地址之后，可以进行一系列操作，包括但不限于以下几个方面：
 
@@ -380,7 +380,7 @@ main(int argc, char **argv)
 
     /* Set NAT access string
     */
-   //设置nat访问字符串
+   //todo 设置nat访问字符串 -lkx？？？ 这个和上面的解析公网ip不太明白
    /*
    设置NAT访问字符串的目的是为了实现私有网络和公网之间的连接和通信，
    提供互联网访问、安全性、地址管理和网络扩展等功能。这样可以更好地控制和管理网络流量，
@@ -499,7 +499,7 @@ main(int argc, char **argv)
         }
 
         //设置SPA数据包加密格式，这种格式是指用哪种加密算法，例如AES、DES等
-        res = fko_set_spa_encryption_mode(ctx, FKO_ENC_MODE_ASYMMETRIC);//这里只是说了使用非对称加密，没有具体指出
+        res = fko_set_spa_encryption_mode(ctx, FKO_ENC_MODE_ASYMMETRIC);// 这里只是说了使用非对称加密，没有具体指出
         if(res != FKO_SUCCESS)
         {
             errmsg("fko_set_spa_encryption_mode", res);
@@ -589,10 +589,11 @@ main(int argc, char **argv)
 
     /* Save packet data payload if requested.
     */
-   //如果请求，保存数据包数据负载。？？？
+   //如果请求，保存数据包数据负载。
     /*
     数据包的负载是指在网络通信中传输的实际数据部分，通常是需要发送或接收的有效信息。
-    在网络协议中，数据包通常由首部和负载两部分组成，首部包含了协议相关的控制信息，而负载则包含了实际传输的数据。
+    在网络协议中，数据包通常由首部和负载两部分组成，首部包含了协议相关的控制信息，
+    而负载则包含了实际传输的数据。
 
 保存数据包负载的目的可以有多个：
 
