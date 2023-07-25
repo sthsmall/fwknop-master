@@ -106,7 +106,7 @@ main(int argc, char **argv)
     {
         /* Handle command line
          * 处理命令行
-        */
+        */ 
         config_init(&opts, argc, argv);//2023.7.19 zxj 用来处理输入的命令
 
 #if HAVE_LIBFIU
@@ -157,7 +157,7 @@ main(int argc, char **argv)
         */
         
         set_locale(&opts);
-#endif
+#endif 
 
         /* Make sure we have a valid run dir and path leading to digest file
          * in case it configured to be somewhere other than the run dir.
@@ -202,6 +202,12 @@ main(int argc, char **argv)
             clean_exit(&opts, FW_CLEANUP, EXIT_SUCCESS);
         }
 
+
+        /*
+         * 检查是否有指定的文件夹路径（CONF_ACCESS_FOLDER 参数），如果有，
+         则对该文件夹路径进行处理（可能是读取其中的内容或进行其他操作）。
+         如果处理过程中出现错误，程序将通过 clean_exit 函数退出，并返回错误状态
+        */
         if (opts.config[CONF_ACCESS_FOLDER] != NULL) //If we have an access folder, process it
         {
             if (parse_access_folder(&opts, opts.config[CONF_ACCESS_FOLDER], &depth) != EXIT_SUCCESS)
@@ -210,6 +216,7 @@ main(int argc, char **argv)
             }
         }
         /* Process the access.conf file, but only if no access.conf folder was specified.
+         * 处理 access.conf 文件，但前提是未指定 access.conf 文件夹
         */
         else if (parse_access_file(&opts, opts.config[CONF_ACCESS_FILE], &depth) != EXIT_SUCCESS)
         {
@@ -217,6 +224,7 @@ main(int argc, char **argv)
         }
 
         /* We must have at least one valid access stanza at this point
+         * 确保access.config文件中的访问配置块有有效的模块 
         */
         if(! valid_access_stanzas(opts.acc_stanzas))
         {
@@ -248,10 +256,11 @@ main(int argc, char **argv)
          * to pid file.
          * 获取pid，成为守护进程或在前台运行，将pid写入pid文件
         */
+       
         if(! opts.exit_parse_digest_cache)//2023.7.19 zxj 解析和验证摘要缓存并退出，初始化缓存摘要
             setup_pid(&opts);
 
-        if(opts.verbose > 1 && opts.foreground)//2023.7.19 zxj 变成守护进程
+        if(opts.verbose > 1 && opts.foreground)
         {
             dump_config(&opts);
             dump_access_list(&opts);
