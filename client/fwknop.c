@@ -185,7 +185,7 @@ main(int argc, char **argv)
     char                hmac_key[MAX_KEY_LEN+1]  = {0}; //HMAC密钥
     int                 key_len = 0, orig_key_len = 0, hmac_key_len = 0, enc_mode; //存储密钥的长度、加密模式
     int                 tmp_port = 0; //存储临时端口
-    char                dump_buf[CTX_DUMP_BUFSIZE];
+    char                 [CTX_DUMP_BUFSIZE];
 
     //fwknop客户端配置参数和值
     fko_cli_options_t   options;
@@ -201,7 +201,7 @@ main(int argc, char **argv)
     */
    //将命令行参数和客户端配置信息，传递给config进行初始化 -lkx
     config_init(&options, argc, argv);
-
+    
 /*
 这段代码是一个条件编译的代码块，当宏定义 HAVE_LIBFIU 存在时执行。它用于设置故障注入点。
 
@@ -262,7 +262,7 @@ main(int argc, char **argv)
 
     /* Set client timeout
     */
-   //设置超时时间，超时就自动断开
+   //设置超时时间，超时就自动断开 ? 
     if(options.fw_timeout >= 0)
     {
         res = fko_set_spa_client_timeout(ctx, options.fw_timeout);
@@ -309,7 +309,7 @@ main(int argc, char **argv)
                 hmac_key, &hmac_key_len, EXIT_FAILURE);
         }
     }
-
+    //allow_ip_str ???
     if(options.server_command[0] != 0x0)
     {
         /* Set the access message to a command that the server will
@@ -325,7 +325,7 @@ main(int argc, char **argv)
         /* Resolve the client's public facing IP address if requestesd.
          * if this fails, consider it fatal.
         */
-    //解析客户端的公网ip地址
+    //解析客户端的公网ip地址 
     /*
        获取到客户端的公网IP地址之后，可以进行一系列操作，包括但不限于以下几个方面：
 
@@ -364,7 +364,7 @@ main(int argc, char **argv)
         */
        //设置消息字符串通过结合允许ip和端口/协议
        //fwknopd服务器允许没有端口/协议指定以及，所以在这种情况下附加字符串“none/0”到允许ip
-
+        //设置缓冲区
         if(set_access_buf(ctx, &options, access_buf) != 1)
             clean_exit(ctx, &options, key, &key_len,
                     hmac_key, &hmac_key_len, EXIT_FAILURE);
@@ -1056,6 +1056,8 @@ set_access_buf(fko_ctx_t ctx, fko_cli_options_t *options, char *access_buf)
         //    用访问字符串中的端口作为NAT的端口，并且通过此转换后的端口授予访问权限给
         //    --nat-access IP:port所指定的目标（因此，在发送SPA数据包之后，此服务是
         //    传入连接的最终目标）。
+
+        //解释strchr函数：查找字符串中首次出现字符c的位置
             ndx = strchr(options->access_str, '/');
             if(ndx == NULL)
             {
@@ -1067,6 +1069,7 @@ set_access_buf(fko_ctx_t ctx, fko_cli_options_t *options, char *access_buf)
 
             /* This adds in the protocol + '/' char
             */
+           //这将协议+ '/'字符添加进去
             strlcat(access_buf, options->access_str,
                     strlen(access_buf) + (ndx - options->access_str) + 2);
 
@@ -1124,7 +1127,7 @@ set_nat_access(fko_ctx_t ctx, fko_cli_options_t *options, const char * const acc
     struct addrinfo     hints;
 
     memset(&hints, 0 , sizeof(hints));
-
+    
     ndx = strchr(options->access_str, '/');
     if(ndx == NULL)
     {
@@ -1202,7 +1205,7 @@ set_nat_access(fko_ctx_t ctx, fko_cli_options_t *options, const char * const acc
             log_msg(LOG_VERBOSITY_ERROR, "[*] Invalid port value.");
             return FKO_ERROR_INVALID_DATA;
         }
-
+        ???
 
         if (is_valid_ipv4_addr(options->nat_access_str, hostlen) || is_valid_hostname(options->nat_access_str, hostlen))
         {
