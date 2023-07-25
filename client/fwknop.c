@@ -57,7 +57,7 @@ static int get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
 static void errmsg(const char *msg, const int err);
 // prev_exec: 用于执行保存的最后一个命令，函数内部判断是否执行最后一个保存的命令，是否将命令行参数展示，是否保存当前的命令。
 static int prev_exec(fko_cli_options_t *options, int argc, char **argv);
-// get_save_file: //将命令参数的保存路径设置为Linux的home或者win的用户名下的fwknop.run文件中
+// get_save_file: 获取不同操作系统默认的保存文件路径。
 static int get_save_file(char *args_save_file);
 // show_last_command: 用于显示最后一条命令。
 static int show_last_command(const char * const args_save_file);
@@ -185,9 +185,9 @@ main(int argc, char **argv)
     char                hmac_key[MAX_KEY_LEN+1]  = {0}; //HMAC密钥
     int                 key_len = 0, orig_key_len = 0, hmac_key_len = 0, enc_mode; //存储密钥的长度、加密模式
     int                 tmp_port = 0; //存储临时端口
-    char                dump_buf[CTX_DUMP_BUFSIZE];
+    char                 [CTX_DUMP_BUFSIZE];
 
-    //fwknop存储客户端配置参数和对应值的结构体
+    //fwknop客户端配置参数和值
     fko_cli_options_t   options;
 
 
@@ -201,7 +201,7 @@ main(int argc, char **argv)
     */
    //将命令行参数和客户端配置信息，传递给config进行初始化 -lkx
     config_init(&options, argc, argv);
-
+    
 /*
 这段代码是一个条件编译的代码块，当宏定义 HAVE_LIBFIU 存在时执行。它用于设置故障注入点。
 
@@ -262,7 +262,7 @@ main(int argc, char **argv)
 
     /* Set client timeout
     */
-   //设置超时时间，超时就自动断开
+   //设置超时时间，超时就自动断开 
     if(options.fw_timeout >= 0)
     {
         res = fko_set_spa_client_timeout(ctx, options.fw_timeout);
@@ -309,7 +309,7 @@ main(int argc, char **argv)
                 hmac_key, &hmac_key_len, EXIT_FAILURE);
         }
     }
-
+    //allow_ip_str ???
     if(options.server_command[0] != 0x0)
     {
         /* Set the access message to a command that the server will
@@ -364,7 +364,7 @@ main(int argc, char **argv)
         */
        //设置消息字符串通过结合允许ip和端口/协议
        //fwknopd服务器允许没有端口/协议指定以及，所以在这种情况下附加字符串“none/0”到允许ip
-
+        //设置缓冲区
         if(set_access_buf(ctx, &options, access_buf) != 1)
             clean_exit(ctx, &options, key, &key_len,
                     hmac_key, &hmac_key_len, EXIT_FAILURE);
@@ -380,7 +380,7 @@ main(int argc, char **argv)
 
     /* Set NAT access string
     */
-   //todo 设置nat访问字符串 -lkx？？？ 这个和上面的解析公网ip不太明白
+   //设置nat访问字符串
    /*
    设置NAT访问字符串的目的是为了实现私有网络和公网之间的连接和通信，
    提供互联网访问、安全性、地址管理和网络扩展等功能。这样可以更好地控制和管理网络流量，
@@ -427,7 +427,6 @@ main(int argc, char **argv)
     {
         /* If use-gpg-agent was not specified, then remove the GPG_AGENT_INFO
          * ENV variable if it exists.
-         *如果未指定"use-gpg-agent"，则如果存在"GPG_AGENT_INFO"环境变量，则将其删除。
         */
 #ifndef WIN32
         if(!options.use_gpg_agent)
@@ -499,7 +498,7 @@ main(int argc, char **argv)
         }
 
         //设置SPA数据包加密格式，这种格式是指用哪种加密算法，例如AES、DES等
-        res = fko_set_spa_encryption_mode(ctx, FKO_ENC_MODE_ASYMMETRIC);// 这里只是说了使用非对称加密，没有具体指出
+        res = fko_set_spa_encryption_mode(ctx, FKO_ENC_MODE_ASYMMETRIC);//这里只是说了使用非对称加密，没有具体指出
         if(res != FKO_SUCCESS)
         {
             errmsg("fko_set_spa_encryption_mode", res);
@@ -589,11 +588,10 @@ main(int argc, char **argv)
 
     /* Save packet data payload if requested.
     */
-   //如果请求，保存数据包数据负载。
+   //如果请求，保存数据包数据负载。？？？
     /*
     数据包的负载是指在网络通信中传输的实际数据部分，通常是需要发送或接收的有效信息。
-    在网络协议中，数据包通常由首部和负载两部分组成，首部包含了协议相关的控制信息，
-    而负载则包含了实际传输的数据。
+    在网络协议中，数据包通常由首部和负载两部分组成，首部包含了协议相关的控制信息，而负载则包含了实际传输的数据。
 
 保存数据包负载的目的可以有多个：
 
@@ -1058,6 +1056,8 @@ set_access_buf(fko_ctx_t ctx, fko_cli_options_t *options, char *access_buf)
         //    用访问字符串中的端口作为NAT的端口，并且通过此转换后的端口授予访问权限给
         //    --nat-access IP:port所指定的目标（因此，在发送SPA数据包之后，此服务是
         //    传入连接的最终目标）。
+
+        //解释strchr函数：查找字符串中首次出现字符c的位置
             ndx = strchr(options->access_str, '/');
             if(ndx == NULL)
             {
@@ -1069,6 +1069,7 @@ set_access_buf(fko_ctx_t ctx, fko_cli_options_t *options, char *access_buf)
 
             /* This adds in the protocol + '/' char
             */
+           //这将协议+ '/'字符添加进去
             strlcat(access_buf, options->access_str,
                     strlen(access_buf) + (ndx - options->access_str) + 2);
 
@@ -1126,7 +1127,7 @@ set_nat_access(fko_ctx_t ctx, fko_cli_options_t *options, const char * const acc
     struct addrinfo     hints;
 
     memset(&hints, 0 , sizeof(hints));
-
+    
     ndx = strchr(options->access_str, '/');
     if(ndx == NULL)
     {
@@ -1204,7 +1205,7 @@ set_nat_access(fko_ctx_t ctx, fko_cli_options_t *options, const char * const acc
             log_msg(LOG_VERBOSITY_ERROR, "[*] Invalid port value.");
             return FKO_ERROR_INVALID_DATA;
         }
-
+        ???
 
         if (is_valid_ipv4_addr(options->nat_access_str, hostlen) || is_valid_hostname(options->nat_access_str, hostlen))
         {
@@ -1284,7 +1285,7 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
     }
 
     if(options->run_last_command)
-        res = run_last_args(options, args_save_file);//使用上次调用中的命令行参数（如果有）执行 fwknop。参数是从 ~/.fwknop.run 文件中解析出来的
+        res = run_last_args(options, args_save_file);
     else if(options->show_last_command)
         res = show_last_command(args_save_file);
     else if (!options->no_save_args)
@@ -1294,11 +1295,16 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
 }
 
 
-
-/*该函数接受一个保存参数文件路径的字符串const char * const args_save_file作为输入。
+/* Show the last command that was executed
+*/
+//展示最后一次执行的命令
+/**
+ * 这是一个用C语言编写的函数，用于显示上一个命令。
+ * 该函数接受一个保存参数文件路径的字符串const char * const args_save_file作为输入。
 
 函数首先初始化一些变量，然后尝试打开保存参数文件。
 如果无法打开文件，则输出错误信息并返回0。
+
 接下来，函数会验证文件的权限和所属权。如果权限或所属权不正确，则关闭文件并返回0。
 
 然后，函数尝试从文件中读取一行内容，并将其存储在args_str数组中。
@@ -1311,16 +1317,13 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
 
  * 
 */
-/* Show the last command that was executed
-*/
-//展示最后一次执行的命令（以及参数保存文件的读写鉴权）
 static int
 show_last_command(const char * const args_save_file)
 {
     char args_str[MAX_LINE_LEN] = {0};
     FILE *args_file_ptr = NULL;
 
-    if ((args_file_ptr = fopen(args_save_file, "r")) == NULL) {     //只读模式打开
+    if ((args_file_ptr = fopen(args_save_file, "r")) == NULL) {
         log_msg(LOG_VERBOSITY_ERROR, "Could not open args file: %s",
             args_save_file);
         return 0;
@@ -1416,7 +1419,7 @@ run_last_args(fko_cli_options_t *options, const char * const args_save_file)
 }
 
 
-//将保存路径放在系统默认的home或者win的用户名下的fwknop.run文件中
+//获取不同操作系统默认的保存文件路径
 
 static int
 get_save_file(char *args_save_file)
@@ -1844,7 +1847,8 @@ enable_fault_injections(fko_cli_options_t * const opts)
 }
 #endif
 
-
+/* free up memory and exit
+*/
 /*
 2023/7/20 10:42:33
 
@@ -1866,10 +1870,6 @@ enable_fault_injections(fko_cli_options_t * const opts)
 并根据配置中的故障注入标签禁用相应的故障注入功能。然后，销毁上下文对象、释放内存、清零敏感数据缓冲区，
 最后退出程序并返回指定的退出状态码。
 
-*/
-
-/* free up memory and exit
-*  释放内存并退出程序。
 */
 static void
 clean_exit(fko_ctx_t ctx, fko_cli_options_t *opts,

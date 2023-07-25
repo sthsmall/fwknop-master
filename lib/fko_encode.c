@@ -129,8 +129,8 @@ fko_encode_spa_data(fko_ctx_t ctx)
 
     /* Add the base64-encoded username.
     */
-    strlcat(tbuf, ":", FKO_ENCODE_TMP_BUF_SIZE); //只添加了一个冒号，为什么长度要是1024
-    //
+    strlcat(tbuf, ":", FKO_ENCODE_TMP_BUF_SIZE);
+    //对username进行base64编码，附加到tbuf缓冲区中
     if((res = append_b64(tbuf, ctx->username)) != FKO_SUCCESS)
     {
         free(tbuf);
@@ -139,12 +139,15 @@ fko_encode_spa_data(fko_ctx_t ctx)
 
     /* Add the timestamp.
     */
+   //获取当前的tbuf的长度
     offset = strlen(tbuf);
+    //在tbuf缓冲区后加上时间戳
     snprintf(((char*)tbuf+offset), FKO_ENCODE_TMP_BUF_SIZE - offset,
             ":%u:", (unsigned int) ctx->timestamp);
 
     /* Add the version string.
     */
+   //添加版本信息
     strlcat(tbuf, ctx->version, FKO_ENCODE_TMP_BUF_SIZE);
 
     /* Before we add the message type value, we will once again
@@ -156,16 +159,19 @@ fko_encode_spa_data(fko_ctx_t ctx)
      * possible reset of the message type.
      *
     */
+   //设置超时值以便服务端验证数据包有效期
     fko_set_spa_client_timeout(ctx, ctx->client_timeout);
 
     /* Add the message type value.
     */
+   //添加消息类型(TIMEOUT或者没超时)
     offset = strlen(tbuf);
     snprintf(((char*)tbuf+offset), FKO_ENCODE_TMP_BUF_SIZE - offset,
             ":%i:", ctx->message_type);
 
     /* Add the base64-encoded SPA message.
     */
+   //将spa message进行base64编码，附加到tbuf后
     if((res = append_b64(tbuf, ctx->message)) != FKO_SUCCESS)
     {
         free(tbuf);
@@ -175,6 +181,7 @@ fko_encode_spa_data(fko_ctx_t ctx)
     /* If a nat_access message was given, add it to the SPA
      * message.
     */
+   //如果有访问NAT字符串，将其编码添加到tubf后
     if(ctx->nat_access != NULL)
     {
         strlcat(tbuf, ":", FKO_ENCODE_TMP_BUF_SIZE);
@@ -188,6 +195,7 @@ fko_encode_spa_data(fko_ctx_t ctx)
     /* If we have a server_auth field set.  Add it here.
      *
     */
+   //将服务器认证信息编码，添加到tbuf后
     if(ctx->server_auth != NULL)
     {
         strlcat(tbuf, ":", FKO_ENCODE_TMP_BUF_SIZE);
@@ -201,6 +209,7 @@ fko_encode_spa_data(fko_ctx_t ctx)
     /* If a client timeout is specified and we are not dealing with a
      * SPA command message, add the timeout here.
     */
+   //如果指定了客户端超时，而我们没有处理SPA命令消息，在此处添加超时。
     if(ctx->client_timeout > 0 && ctx->message_type != FKO_COMMAND_MSG)
     {
         offset = strlen(tbuf);
@@ -211,11 +220,13 @@ fko_encode_spa_data(fko_ctx_t ctx)
     /* If encoded_msg is not null, then we assume it needs to
      * be freed before re-assignment.
     */
+   //先清理encoded_msg
     if(ctx->encoded_msg != NULL)
         free(ctx->encoded_msg);
 
     /* Copy our encoded data into the context.
     */
+   //把编码后的数据赋值给encoded_msg
     ctx->encoded_msg = strdup(tbuf);
     free(tbuf);
 
@@ -229,6 +240,7 @@ fko_encode_spa_data(fko_ctx_t ctx)
 
     /* At this point we can compute the digest for this SPA data.
     */
+   //设置消息摘要
     if((res = fko_set_spa_digest(ctx)) != FKO_SUCCESS)
         return(res);
 
