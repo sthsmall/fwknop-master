@@ -57,7 +57,7 @@ static int get_keys(fko_ctx_t ctx, fko_cli_options_t *options,
 static void errmsg(const char *msg, const int err);
 // prev_exec: 用于执行保存的最后一个命令，函数内部判断是否执行最后一个保存的命令，是否将命令行参数展示，是否保存当前的命令。
 static int prev_exec(fko_cli_options_t *options, int argc, char **argv);
-// get_save_file: 获取不同操作系统默认的保存文件路径。
+// get_save_file: //将命令参数的保存路径设置为Linux的home或者win的用户名下的fwknop.run文件中
 static int get_save_file(char *args_save_file);
 // show_last_command: 用于显示最后一条命令。
 static int show_last_command(const char * const args_save_file);
@@ -187,7 +187,7 @@ main(int argc, char **argv)
     int                 tmp_port = 0; //存储临时端口
     char                dump_buf[CTX_DUMP_BUFSIZE];
 
-    //fwknop客户端配置参数和值
+    //fwknop存储客户端配置参数和对应值的结构体
     fko_cli_options_t   options;
 
 
@@ -427,6 +427,7 @@ main(int argc, char **argv)
     {
         /* If use-gpg-agent was not specified, then remove the GPG_AGENT_INFO
          * ENV variable if it exists.
+         *如果未指定"use-gpg-agent"，则如果存在"GPG_AGENT_INFO"环境变量，则将其删除。
         */
 #ifndef WIN32
         if(!options.use_gpg_agent)
@@ -1283,7 +1284,7 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
     }
 
     if(options->run_last_command)
-        res = run_last_args(options, args_save_file);
+        res = run_last_args(options, args_save_file);//使用上次调用中的命令行参数（如果有）执行 fwknop。参数是从 ~/.fwknop.run 文件中解析出来的
     else if(options->show_last_command)
         res = show_last_command(args_save_file);
     else if (!options->no_save_args)
@@ -1293,16 +1294,11 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
 }
 
 
-/* Show the last command that was executed
-*/
-//展示最后一次执行的命令
-/**
- * 这是一个用C语言编写的函数，用于显示上一个命令。
- * 该函数接受一个保存参数文件路径的字符串const char * const args_save_file作为输入。
+
+/*该函数接受一个保存参数文件路径的字符串const char * const args_save_file作为输入。
 
 函数首先初始化一些变量，然后尝试打开保存参数文件。
 如果无法打开文件，则输出错误信息并返回0。
-
 接下来，函数会验证文件的权限和所属权。如果权限或所属权不正确，则关闭文件并返回0。
 
 然后，函数尝试从文件中读取一行内容，并将其存储在args_str数组中。
@@ -1315,13 +1311,16 @@ prev_exec(fko_cli_options_t *options, int argc, char **argv)
 
  * 
 */
+/* Show the last command that was executed
+*/
+//展示最后一次执行的命令（以及参数保存文件的读写鉴权）
 static int
 show_last_command(const char * const args_save_file)
 {
     char args_str[MAX_LINE_LEN] = {0};
     FILE *args_file_ptr = NULL;
 
-    if ((args_file_ptr = fopen(args_save_file, "r")) == NULL) {
+    if ((args_file_ptr = fopen(args_save_file, "r")) == NULL) {     //只读模式打开
         log_msg(LOG_VERBOSITY_ERROR, "Could not open args file: %s",
             args_save_file);
         return 0;
@@ -1417,7 +1416,7 @@ run_last_args(fko_cli_options_t *options, const char * const args_save_file)
 }
 
 
-//获取不同操作系统默认的保存文件路径
+//将保存路径放在系统默认的home或者win的用户名下的fwknop.run文件中
 
 static int
 get_save_file(char *args_save_file)
@@ -1845,8 +1844,7 @@ enable_fault_injections(fko_cli_options_t * const opts)
 }
 #endif
 
-/* free up memory and exit
-*/
+
 /*
 2023/7/20 10:42:33
 
@@ -1868,6 +1866,10 @@ enable_fault_injections(fko_cli_options_t * const opts)
 并根据配置中的故障注入标签禁用相应的故障注入功能。然后，销毁上下文对象、释放内存、清零敏感数据缓冲区，
 最后退出程序并返回指定的退出状态码。
 
+*/
+
+/* free up memory and exit
+*  释放内存并退出程序。
 */
 static void
 clean_exit(fko_ctx_t ctx, fko_cli_options_t *opts,

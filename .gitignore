@@ -84,3 +84,4 @@ android/project/jni/libfwknop/*.c
 # Erlang
 erlang/_build
 erlang/rebar.lock
+.vscode/settings.json

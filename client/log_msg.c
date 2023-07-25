@@ -43,8 +43,9 @@ static log_ctx_t log_ctx;                           /*!< Structure to store the 
 
 /**
  * Set up the context for the log module.
- *
+ * 设置日志模块的上下文。?
  * This function only initialize the verbosity level
+ * 此函数仅初始化日志的详细程度（verbosity level）。
  */
 void
 log_new(void)
@@ -74,16 +75,7 @@ log_set_verbosity(int level)
     log_ctx.verbosity = level;
 }
 
-/**
- * Log a message
- *
- * This function sends a message to the stream dedicated to the priority
- * set. If the verbosity for the context is higher than the one used for
- * the message, then the message is discarded.
- *
- * \param level Verbosity level to used for the message.
- * \param msg   Message to print
- */
+
 /*
 2023/7/20 15:37:07
 
@@ -94,10 +86,24 @@ log_set_verbosity(int level)
 
 接下来使用va_start宏初始化变长参数列表，然后根据日志级别选择将日志输出到LOG_STREAM_STDERR或LOG_STREAM_STDOUT流中，
 使用vfprintf函数将格式化字符串和变长参数列表打印到指定的流中，然后再打印一个换行符。
-
 最后使用va_end宏结束变长参数的处理。
-
 */
+
+
+/**
+ * Log a message
+ *
+ * This function sends a message to the stream dedicated to the priority
+ * set. If the verbosity for the context is higher than the one used for
+ * the message, then the message is discarded.
+ * 此函数将消息发送到指定优先级的流。
+ * 如果上下文的详细程度高于用于消息的详细程度，则丢弃该消息。
+ *
+ * \param level Verbosity level to used for the message.
+ * 用于消息的详细程度级别。
+ * \param msg  Message to print
+ * 要打印的消息。
+ */
 void
 log_msg(int level, char* msg, ...)
 {
