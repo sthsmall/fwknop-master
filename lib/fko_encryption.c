@@ -42,6 +42,7 @@
 
 /* Prep and encrypt using Rijndael
 */
+//AES是Rijndael算法的标准化，其实本质差不多
 static int
 _rijndael_encrypt(fko_ctx_t ctx, const char *enc_key, const int enc_key_len)
 {
@@ -57,7 +58,7 @@ _rijndael_encrypt(fko_ctx_t ctx, const char *enc_key, const int enc_key_len)
 
     if (! is_valid_encoded_msg_len(ctx->encoded_msg_len))
         return(FKO_ERROR_INVALID_DATA_ENCRYPT_MSGLEN_VALIDFAIL);
-
+    //检查消息摘要长度是否符合要求
     switch(ctx->digest_len)
     {
         case MD5_B64_LEN:
@@ -79,11 +80,13 @@ _rijndael_encrypt(fko_ctx_t ctx, const char *enc_key, const int enc_key_len)
     /* Make a bucket big enough to hold the enc msg + digest (plaintext)
      * and populate it appropriately.
     */
+   //明文长度=编码长度+摘要长度+16+2 ？？可能是适当填充
     plaintext = calloc(1, pt_len);
 
     if(plaintext == NULL)
         return(FKO_ERROR_MEMORY_ALLOCATION);
 
+    //设置plaintext和pt_len
     pt_len = snprintf(plaintext, pt_len, "%s:%s", ctx->encoded_msg, ctx->digest);
 
     if(! is_valid_pt_msg_len(pt_len))
@@ -96,7 +99,7 @@ _rijndael_encrypt(fko_ctx_t ctx, const char *enc_key, const int enc_key_len)
 
     /* Make a bucket for the encrypted version and populate it.
     */
-    ciphertext = calloc(1, pt_len + 32); /* Plus padding for salt and Block */
+    ciphertext = calloc(1, pt_len + 32); /* Plus padding for salt and Block */ //填充加盐
     if(ciphertext == NULL)
     {
         if(zero_free(plaintext, pt_len) == FKO_SUCCESS)
@@ -104,7 +107,7 @@ _rijndael_encrypt(fko_ctx_t ctx, const char *enc_key, const int enc_key_len)
         else
             return(FKO_ERROR_ZERO_OUT_DATA);
     }
-
+    //执行加密
     cipher_len = rij_encrypt(
         (unsigned char*)plaintext, pt_len,
         (char*)enc_key, enc_key_len,
@@ -113,6 +116,7 @@ _rijndael_encrypt(fko_ctx_t ctx, const char *enc_key, const int enc_key_len)
 
     /* Now make a bucket for the base64-encoded version and populate it.
     */
+   //初始化缓冲区
     b64ciphertext = calloc(1, ((cipher_len / 3) * 4) + 8);
     if(b64ciphertext == NULL)
     {
@@ -123,13 +127,16 @@ _rijndael_encrypt(fko_ctx_t ctx, const char *enc_key, const int enc_key_len)
             return(FKO_ERROR_ZERO_OUT_DATA);
     }
 
+    //将加密后的密文进行base64编码
     b64_encode(ciphertext, b64ciphertext, cipher_len);
+    //去除base64编码后的'='符
     strip_b64_eq(b64ciphertext);
 
     if(ctx->encrypted_msg != NULL)
         zero_free_rv = zero_free(ctx->encrypted_msg,
                 strnlen(ctx->encrypted_msg, MAX_SPA_ENCODED_MSG_SIZE));
 
+    //将base64编码后的密文数据赋值给encrypted_msg
     ctx->encrypted_msg = strdup(b64ciphertext);
 
     /* Clean-up
@@ -593,7 +600,7 @@ fko_encrypt_spa_data(fko_ctx_t ctx, const char * const enc_key,
     */
    //还没有加密数据或者spa数据被修改
     if(ctx->encoded_msg == NULL || FKO_IS_SPA_DATA_MODIFIED(ctx))
-        //加密spa数据包
+        //编码spa数据包并生成消息摘要
         res = fko_encode_spa_data(ctx);
 
     if(res != FKO_SUCCESS)
@@ -608,12 +615,14 @@ fko_encrypt_spa_data(fko_ctx_t ctx, const char * const enc_key,
 
     /* Encrypt according to type and return...
     */
+   //加密类型是RIJNDAEL
     if(ctx->encryption_type == FKO_ENCRYPTION_RIJNDAEL)
     {
         if(enc_key == NULL)
             return(FKO_ERROR_INVALID_KEY_LEN);
         res = _rijndael_encrypt(ctx, enc_key, enc_key_len);
     }
+    //GPG
     else if(ctx->encryption_type == FKO_ENCRYPTION_GPG)
 #if HAVE_LIBGPGME
         res = gpg_encrypt(ctx, enc_key);

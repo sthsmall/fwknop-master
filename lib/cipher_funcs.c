@@ -257,10 +257,12 @@ rij_encrypt(unsigned char *in, size_t in_len,
     /* Add padding to the original plaintext to ensure that it is a
      * multiple of the Rijndael block size
     */
+   //为原始明文添加填充，确保其大小是 Rijndael 数据块大小的倍数
     pad_val = RIJNDAEL_BLOCKSIZE - (in_len % RIJNDAEL_BLOCKSIZE);
     for (i = (int)in_len; i < ((int)in_len+pad_val); i++)
         in[i] = pad_val;
-
+    
+    //分组加密
     block_encrypt(&ctx, in, in_len+pad_val, ondx, ctx.iv);
 
     ondx += in_len+pad_val;
