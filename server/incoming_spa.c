@@ -999,6 +999,7 @@ incoming_spa(fko_srv_options_t *opts)
 
         /* Make sure this access stanza has not expired
         */
+       //保证这个访问部分没有过期
         if(! check_stanza_expiration(acc, &spadat, stanza_num))
         {
             acc = acc->next;

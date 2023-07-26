@@ -66,6 +66,7 @@ run_udp_server(fko_srv_options_t *opts)
 
     /* Now, let's make a UDP server
     */
+   // 创建一个UDP的socket
     if ((s_sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
         log_msg(LOG_ERR, "run_udp_server: socket() failed: %s",
@@ -77,6 +78,7 @@ run_udp_server(fko_srv_options_t *opts)
      * listening for incoming datagrams.
      * 将我们的主套接字设为非阻塞模式，这样我们就不必在监听传入的数据报文时被阻塞。
     */
+    // 使主套接字非阻塞，这样我们就不必一直监听传入的数据报
     if((sfd_flags = fcntl(s_sock, F_GETFL, 0)) < 0)
     {
         log_msg(LOG_ERR, "run_udp_server: fcntl F_GETFL error: %s",
@@ -86,7 +88,7 @@ run_udp_server(fko_srv_options_t *opts)
     }
 
     sfd_flags |= O_NONBLOCK;
-
+    
     if(fcntl(s_sock, F_SETFL, sfd_flags) < 0)
     {
         log_msg(LOG_ERR, "run_udp_server: fcntl F_SETFL error setting O_NONBLOCK: %s",
@@ -102,6 +104,7 @@ run_udp_server(fko_srv_options_t *opts)
     saddr.sin_port        = htons(opts->udpserv_port); /* Local port */
 
     /* Bind to the local address */
+    // 绑定本地地址
     if (bind(s_sock, (struct sockaddr *) &saddr, sizeof(saddr)) < 0)
     {
         log_msg(LOG_ERR, "run_udp_server: bind() failed: %s",
@@ -115,6 +118,7 @@ run_udp_server(fko_srv_options_t *opts)
     /* Now loop and receive SPA packets
      * 现在循环并接收 SPA 数据包。
     */
+   // 循环接收SPA数据包
     while(1)
     {
         if(sig_do_stop())
@@ -130,6 +134,7 @@ run_udp_server(fko_srv_options_t *opts)
             /* Check for any expired firewall rules and deal with them.
              * 检查是否有任何已过期的防火墙规则并进行处理。
             */
+           // 检查是否有过期的防火墙规则并处理它们
             if(opts->enable_fw)
             {
                 if(opts->rules_chk_threshold > 0)
@@ -148,20 +153,24 @@ run_udp_server(fko_srv_options_t *opts)
             /* See if any CMD_CYCLE_CLOSE commands need to be executed.
              * 查看是否需要执行任何 CMD_CYCLE_CLOSE 命令。
             */
+           // 查看是否需要执行任何CMD_CYCLE_CLOSE命令
             cmd_cycle_close(opts);
         }
 
         /* Initialize and setup the socket for select.
          *初始化并设置用于 select 的套接字。
         */
+       // 初始化位图并设置套接字对应的值为1
         FD_SET(s_sock, &sfd_set);
 
         /* Set our select timeout to (500ms by default).
          * 将我们的 select 超时时间设置为默认值 500 毫秒。
         */
+       // 将选择超时设置为（默认为500ms）
         tv.tv_sec = 0;
         tv.tv_usec = opts->udpserv_select_timeout;
 
+        //  对位图中的套接字键对应值为1的套接字进行监听
         selval = select(s_sock+1, &sfd_set, NULL, NULL, &tv);
 
         if(selval == -1)
@@ -186,12 +195,14 @@ run_udp_server(fko_srv_options_t *opts)
         if(selval == 0)
             continue;
 
+        //  如果键s_sock的值在位图中在位图中为1
         if(! FD_ISSET(s_sock, &sfd_set))
             continue;
 
         /* If we make it here then there is a datagram to process
          * 如果程序执行到这里，说明有一个数据报需要处理。
         */
+        //
         clen = sizeof(caddr);
 
         pkt_len = recvfrom(s_sock, dgram_msg, MAX_SPA_PACKET_LEN,
