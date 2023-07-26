@@ -20,7 +20,8 @@
         "fwknopd_errors.h": "c",
         "limits.h": "c",
         "incoming_spa.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "errno.h": "c"
     },
     "workbench.editor.wrapTabs": true
 }
