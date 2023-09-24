@@ -60,7 +60,7 @@ typedef struct fko_gpg_sig *fko_gpg_sig_t;
  *
  * \struct fko_context
  *
- * \brief The pieces we need to make an FKO SPA data packet.
+ * \brief The pieces we need to make an FKO SPA data packet我们制作FKO SPA数据包所需的组成部分.
  */
 struct fko_context {
     /** \name FKO SPA user-definable message data */

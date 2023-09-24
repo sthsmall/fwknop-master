@@ -48,6 +48,7 @@
 
 /* Validate and in some cases preprocess/reformat the SPA data.  Return an
  * error code value if there is any indication the data is not valid spa data.
+ * 验证并在某些情况下预处理/重新格式化SPA数据。如果存在任何指示数据不是有效的SPA数据的迹象，则返回错误代码值。
 */
 static int
 preprocess_spa_data(const fko_srv_options_t *opts, spa_pkt_info_t *spa_pkt, spa_data_t *spadat)
@@ -62,11 +63,15 @@ preprocess_spa_data(const fko_srv_options_t *opts, spa_pkt_info_t *spa_pkt, spa_
     /* At this point, we can reset the packet data length to 0.  This is our
      * indicator to the rest of the program that we do not have a current
      * spa packet to process (after this one that is).
+     * 在这一点上，我们可以将数据包数据长度重置为0。
+     * 这是我们向程序的其余部分指示的信号，表示我们没有要处理的当前SPA数据包（在这个数据包之后）。
+     * 
     */
     spa_pkt->packet_data_len = 0;
 
-    /* These two checks are already done in process_packet(), but this is a
+    /* These two checks are already done in process_packet(), but this is a 
      * defensive measure to run them again here
+     * 这两个检查已经在process_packet()中完成，但这是一种防御性措施，再次运行它们
     */
     if(pkt_data_len < MIN_SPA_DATA_SIZE)
         return(SPA_MSG_BAD_DATA);
@@ -80,6 +85,11 @@ preprocess_spa_data(const fko_srv_options_t *opts, spa_pkt_info_t *spa_pkt, spa_
      * no worse off since a legitimate SPA packet that happens to include
      * a prefix after the outer one is stripped off won't decrypt properly
      * anyway because libfko would not add a new one.
+     * 忽略任何包含Rijndael或GnuPG前缀的任何SPA数据包，因为攻击者可能已经将它们附加到以前看到的SPA数据包中，
+     * 以尝试通过重放检查。而且，我们不会更糟，因为一个合法的SPA数据包恰好包含一个外部前缀，
+     * 在剥离掉外部前缀后，它不会正确解密，因为libfko不会添加新的前缀。
+     * TODO:?
+     * 
     */
     if(constant_runtime_cmp(ndx, B64_RIJNDAEL_SALT, B64_RIJNDAEL_SALT_STR_LEN) == 0)
         return(SPA_MSG_BAD_DATA);
@@ -943,7 +953,7 @@ incoming_spa(fko_srv_options_t *opts)
    //循环遍历所有访问部分，寻找匹配
     acc_stanza_t        *acc = opts->acc_stanzas;
 
-    //将网络地址转换为可读字符串形式的函数
+    //将网络地址从二进制转换为可读字符串形式的函数
     inet_ntop(AF_INET, &(spa_pkt->packet_src_ip),
         spadat.pkt_source_ip, sizeof(spadat.pkt_source_ip));
 

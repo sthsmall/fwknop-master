@@ -84,6 +84,8 @@ static fko_enc_mode_str_t fko_enc_mode_strs[] =
  * is found before comparing all bytes).  This code was adapted
  * from YaSSL which is GPLv2 after a timing bug was reported by
  * Ryman through github (#85)
+ * 无论输入特性如何，都以恒定运行时间比较所有字节（即使在比较所有字节之前发现差异，也不提前返回）。
+ * 此代码经过修改，源自YaSSL，该项目在Ryman通过GitHub报告了一个时序错误后采用了GPLv2许可。
 */
 int
 constant_runtime_cmp(const char *a, const char *b, int len)

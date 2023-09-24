@@ -52,14 +52,16 @@
 #endif /* LCOV_EXCL_STOP */
 
 /**
- * \brief include keys file
+ * \brief include keys file包含密钥文件
  *
  * This function loads only the crypto keys from a given file.
  * It inserts these keys into the active access stanza.
+ * 此函数仅从给定文件中加载加密密钥。
+ * 它将这些密钥插入到活动的访问配置段中。
  *
- * \param curr_acc pointer to the current access stanza
- * \param access_filename Pointer to the file containing the keys
- * \param opts fko_srv_options_t Server options struct
+ * \param curr_acc pointer to the current access stanza指向当前访问配置段的指针
+ * \param access_filename Pointer to the file containing the keys指向包含密钥的文件的指针
+ * \param opts fko_srv_options_t Server options struct服务器选项结构
  *
  */
 int

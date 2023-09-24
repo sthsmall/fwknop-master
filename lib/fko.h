@@ -386,6 +386,7 @@ typedef enum {
 #define FKO_DEFAULT_HMAC_MODE    FKO_HMAC_SHA256
 
 /* Define the consistent prefixes or salt on some encryption schemes.
+ * 定义一些加密方案中的一致前缀或盐。
 */
 #define B64_RIJNDAEL_SALT "U2FsdGVkX1"
 #define B64_RIJNDAEL_SALT_STR_LEN 10

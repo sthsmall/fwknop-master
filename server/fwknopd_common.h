@@ -660,36 +660,38 @@ typedef struct fko_srv_options
      * then exit.
     */
    //调用立即响应然后退出的命令行选项或标志。
-    unsigned char   dump_config;        /* Dump current configuration flag */
-    unsigned char   foreground;         /* Run in foreground flag */
-    unsigned char   kill;               /* flag to initiate kill of fwknopd */
-    unsigned char   rotate_digest_cache;/* flag to force rotation of digest */
-    unsigned char   restart;            /* Restart fwknopd flag */
-    unsigned char   status;             /* Get fwknopd status flag */
-    unsigned char   fw_list;            /* List current firewall rules */
-    unsigned char   fw_list_all;        /* List all current firewall rules */
-    unsigned char   fw_flush;           /* Flush current firewall rules */
-    unsigned char   key_gen;            /* Generate keys and exit */
-    unsigned char   exit_after_parse_config; /* Parse config and exit */
-    unsigned char   exit_parse_digest_cache; /* Parse digest cache and exit */
+    unsigned char   dump_config;        /* Dump current configuration flag 转储当前配置标志*/
+    unsigned char   foreground;         /* Run in foreground flag 在前台运行标志*/
+    unsigned char   kill;               /* flag to initiate kill of fwknopd 启动fwknopd杀进程的标志*/
+    unsigned char   rotate_digest_cache;/* flag to force rotation of digest 强制旋转摘要缓存的标志*/
+    unsigned char   restart;            /* Restart fwknopd flag 重新启动fwknopd的标志*/
+    unsigned char   status;             /* Get fwknopd status flag 获取fwknopd状态的标志*/
+    unsigned char   fw_list;            /* List current firewall rules 列出当前防火墙规则的标志*/
+    unsigned char   fw_list_all;        /* List all current firewall rules 列出所有当前防火墙规则的标志*/
+    unsigned char   fw_flush;           /* Flush current firewall rules 清空当前防火墙规则的标志*/
+    unsigned char   key_gen;            /* Generate keys and exit 生成密钥并退出的标志*/
+    unsigned char   exit_after_parse_config; /* Parse config and exit 解析配置并退出的标志*/
+    unsigned char   exit_parse_digest_cache; /* Parse digest cache and exit 解析摘要缓存并退出的标志*/
 
     /* Operational flags
     */
-    unsigned char   test;               /* Test mode flag */
-    unsigned char   afl_fuzzing;        /* SPA pkts from stdin for AFL fuzzing */
-    unsigned char   verbose;            /* Verbose mode flag */
-    unsigned char   enable_udp_server;  /* Enable UDP server mode */
-    unsigned char   enable_nfq_capture; /* Enable Netfilter Queue capture mode */
+    unsigned char   test;               /* Test mode flag 测试模式标志*/
+    unsigned char   afl_fuzzing;        /* SPA pkts from stdin for AFL fuzzing 用于AFL模糊测试的SPA数据包标志*/
+    unsigned char   verbose;            /* Verbose mode flag 详细模式标志*/
+    unsigned char   enable_udp_server;  /* Enable UDP server mode 启用UDP服务器模式的标志*/
+    unsigned char   enable_nfq_capture; /* Enable Netfilter Queue capture mode 启用Netfilter队列捕获模式的标志*/
     unsigned char   enable_fw;          /* Command modes by themselves don't
-                                           need firewall support. */
+                                           need firewall support. 仅命令模式本身不需要防火墙支持的标志*/
 
-    unsigned char   firewd_disable_check_support; /* Don't use firewall-cmd ... -C */
-    unsigned char   ipt_disable_check_support;    /* Don't use iptables -C */
+    unsigned char   firewd_disable_check_support; /* Don't use firewall-cmd ... -C 不使用firewall-cmd ... -C的标志*/
+    unsigned char   ipt_disable_check_support;    /* Don't use iptables -C 不使用iptables -C的标志*/
 
     /* Flag for permitting SPA packets regardless of directionality test
      * w.r.t. the sniffing interface.  This can sometimes be useful for SPA
      * packets that are sent _through_ a system and fwknopd is sniffing on
      * the outbound interface as far as these packets are concerned.
+     * 用于允许SPA数据包的标志，无论嗅探接口的方向性测试如何。
+     * 对于通过系统发送的SPA数据包，fwknopd在这些数据包的角度看出站接口上嗅探时，有时会很有用。
     */
     unsigned char   pcap_any_direction;
 
@@ -698,6 +700,7 @@ typedef struct fko_srv_options
     int             lock_fd;
 
     /* Values used in --key-gen mode only
+     * 仅在--key-gen模式下使用的值
     */
     char key_gen_file[MAX_PATH_LEN];
     int  key_len;
@@ -708,7 +711,7 @@ typedef struct fko_srv_options
     struct digest_cache_list *digest_cache;   /* In-memory digest cache list */
 #endif
 
-    spa_pkt_info_t  spa_pkt;            /* The current SPA packet 当前的 SPA 数据包*/
+    spa_pkt_info_t  spa_pkt;            /* The current SPA packet 当前的 SPA 数据包信息*/
 
     /* Counter set from the command line to exit after the specified
      * number of SPA packets are processed.

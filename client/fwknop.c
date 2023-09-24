@@ -970,6 +970,7 @@ get_rand_port(fko_ctx_t ctx)
     /* Force libfko to calculate a new random value since we don't want to
      * give anyone a hint (via the port value) about the contents of the
      * encrypted SPA data.
+     * 强制 libfko 计算一个新的随机值，因为我们不希望通过端口值向任何人提示加密的 SPA 数据内容。
     */
     res = fko_set_rand_value(ctx, NULL);
     if(res != FKO_SUCCESS)
