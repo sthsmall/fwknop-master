@@ -677,6 +677,7 @@ fko_decrypt_spa_data(fko_ctx_t ctx, const char * const dec_key, const int key_le
 }
 
 /* Return the assumed encryption type based on the raw encrypted data.
+ *根据原始加密数据返回假定的加密类型。
 */
 int
 fko_encryption_type(const char * const enc_data)
@@ -684,6 +685,7 @@ fko_encryption_type(const char * const enc_data)
     int enc_data_len;
 
     /* Sanity check the data.
+     * 对数据进行合理性检查。
     */
     if(enc_data == NULL)
         return(FKO_ENCRYPTION_INVALID_DATA);

@@ -402,6 +402,7 @@ typedef enum {
 /* The context holds the global state and config options, as
  * well as some intermediate results during processing. This
  * is an opaque pointer.
+ * 上下文包含全局状态和配置选项，以及在处理过程中的一些中间结果。这是一个不透明的指针
 */
 struct fko_context;
 typedef struct fko_context *fko_ctx_t;
@@ -442,7 +443,7 @@ DLL_API int fko_new(fko_ctx_t *ctx);
 
 
 /**
- * \brief Initialize a new FKO context with data
+ * \brief Initialize a new FKO context with data初始化一个新的FKO上下文并提供数据。
  *
  * The function 'fko_new_with_data' sets up and initializes a new
  * 'fko_ctx_t' context, but instead of initializing default values, it
@@ -458,16 +459,28 @@ DLL_API int fko_new(fko_ctx_t *ctx);
  * required, then the HMAC_KEY and associated length can be passed in.
  * This will cause libfko to authenticate the SPA data before
  * decryption is attempted, and this is strongly recommended to do.
- *
+ * 该函数 'fko_new_with_data' 设置并初始化一个新的 'fko_ctx_t' 上下文，
+ * 但不是初始化默认值，而是存储了加密的消息数据，使其准备好进行解析。这可以通过两种方式完成。
+ * 其中一种方式是将第三个参数传递为 'NULL'。上下文将会被创建并存储数据，但不会进行解密或解码。
+ * 在这种情况下，您需要在以后的某个时候调用 'fko_decrypt_spa_data' 函数。
+ * 另一种方式是提供KEY值（解密口令）和相关长度。在这种情况下，上下文会被创建，
+ * SPA数据会被解密、解码、解析，并存储在上下文中，准备好供检索。如果还需要或要求进行HMAC验证，
+ * 
  * \param ctx Pointer to the FKO context to be initialized
+ * 指向要初始化的FKO上下文的指针。
  * \param enc_msg Pointer to the message to be decoded, should be null terminated
+ * 指向要解码的消息的指针，该消息应以空字符（null terminated）结尾。
  * \param dec_key Pointer to the decryption key.  Expects either text or unsigned char.
- * \param dec_key_len Size of the decryption key.
+ * 指向解密密钥的指针。可以是文本或无符号字符（unsigned char）类型的指针。
+ * \param dec_key_len Size of the decryption key.解密密钥的大小。
  * \param encryption_mode Describes the mode of encryption used.  Most common is FKO_ENC_MODE_CBC, which is AES in CBC mode.
+ * 描述所使用的加密模式。最常见的是FKO_ENC_MODE_CBC，它是AES的CBC模式。
  * \param hmac_key This is the pointer to the HMAC key.  Expected to be either text or unsigned char.
+ * 这是指向HMAC密钥的指针。它可以是文本或无符号字符（unsigned char）类型的指针。
  * \param hmac_key_len Size of the HMAC key
+ * HMAC密钥的大小
  * \param hmac_type Describes which hash function to use for the HMAC.
- *
+ * 描述要用于HMAC的哈希函数。
  * \return FKO_SUCCESS if successful, returns an error code otherwise.
  */
 DLL_API int fko_new_with_data(fko_ctx_t *ctx, const char * const enc_msg,
@@ -754,9 +767,9 @@ DLL_API int fko_set_spa_hmac_type(fko_ctx_t ctx, const short hmac_type);
 DLL_API const char* fko_errstr(const int err_code);
 
 /**
- * \brief Return the assumed encryption type based on the raw encrypted data.
+ * \brief Return the assumed encryption type based on the raw encrypted data.根据原始加密数据返回假定的加密类型。
  *
- * \param The encrypted data to process
+ * \param enc_data The encrypted data to process要处理的加密数据。
  *
  * \return Returns a value from [fko_encryption_type_t](\ref fko_encryption_type_t)
  */

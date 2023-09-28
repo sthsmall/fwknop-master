@@ -216,6 +216,7 @@ add_cmd_close(fko_srv_options_t *opts, acc_stanza_t *acc,
 
     /* CMD_CYCLE_CLOSE: Build the close command, but don't execute it until
      * the expiration timer has passed.
+     * CMD_CYCLE_CLOSE：构建关闭命令，但要等到到期计时器结束后才执行。
     */
     if(build_cmd(spadat, acc->cmd_cycle_close, acc->cmd_cycle_timer))
     {

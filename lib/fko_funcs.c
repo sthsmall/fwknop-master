@@ -186,31 +186,7 @@ fko_new(fko_ctx_t *r_ctx)
  * and parsing the provided data into the context data.
 */
 /*
-这段代码是一个名为 fko_new_with_data 的函数实现，用于创建并初始化一个 fko_ctx_t 上下文结构体对象，并传入一些数据。
-
-首先，定义了一个局部变量 ctx 并初始化为 NULL。
-
-然后，根据输入的参数进行各种错误检查和处理。例如，如果 enc_msg 是空指针，则返回错误码 FKO_ERROR_INVALID_DATA_FUNCS_NEW_ENCMSG_MISSING。
-如果 dec_key_len 或 hmac_key_len 小于零，则返回错误码 FKO_ERROR_INVALID_KEY_LEN。
-
-接着，使用 calloc 函数分配了一块内存，用于存储 ctx 结构体对象，并将其初始化为全零。如果内存分配失败，则返回错误码 FKO_ERROR_MEMORY_ALLOCATION。
-
-然后，计算了 enc_msg 的长度，并进行一些长度有效性检查。
-
-接下来，将传入的数据存储到上下文对象的相应成员变量中。例如，将 enc_msg 复制到 ctx->encrypted_msg 中，并设置其长度为 enc_msg_len。
-
-然后，根据需要设置默认的加密模式和 HMAC 摘要类型等。
-
-之后，根据需要检验 HMAC。
-
-最终，根据传入的解密密钥进行解密操作，并根据结果进行相应的处理。
-
-最后，将创建并初始化完成的上下文对象通过指针 r_ctx 返回。
-
-函数执行成功时返回 FKO_SUCCESS，否则根据具体错误情况返回相应的错误码。
-
-这段代码是对名为 enc_msg 的消息进行加密操作。具体来说，它将 enc_msg 复制到上下文对象的 encrypted_msg 字段中，并使用提供的加密模式对其进行加密处理。
-在函数的后续部分，如果传入了解密密钥，则还会对消息进行解密和解码操作。因此，可以说这段代码实现了对消息的加密和解密功能。
+详细请查看声明，因为太多不能快捷显示
 */
 int
 fko_new_with_data(fko_ctx_t *r_ctx, const char * const enc_msg,
@@ -325,6 +301,7 @@ fko_new_with_data(fko_ctx_t *r_ctx, const char * const enc_msg,
 }
 
 /* Destroy a context and free its resources
+ * 销毁一个上下文并释放其资源
 */
 int
 fko_destroy(fko_ctx_t ctx)

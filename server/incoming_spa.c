@@ -894,6 +894,7 @@ set_timeout(acc_stanza_t *acc, spa_data_t *spadat)
         if(acc->max_fw_timeout < spadat->client_timeout)
         {
             /* don't allow clients to request more time than the max
+             * 不允许客户端请求超过最大允许的时间。
             */
             spadat->fw_access_timeout = acc->max_fw_timeout;
         }
@@ -982,6 +983,7 @@ incoming_spa(fko_srv_options_t *opts)
         stanza_num++;
 
         /* Start access loop with a clean FKO context
+         * 使用一个干净的FKO上下文开始访问循环
         */
         if(ctx != NULL)
         {
@@ -994,6 +996,7 @@ incoming_spa(fko_srv_options_t *opts)
         }
 
         /* Check for a match for the SPA source and destination IP and the access stanza
+         * 检查SPA源IP和目标IP以及访问段落的匹配情况。
         */
         if(! src_dst_check(acc, spa_pkt, &spadat, stanza_num))
         {
@@ -1018,6 +1021,7 @@ incoming_spa(fko_srv_options_t *opts)
 
         /* Get encryption type and try its decoding routine first (if the key
          * for that type is set)
+         * 获取加密类型并首先尝试其解码例程（如果已设置该类型的密钥）
         */
         enc_type = fko_encryption_type((char *)spa_pkt->packet_data);
 
@@ -1040,7 +1044,7 @@ incoming_spa(fko_srv_options_t *opts)
             continue;
         }
 
-        /* Add this SPA packet into the replay detection cache
+        /* Add this SPA packet into the replay detection cache将此SPA数据包添加到重放检测缓存中。
         */
         if(! add_replay_cache(opts, acc, &spadat, raw_digest,
                     &added_replay_digest, stanza_num, &res))
@@ -1052,6 +1056,8 @@ incoming_spa(fko_srv_options_t *opts)
         /* At this point the SPA data is authenticated via the HMAC (if used
          * for now). Next we need to see if it meets our access criteria which
          * the server imposes regardless of the content of the SPA packet.
+         * 在这一点上，SPA数据已通过HMAC（如果使用）进行身份验证。
+         * 接下来，我们需要检查它是否满足我们的访问标准，这是服务器无论SPA数据包的内容都会强制执行的。
         */
         log_msg(LOG_DEBUG, "[%s] (stanza #%d) SPA Decode (res=%i):",
             spadat.pkt_source_ip, stanza_num, res);
@@ -1065,6 +1071,8 @@ incoming_spa(fko_srv_options_t *opts)
         /* First, if this is a GPG message, and GPG_REMOTE_ID list is not empty,
          * then we need to make sure this incoming message is signer ID matches
          * an entry in the list.
+         * 首先，如果这是一条GPG消息，并且GPG_REMOTE_ID列表不为空，
+         * 那么我们需要确保传入的消息签名者ID与列表中的某个条目匹配。
         */
 
         if(! handle_gpg_sigs(acc, &spadat, &ctx, enc_type, stanza_num, &res))
@@ -1074,6 +1082,7 @@ incoming_spa(fko_srv_options_t *opts)
         }
 
         /* Populate our spa data struct for future reference.
+        * 为将来的参考，填充我们的spa数据结构。
         */
         res = get_spa_data_fields(ctx, &spadat);
 
@@ -1090,10 +1099,14 @@ incoming_spa(fko_srv_options_t *opts)
         /* Figure out what our timeout will be. If it is specified in the SPA
          * data, then use that.  If not, try the FW_ACCESS_TIMEOUT from the
          * access.conf file (if there is one).  Otherwise use the default.
+         * 确定我们的超时时间将会是多少。如果在SPA数据中指定了超时时间，那么使用该值。
+         * 如果没有指定，尝试使用access.conf文件中的FW_ACCESS_TIMEOUT（如果存在）。
+         * 否则，使用默认超时时间。
         */
         set_timeout(acc, &spadat);
 
         /* Check packet age if so configured.
+         * 如果已配置，则检查数据包的年龄。
         */
         if(! check_pkt_age(opts, &spadat, stanza_num))
         {
@@ -1104,6 +1117,8 @@ incoming_spa(fko_srv_options_t *opts)
         /* At this point, we have enough to check the embedded (or packet source)
          * IP address against the defined access rights.  We start by splitting
          * the spa msg source IP from the remainder of the message.
+         * 此时，我们已经具备足够的信息来检查嵌入（或数据包源）的IP地址是否符合定义的访问权限。
+         * 我们首先从消息中分离SPA消息源IP地址和其余部分。
         */
         spa_ip_demark = strchr(spadat.spa_message, ',');
         if(spa_ip_demark == NULL)
@@ -1140,6 +1155,7 @@ incoming_spa(fko_srv_options_t *opts)
 
         /* If use source IP was requested (embedded IP of 0.0.0.0), make sure it
          * is allowed.
+         * 如果请求使用源IP地址（嵌入IP地址为0.0.0.0），确保它是被允许的。
         */
         if(! check_src_access(acc, &spadat, stanza_num))
         {
@@ -1149,14 +1165,15 @@ incoming_spa(fko_srv_options_t *opts)
 
         /* If REQUIRE_USERNAME is set, make sure the username in this SPA data
          * matches.
+         * 如果设置了REQUIRE_USERNAME，请确保此SPA数据中的用户名匹配。
         */
         if(! check_username(acc, &spadat, stanza_num))
         {
             acc = acc->next;
             continue;
         }
-
-        /* Take action based on SPA message type.
+ake action based on SPA message type.
+        /* T
         */
         if(! check_nat_access_types(opts, acc, &spadat, stanza_num))
         {
@@ -1169,7 +1186,7 @@ incoming_spa(fko_srv_options_t *opts)
         if(acc->cmd_cycle_open != NULL)
         {
             if(cmd_cycle_open(opts, acc, &spadat, stanza_num, &res))
-                break; /* successfully processed a matching access stanza */
+                break; /* successfully processed a matching access stanza 成功处理了匹配的访问部分。*/
             else
             {
                 acc = acc->next;
@@ -1182,6 +1199,7 @@ incoming_spa(fko_srv_options_t *opts)
             {
                 /* we processed the command on a matching access stanza, so we
                  * don't look for anything else to do with this SPA packet
+                 * 我们已经在匹配的访问部分上处理了命令，因此不需要再查找与此SPA数据包有关的其他操作。
                 */
                 break;
             }
@@ -1195,6 +1213,9 @@ incoming_spa(fko_srv_options_t *opts)
         /* From this point forward, we have some kind of access message. So
          * we first see if access is allowed by checking access against
          * restrict_ports and open_ports.
+         * 从这一点开始，我们有某种类型的访问消息。
+         * 因此，我们首先通过检查访问权限来查看是否允许访问，
+         * 这是通过与restrict_ports和open_ports进行比较来完成的。
          *
          *  --DSS TODO: We should add BLACKLIST support here as well.
         */
@@ -1207,6 +1228,7 @@ incoming_spa(fko_srv_options_t *opts)
         /* At this point, we process the SPA request and break out of the
          * access stanza loop (first valid access stanza stops us looking
          * for others).
+         * 在这一点上，我们处理SPA请求并跳出访问部分循环（第一个有效的访问部分停止我们查找其他的）。
         */
         if(opts->test)  /* no firewall changes in --test mode */
         {
@@ -1237,6 +1259,7 @@ incoming_spa(fko_srv_options_t *opts)
 
         /* If we made it here, then the SPA packet was processed according
          * to a matching access.conf stanza, so we're done with this packet.
+         * 如果我们执行到了这一步，那么SPA数据包已根据匹配的access.conf访问部分进行处理，因此我们已完成了对这个数据包的处理。
         */
         break;
     }
